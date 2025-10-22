@@ -1,38 +1,36 @@
-# macOS
+# Environment
+.env
+
+# MacOS
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Thumbnails
 ._*
 
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# IDE
+# IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# Composer
+/vendor/
+composer.lock
 
 # Logs
+/logs/*.log
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# Environment variables
-.env
-.env.local
-.env.*.local
+# Uploads (no subir archivos de usuario)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Cache
+/cache/*
+!/cache/.gitkeep
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
