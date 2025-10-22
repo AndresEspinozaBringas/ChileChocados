@@ -1,0 +1,779 @@
+{
+  "admin-categories.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 20,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "admin-login.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 12,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "admin-messages.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 3,
+      "close": 22,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "admin-newpost.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 13,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "admin-recovery.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 12,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "admin.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 82,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "cart.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 12,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "categories.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 9,
+      "close": 26,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "detail.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 35,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "favorites.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 11,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    }
+  },
+  "index.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 10,
+      "close": 146,
+      "balanced": false
+    },
+    "section": {
+      "open": 7,
+      "close": 7,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "list.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 50,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "login.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 14,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "messages.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 3,
+      "close": 20,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "post-approval.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 12,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "profile.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 4,
+      "close": 29,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "publish-category.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 9,
+      "close": 35,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    }
+  },
+  "publish.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 31,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "register.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 14,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "sell.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 24,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  },
+  "share.html": {
+    "html": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "head": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "body": {
+      "open": 1,
+      "close": 1,
+      "balanced": true
+    },
+    "main": {
+      "open": 0,
+      "close": 1,
+      "balanced": false
+    },
+    "div": {
+      "open": 1,
+      "close": 12,
+      "balanced": false
+    },
+    "section": {
+      "open": 0,
+      "close": 0,
+      "balanced": true
+    },
+    "nav": {
+      "open": 0,
+      "close": 2,
+      "balanced": false
+    }
+  }
+}
