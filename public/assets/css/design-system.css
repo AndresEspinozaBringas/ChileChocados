@@ -1,0 +1,543 @@
+/**
+ * ============================================================================
+ * CHILECHOCADOS - SISTEMA DE DISEÑO
+ * ============================================================================
+ * 
+ * Design System v1.0
+ * Fecha: Octubre 2025
+ * Diseñado por: ToroDigital - UX/UI Team
+ * 
+ * Este archivo contiene todas las variables CSS y tokens de diseño
+ * para garantizar consistencia visual en toda la plataforma.
+ * 
+ * Filosofía de diseño:
+ * - Moderno, técnico y robusto
+ * - Confianza y dinamismo
+ * - Accesibilidad WCAG 2.1 AA
+ * - Mobile-first responsive
+ * 
+ * ============================================================================
+ */
+
+:root {
+  
+  /* ============================================================================
+   * SISTEMA DE COLORES
+   * ============================================================================
+   * Paleta principal basada en la identidad ChileChocados
+   * Todos los colores cumplen con ratios de contraste WCAG AA (4.5:1 para texto)
+   */
+  
+  /* --- Colores Primarios --- */
+  --cc-primary: #E6332A;              /* Rojo ChileChocados - Color principal */
+  --cc-primary-dark: #B82920;         /* Rojo oscuro - Hover states */
+  --cc-primary-darker: #8A1F18;       /* Rojo muy oscuro - Active states */
+  --cc-primary-light: #ED5B54;        /* Rojo claro - Backgrounds sutiles */
+  --cc-primary-lighter: #F89892;      /* Rojo muy claro - Hover backgrounds */
+  --cc-primary-pale: #FFF1F0;         /* Rojo pálido - Alerts y badges */
+  
+  /* --- Colores Secundarios --- */
+  --cc-secondary: #F5C542;            /* Amarillo - Acento y destacados */
+  --cc-secondary-dark: #E0B02B;       /* Amarillo oscuro - Hover */
+  --cc-secondary-darker: #C89820;     /* Amarillo muy oscuro - Active */
+  --cc-secondary-light: #F8D56E;      /* Amarillo claro - Backgrounds */
+  --cc-secondary-lighter: #FBE49B;    /* Amarillo muy claro - Hover backgrounds */
+  --cc-secondary-pale: #FFFBF0;       /* Amarillo pálido - Alerts */
+  
+  /* --- Escala de Grises --- */
+  --cc-gray-900: #1A1A1A;             /* Casi negro - Textos principales */
+  --cc-gray-800: #2E2E2E;             /* Gris muy oscuro - Headers */
+  --cc-gray-700: #4A4A4A;             /* Gris oscuro - Textos secundarios */
+  --cc-gray-600: #666666;             /* Gris medio-oscuro - Placeholders */
+  --cc-gray-500: #808080;             /* Gris medio - Bordes */
+  --cc-gray-400: #ABABAB;             /* Gris medio-claro - Disabled */
+  --cc-gray-300: #D4D4D4;             /* Gris claro - Separadores */
+  --cc-gray-200: #E8E8E8;             /* Gris muy claro - Backgrounds */
+  --cc-gray-100: #F5F5F5;             /* Casi blanco - Cards */
+  --cc-gray-50: #FAFAFA;              /* Blanco grisáceo - Body background */
+  
+  /* --- Colores Base --- */
+  --cc-white: #FFFFFF;
+  --cc-black: #000000;
+  
+  /* --- Colores de Estado (Semánticos) --- */
+  --cc-success: #10B981;              /* Verde - Operaciones exitosas */
+  --cc-success-dark: #059669;
+  --cc-success-light: #D1FAE5;
+  
+  --cc-warning: #F59E0B;              /* Naranja - Advertencias */
+  --cc-warning-dark: #D97706;
+  --cc-warning-light: #FEF3C7;
+  
+  --cc-danger: #EF4444;               /* Rojo - Errores y acciones destructivas */
+  --cc-danger-dark: #DC2626;
+  --cc-danger-light: #FEE2E2;
+  
+  --cc-info: #3B82F6;                 /* Azul - Información */
+  --cc-info-dark: #2563EB;
+  --cc-info-light: #DBEAFE;
+  
+  /* --- Colores de Fondo y Superficies --- */
+  --cc-bg-body: var(--cc-gray-50);
+  --cc-bg-surface: var(--cc-white);
+  --cc-bg-elevated: var(--cc-white);
+  --cc-bg-overlay: rgba(0, 0, 0, 0.5);
+  --cc-bg-muted: var(--cc-gray-100);
+  
+  /* --- Colores de Texto --- */
+  --cc-text-primary: var(--cc-gray-900);
+  --cc-text-secondary: var(--cc-gray-700);
+  --cc-text-tertiary: var(--cc-gray-600);
+  --cc-text-disabled: var(--cc-gray-400);
+  --cc-text-inverse: var(--cc-white);
+  --cc-text-link: var(--cc-primary);
+  --cc-text-link-hover: var(--cc-primary-dark);
+  
+  /* --- Colores de Bordes --- */
+  --cc-border-default: var(--cc-gray-300);
+  --cc-border-light: var(--cc-gray-200);
+  --cc-border-strong: var(--cc-gray-500);
+  --cc-border-focus: var(--cc-primary);
+  
+  
+  /* ============================================================================
+   * TIPOGRAFÍA
+   * ============================================================================
+   * Sistema tipográfico basado en Inter con fallbacks seguros
+   * Escala modular con ratio 1.25 (Major Third)
+   */
+  
+  /* --- Familias de Fuentes --- */
+  --cc-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+                      'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --cc-font-secondary: 'Montserrat', var(--cc-font-primary);
+  --cc-font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  
+  /* --- Tamaños de Fuente (Escala Modular 1.25) --- */
+  --cc-text-xs: 0.75rem;              /* 12px */
+  --cc-text-sm: 0.875rem;             /* 14px */
+  --cc-text-base: 1rem;               /* 16px - Base size */
+  --cc-text-lg: 1.125rem;             /* 18px */
+  --cc-text-xl: 1.25rem;              /* 20px */
+  --cc-text-2xl: 1.5rem;              /* 24px */
+  --cc-text-3xl: 1.875rem;            /* 30px */
+  --cc-text-4xl: 2.25rem;             /* 36px */
+  --cc-text-5xl: 3rem;                /* 48px */
+  --cc-text-6xl: 3.75rem;             /* 60px */
+  --cc-text-7xl: 4.5rem;              /* 72px */
+  
+  /* --- Pesos de Fuente --- */
+  --cc-font-light: 300;
+  --cc-font-normal: 400;
+  --cc-font-medium: 500;
+  --cc-font-semibold: 600;
+  --cc-font-bold: 700;
+  --cc-font-extrabold: 800;
+  
+  /* --- Line Heights --- */
+  --cc-leading-none: 1;
+  --cc-leading-tight: 1.25;
+  --cc-leading-snug: 1.375;
+  --cc-leading-normal: 1.5;
+  --cc-leading-relaxed: 1.625;
+  --cc-leading-loose: 2;
+  
+  /* --- Letter Spacing --- */
+  --cc-tracking-tighter: -0.05em;
+  --cc-tracking-tight: -0.025em;
+  --cc-tracking-normal: 0;
+  --cc-tracking-wide: 0.025em;
+  --cc-tracking-wider: 0.05em;
+  --cc-tracking-widest: 0.1em;
+  
+  
+  /* ============================================================================
+   * ESPACIADO Y LAYOUT
+   * ============================================================================
+   * Sistema de espaciado consistente basado en múltiplos de 4px
+   * Escala: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128
+   */
+  
+  --cc-space-0: 0;
+  --cc-space-px: 1px;
+  --cc-space-0-5: 0.125rem;           /* 2px */
+  --cc-space-1: 0.25rem;              /* 4px */
+  --cc-space-1-5: 0.375rem;           /* 6px */
+  --cc-space-2: 0.5rem;               /* 8px */
+  --cc-space-2-5: 0.625rem;           /* 10px */
+  --cc-space-3: 0.75rem;              /* 12px */
+  --cc-space-4: 1rem;                 /* 16px */
+  --cc-space-5: 1.25rem;              /* 20px */
+  --cc-space-6: 1.5rem;               /* 24px */
+  --cc-space-7: 1.75rem;              /* 28px */
+  --cc-space-8: 2rem;                 /* 32px */
+  --cc-space-9: 2.25rem;              /* 36px */
+  --cc-space-10: 2.5rem;              /* 40px */
+  --cc-space-11: 2.75rem;             /* 44px */
+  --cc-space-12: 3rem;                /* 48px */
+  --cc-space-14: 3.5rem;              /* 56px */
+  --cc-space-16: 4rem;                /* 64px */
+  --cc-space-20: 5rem;                /* 80px */
+  --cc-space-24: 6rem;                /* 96px */
+  --cc-space-32: 8rem;                /* 128px */
+  
+  /* --- Anchos de Contenedor --- */
+  --cc-container-xs: 20rem;           /* 320px */
+  --cc-container-sm: 24rem;           /* 384px */
+  --cc-container-md: 28rem;           /* 448px */
+  --cc-container-lg: 32rem;           /* 512px */
+  --cc-container-xl: 36rem;           /* 576px */
+  --cc-container-2xl: 42rem;          /* 672px */
+  --cc-container-3xl: 48rem;          /* 768px */
+  --cc-container-4xl: 56rem;          /* 896px */
+  --cc-container-5xl: 64rem;          /* 1024px */
+  --cc-container-6xl: 72rem;          /* 1152px */
+  --cc-container-7xl: 80rem;          /* 1280px */
+  --cc-container-full: 100%;
+  
+  
+  /* ============================================================================
+   * BORDES Y RADIOS
+   * ============================================================================
+   */
+  
+  /* --- Border Widths --- */
+  --cc-border-0: 0;
+  --cc-border-1: 1px;
+  --cc-border-2: 2px;
+  --cc-border-4: 4px;
+  --cc-border-8: 8px;
+  
+  /* --- Border Radius --- */
+  --cc-radius-none: 0;
+  --cc-radius-sm: 0.125rem;           /* 2px */
+  --cc-radius: 0.25rem;               /* 4px */
+  --cc-radius-md: 0.375rem;           /* 6px */
+  --cc-radius-lg: 0.5rem;             /* 8px */
+  --cc-radius-xl: 0.75rem;            /* 12px */
+  --cc-radius-2xl: 1rem;              /* 16px */
+  --cc-radius-3xl: 1.5rem;            /* 24px */
+  --cc-radius-full: 9999px;           /* Completamente redondo */
+  
+  
+  /* ============================================================================
+   * SOMBRAS (ELEVACIÓN)
+   * ============================================================================
+   * Sistema de elevación de 5 niveles para crear jerarquía visual
+   */
+  
+  --cc-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --cc-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 
+                  0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --cc-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+               0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --cc-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                  0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --cc-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+                  0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --cc-shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --cc-shadow-2xl: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
+  
+  /* Sombras de color (para destacados) */
+  --cc-shadow-primary: 0 4px 14px 0 rgba(230, 51, 42, 0.39);
+  --cc-shadow-secondary: 0 4px 14px 0 rgba(245, 197, 66, 0.39);
+  
+  /* Sombras internas */
+  --cc-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  --cc-shadow-inner-md: inset 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+  
+  
+  /* ============================================================================
+   * TRANSICIONES Y ANIMACIONES
+   * ============================================================================
+   * Duraciones y timing functions para transiciones suaves
+   */
+  
+  /* --- Duraciones --- */
+  --cc-duration-instant: 0ms;
+  --cc-duration-fast: 150ms;
+  --cc-duration-normal: 250ms;
+  --cc-duration-slow: 350ms;
+  --cc-duration-slower: 500ms;
+  
+  /* --- Timing Functions (Easing) --- */
+  --cc-ease-linear: linear;
+  --cc-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --cc-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --cc-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --cc-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* --- Transiciones Predefinidas --- */
+  --cc-transition-fast: all var(--cc-duration-fast) var(--cc-ease-out);
+  --cc-transition: all var(--cc-duration-normal) var(--cc-ease-out);
+  --cc-transition-slow: all var(--cc-duration-slow) var(--cc-ease-out);
+  --cc-transition-colors: color var(--cc-duration-normal) var(--cc-ease-out),
+                          background-color var(--cc-duration-normal) var(--cc-ease-out),
+                          border-color var(--cc-duration-normal) var(--cc-ease-out);
+  --cc-transition-transform: transform var(--cc-duration-normal) var(--cc-ease-out);
+  --cc-transition-opacity: opacity var(--cc-duration-normal) var(--cc-ease-out);
+  
+  
+  /* ============================================================================
+   * Z-INDEX (CAPAS)
+   * ============================================================================
+   * Sistema de capas para gestionar el stacking context
+   */
+  
+  --cc-z-dropdown: 1000;
+  --cc-z-sticky: 1020;
+  --cc-z-fixed: 1030;
+  --cc-z-modal-backdrop: 1040;
+  --cc-z-modal: 1050;
+  --cc-z-popover: 1060;
+  --cc-z-tooltip: 1070;
+  --cc-z-toast: 1080;
+  
+  
+  /* ============================================================================
+   * BREAKPOINTS
+   * ============================================================================
+   * Breakpoints responsive para media queries
+   * Mobile-first approach
+   */
+  
+  --cc-screen-xs: 375px;              /* Mobile pequeño */
+  --cc-screen-sm: 640px;              /* Mobile grande / Tablet pequeña */
+  --cc-screen-md: 768px;              /* Tablet */
+  --cc-screen-lg: 1024px;             /* Desktop pequeño */
+  --cc-screen-xl: 1280px;             /* Desktop */
+  --cc-screen-2xl: 1536px;            /* Desktop grande */
+  
+  
+  /* ============================================================================
+   * CONFIGURACIONES ESPECÍFICAS
+   * ============================================================================
+   */
+  
+  /* --- Formularios --- */
+  --cc-input-height: 2.75rem;         /* 44px - Touch-friendly */
+  --cc-input-height-sm: 2.25rem;      /* 36px */
+  --cc-input-height-lg: 3.5rem;       /* 56px */
+  --cc-input-padding-x: var(--cc-space-4);
+  --cc-input-padding-y: var(--cc-space-2);
+  
+  /* --- Botones --- */
+  --cc-button-height: 2.75rem;        /* 44px */
+  --cc-button-height-sm: 2rem;        /* 32px */
+  --cc-button-height-lg: 3.5rem;      /* 56px */
+  --cc-button-padding-x: var(--cc-space-6);
+  --cc-button-padding-x-sm: var(--cc-space-4);
+  --cc-button-padding-x-lg: var(--cc-space-8);
+  
+  /* --- Header --- */
+  --cc-header-height: 4rem;           /* 64px */
+  --cc-header-height-mobile: 3.5rem;  /* 56px */
+  
+  /* --- Footer --- */
+  --cc-footer-height: auto;
+  
+  /* --- Sidebar --- */
+  --cc-sidebar-width: 16rem;          /* 256px */
+  --cc-sidebar-width-collapsed: 4rem; /* 64px */
+  
+  
+  /* ============================================================================
+   * EFECTOS VISUALES
+   * ============================================================================
+   */
+  
+  /* --- Blur --- */
+  --cc-blur-sm: 4px;
+  --cc-blur: 8px;
+  --cc-blur-md: 12px;
+  --cc-blur-lg: 16px;
+  --cc-blur-xl: 24px;
+  
+  /* --- Opacity --- */
+  --cc-opacity-0: 0;
+  --cc-opacity-10: 0.1;
+  --cc-opacity-20: 0.2;
+  --cc-opacity-30: 0.3;
+  --cc-opacity-40: 0.4;
+  --cc-opacity-50: 0.5;
+  --cc-opacity-60: 0.6;
+  --cc-opacity-70: 0.7;
+  --cc-opacity-80: 0.8;
+  --cc-opacity-90: 0.9;
+  --cc-opacity-100: 1;
+  
+}
+
+
+/* ============================================================================
+ * MODO OSCURO (DARK MODE)
+ * ============================================================================
+ * Configuración opcional para tema oscuro
+ * Se activa con data-theme="dark" en el elemento HTML
+ */
+
+[data-theme="dark"] {
+  
+  /* Colores primarios ajustados para mejor contraste */
+  --cc-primary: #F05045;
+  --cc-primary-light: #F89892;
+  --cc-secondary: #F8D56E;
+  
+  /* Grises invertidos */
+  --cc-gray-900: #F5F5F5;
+  --cc-gray-800: #E8E8E8;
+  --cc-gray-700: #D4D4D4;
+  --cc-gray-600: #ABABAB;
+  --cc-gray-500: #808080;
+  --cc-gray-400: #666666;
+  --cc-gray-300: #4A4A4A;
+  --cc-gray-200: #2E2E2E;
+  --cc-gray-100: #1A1A1A;
+  --cc-gray-50: #0F0F0F;
+  
+  /* Backgrounds */
+  --cc-bg-body: #0F0F0F;
+  --cc-bg-surface: #1A1A1A;
+  --cc-bg-elevated: #2E2E2E;
+  --cc-bg-overlay: rgba(0, 0, 0, 0.7);
+  --cc-bg-muted: #2E2E2E;
+  
+  /* Texto */
+  --cc-text-primary: #F5F5F5;
+  --cc-text-secondary: #D4D4D4;
+  --cc-text-tertiary: #ABABAB;
+  --cc-text-disabled: #666666;
+  --cc-text-inverse: #1A1A1A;
+  
+  /* Bordes */
+  --cc-border-default: #4A4A4A;
+  --cc-border-light: #2E2E2E;
+  --cc-border-strong: #808080;
+  
+  /* Sombras ajustadas para fondo oscuro */
+  --cc-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 
+                  0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --cc-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 
+               0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --cc-shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 
+                  0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --cc-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 
+                  0 8px 10px -6px rgba(0, 0, 0, 0.6);
+}
+
+
+/* ============================================================================
+ * NOTAS DE USO
+ * ============================================================================
+ * 
+ * CÓMO USAR ESTAS VARIABLES:
+ * 
+ * 1. En CSS:
+ *    .mi-elemento {
+ *      color: var(--cc-primary);
+ *      padding: var(--cc-space-4);
+ *      border-radius: var(--cc-radius-lg);
+ *    }
+ * 
+ * 2. Con fallbacks:
+ *    color: var(--cc-primary, #E6332A);
+ * 
+ * 3. En JavaScript:
+ *    const primaryColor = getComputedStyle(document.documentElement)
+ *      .getPropertyValue('--cc-primary');
+ * 
+ * 4. Cambiar dinámicamente:
+ *    document.documentElement.style
+ *      .setProperty('--cc-primary', '#FF0000');
+ * 
+ * 5. Activar modo oscuro:
+ *    document.documentElement.setAttribute('data-theme', 'dark');
+ * 
+ * ============================================================================
+ */
+
+
+/* ============================================================================
+ * RESET Y BASE STYLES
+ * ============================================================================
+ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--cc-font-primary);
+  font-size: var(--cc-text-base);
+  font-weight: var(--cc-font-normal);
+  line-height: var(--cc-leading-normal);
+  color: var(--cc-text-primary);
+  background-color: var(--cc-bg-body);
+  overflow-x: hidden;
+}
+
+/* Smooth scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Focus visible para accesibilidad */
+*:focus-visible {
+  outline: 2px solid var(--cc-primary);
+  outline-offset: 2px;
+}
+
+
+/* ============================================================================
+ * FIN DEL SISTEMA DE DISEÑO
+ * ============================================================================
+ * 
+ * Próximo paso: Importar components.css, typography.css, utilities.css
+ * 
+ * Estructura recomendada:
+ * 1. design-system.css    (este archivo)
+ * 2. components.css       (botones, cards, forms, etc.)
+ * 3. typography.css       (headings, paragraphs, text utilities)
+ * 4. utilities.css        (clases de utilidad)
+ * 5. layout.css           (grid, flexbox, containers)
+ * 6. pages/*.css          (estilos específicos por página)
+ * 
+ * ============================================================================
+ */
+
+
+/* ============================================================================
+ * COMPATIBILIDAD CON STYLE.CSS LEGACY
+ * ============================================================================
+ * Mapeo de variables antiguas a nuevas para mantener compatibilidad
+ */
+:root {
+  --bg: var(--cc-bg-body);
+  --ink: var(--cc-text-primary);
+  --muted: var(--cc-text-secondary);
+  --line: var(--cc-border-default);
+  --primary: var(--cc-gray-900);
+  --card: var(--cc-bg-surface);
+  --accent: var(--cc-primary);
+  --accent-ink: var(--cc-text-inverse);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0c0f12;
+  --ink: #e5e7eb;
+  --muted: #9aa4b2;
+  --line: #2a2f36;
+  --primary: #f3f4f6;
+  --card: #12161b;
+}

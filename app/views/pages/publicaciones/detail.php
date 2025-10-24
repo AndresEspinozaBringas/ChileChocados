@@ -16,7 +16,7 @@ layout('nav');
     <div class="card" style="grid-column:1/3">
       <div class="ph" style="height:340px"></div>
       <div class="gallery" style="grid-template-columns:repeat(6,1fr)">
-        <?php for($i = 1; $i <= 6; $i++): ?>
+        <?php for ($i = 1; $i <= 6; $i++): ?>
         <div class="slot"><?php echo $i; ?></div>
         <?php endfor; ?>
       </div>

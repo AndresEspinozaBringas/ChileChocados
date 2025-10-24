@@ -3,7 +3,7 @@
  * ChileChocados - Funciones Auxiliares
  * Funciones helper reutilizables en toda la aplicación
  */
-
+require_once APP_PATH . '/helpers/Icon.php';
 /**
  * Sanitizar entrada de usuario
  */
@@ -263,4 +263,29 @@ function paginate($total, $perPage = 12, $currentPage = 1) {
         'has_prev' => $currentPage > 1,
         'has_next' => $currentPage < $totalPages
     ];
+}
+
+/**
+ * Cargar layout/vista parcial
+ */
+function layout($name) {
+    $layoutPath = __DIR__ . '/../app/views/layouts/' . $name . '.php';
+    if (file_exists($layoutPath)) {
+        require $layoutPath;
+    }
+}
+
+/**
+ * Definir constante BASE_URL si no existe
+ */
+if (!defined('BASE_URL')) {
+    define('BASE_URL', APP_URL ?? 'http://localhost');
+}
+
+/**
+ * Generar URL de asset (CSS, JS, imágenes)
+ */
+function asset($path) {
+    $path = ltrim($path, '/');
+    return BASE_URL . '/assets/' . $path;
 }

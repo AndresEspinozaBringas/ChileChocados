@@ -1,0 +1,466 @@
+/**
+ * ============================================================================
+ * CHILECHOCADOS - TIPOGRAFÍA
+ * ============================================================================
+ * 
+ * Typography System v1.0
+ * Fecha: Octubre 2025
+ * Diseñado por: ToroDigital - UX/UI Team
+ * 
+ * Sistema tipográfico completo con:
+ * - Headings (h1-h6)
+ * - Párrafos y listas
+ * - Enlaces
+ * - Clases de utilidad
+ * - Responsive typography
+ * 
+ * Requiere: design-system.css
+ * 
+ * ============================================================================
+ */
+
+
+/* ============================================================================
+ * HEADINGS (H1-H6)
+ * ============================================================================
+ */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  margin: 0;
+  font-family: var(--cc-font-primary);
+  font-weight: var(--cc-font-bold);
+  line-height: 1.2;
+  color: var(--cc-text-primary);
+}
+
+h1, .h1 {
+  font-size: var(--cc-text-5xl);      /* 48px */
+  letter-spacing: -0.02em;
+  margin-bottom: var(--cc-space-6);
+}
+
+h2, .h2 {
+  font-size: var(--cc-text-4xl);      /* 36px */
+  letter-spacing: -0.01em;
+  margin-bottom: var(--cc-space-5);
+}
+
+h3, .h3 {
+  font-size: var(--cc-text-3xl);      /* 30px */
+  margin-bottom: var(--cc-space-4);
+}
+
+h4, .h4 {
+  font-size: var(--cc-text-2xl);      /* 24px */
+  margin-bottom: var(--cc-space-4);
+}
+
+h5, .h5 {
+  font-size: var(--cc-text-xl);       /* 20px */
+  font-weight: var(--cc-font-semibold);
+  margin-bottom: var(--cc-space-3);
+}
+
+h6, .h6 {
+  font-size: var(--cc-text-lg);       /* 18px */
+  font-weight: var(--cc-font-semibold);
+  margin-bottom: var(--cc-space-3);
+}
+
+/* Heading con acento de color */
+.heading-primary {
+  color: var(--cc-primary);
+}
+
+.heading-secondary {
+  color: var(--cc-secondary);
+}
+
+.heading-accent {
+  color: var(--accent, #E6332A);
+}
+
+/* Heading con subtítulo */
+.heading-group {
+  margin-bottom: var(--cc-space-8);
+}
+
+.heading-group .subtitle {
+  display: block;
+  font-size: var(--cc-text-lg);
+  font-weight: var(--cc-font-normal);
+  color: var(--cc-text-secondary);
+  margin-top: var(--cc-space-2);
+  line-height: 1.6;
+}
+
+
+/* ============================================================================
+ * PÁRRAFOS
+ * ============================================================================
+ */
+
+p {
+  margin: 0 0 var(--cc-space-4);
+  font-size: var(--cc-text-base);
+  line-height: 1.6;
+  color: var(--cc-text-primary);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Párrafo lead (introducción) */
+.lead {
+  font-size: var(--cc-text-xl);
+  line-height: 1.7;
+  color: var(--cc-text-secondary);
+  margin-bottom: var(--cc-space-6);
+}
+
+/* Párrafo pequeño */
+.text-small, small {
+  font-size: var(--cc-text-sm);
+  line-height: 1.5;
+}
+
+/* Párrafo extra pequeño */
+.text-xs {
+  font-size: var(--cc-text-xs);
+  line-height: 1.4;
+}
+
+
+/* ============================================================================
+ * LISTAS
+ * ============================================================================
+ */
+
+ul, ol {
+  margin: 0 0 var(--cc-space-4);
+  padding-left: var(--cc-space-6);
+}
+
+ul li, ol li {
+  margin-bottom: var(--cc-space-2);
+  line-height: 1.6;
+}
+
+/* Lista sin estilo */
+.list-none {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* Lista horizontal */
+.list-inline {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cc-space-4);
+}
+
+/* Lista con check marks */
+.list-check {
+  list-style: none;
+  padding-left: 0;
+}
+
+.list-check li {
+  padding-left: var(--cc-space-6);
+  position: relative;
+}
+
+.list-check li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--cc-success);
+  font-weight: var(--cc-font-bold);
+}
+
+
+/* ============================================================================
+ * ENLACES
+ * ============================================================================
+ */
+
+a {
+  color: var(--cc-primary);
+  text-decoration: none;
+  transition: var(--cc-transition);
+}
+
+a:hover {
+  color: var(--cc-primary-dark);
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: 2px solid var(--cc-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Enlaces sin decoración */
+.link-plain {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link-plain:hover {
+  color: var(--cc-primary);
+  text-decoration: none;
+}
+
+/* Enlace de acción */
+.link-action {
+  color: var(--cc-secondary);
+  font-weight: var(--cc-font-semibold);
+}
+
+.link-action:hover {
+  color: var(--cc-secondary-dark);
+}
+
+
+/* ============================================================================
+ * ÉNFASIS Y FORMATO
+ * ============================================================================
+ */
+
+strong, b {
+  font-weight: var(--cc-font-bold);
+}
+
+em, i {
+  font-style: italic;
+}
+
+mark {
+  background-color: #FEF3C7;
+  color: var(--cc-dark);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+code {
+  font-family: var(--cc-font-mono);
+  font-size: 0.9em;
+  background-color: var(--cc-gray-100);
+  color: var(--cc-secondary);
+  padding: 2px 6px;
+  border-radius: var(--cc-radius-sm);
+}
+
+pre {
+  font-family: var(--cc-font-mono);
+  font-size: var(--cc-text-sm);
+  background-color: var(--cc-gray-900);
+  color: var(--cc-gray-100);
+  padding: var(--cc-space-4);
+  border-radius: var(--cc-radius);
+  overflow-x: auto;
+  margin-bottom: var(--cc-space-4);
+}
+
+pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+blockquote {
+  margin: var(--cc-space-6) 0;
+  padding-left: var(--cc-space-4);
+  border-left: 4px solid var(--cc-primary);
+  font-style: italic;
+  color: var(--cc-text-secondary);
+}
+
+
+/* ============================================================================
+ * CLASES DE UTILIDAD - TAMAÑOS
+ * ============================================================================
+ */
+
+.text-xs { font-size: var(--cc-text-xs); }
+.text-sm { font-size: var(--cc-text-sm); }
+.text-base { font-size: var(--cc-text-base); }
+.text-lg { font-size: var(--cc-text-lg); }
+.text-xl { font-size: var(--cc-text-xl); }
+.text-2xl { font-size: var(--cc-text-2xl); }
+.text-3xl { font-size: var(--cc-text-3xl); }
+.text-4xl { font-size: var(--cc-text-4xl); }
+.text-5xl { font-size: var(--cc-text-5xl); }
+
+
+/* ============================================================================
+ * CLASES DE UTILIDAD - PESOS
+ * ============================================================================
+ */
+
+.font-normal { font-weight: var(--cc-font-normal); }
+.font-medium { font-weight: var(--cc-font-medium); }
+.font-semibold { font-weight: var(--cc-font-semibold); }
+.font-bold { font-weight: var(--cc-font-bold); }
+
+
+/* ============================================================================
+ * CLASES DE UTILIDAD - COLORES
+ * ============================================================================
+ */
+
+.text-primary { color: var(--cc-text-primary); }
+.text-secondary { color: var(--cc-text-secondary); }
+.text-muted { color: var(--cc-text-muted); }
+
+.text-blue { color: var(--cc-primary); }
+.text-orange { color: var(--cc-secondary); }
+.text-red { color: var(--accent, #E6332A); }
+
+.text-success { color: var(--cc-success); }
+.text-warning { color: var(--cc-warning); }
+.text-danger { color: var(--cc-danger); }
+.text-info { color: var(--cc-info); }
+
+.text-white { color: var(--cc-white); }
+.text-dark { color: var(--cc-dark); }
+
+
+/* ============================================================================
+ * CLASES DE UTILIDAD - ALINEACIÓN
+ * ============================================================================
+ */
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+
+/* ============================================================================
+ * CLASES DE UTILIDAD - TRANSFORMACIÓN
+ * ============================================================================
+ */
+
+.text-uppercase { text-transform: uppercase; }
+.text-lowercase { text-transform: lowercase; }
+.text-capitalize { text-transform: capitalize; }
+
+
+/* ============================================================================
+ * CLASES DE UTILIDAD - DECORACIÓN
+ * ============================================================================
+ */
+
+.text-underline { text-decoration: underline; }
+.text-line-through { text-decoration: line-through; }
+.text-no-underline { text-decoration: none; }
+
+
+/* ============================================================================
+ * CLASES DE UTILIDAD - ESPACIADO
+ * ============================================================================
+ */
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.whitespace-nowrap { white-space: nowrap; }
+.whitespace-normal { white-space: normal; }
+.whitespace-pre-line { white-space: pre-line; }
+
+
+/* ============================================================================
+ * RESPONSIVE TYPOGRAPHY
+ * ============================================================================
+ */
+
+@media (max-width: 768px) {
+  h1, .h1 {
+    font-size: var(--cc-text-4xl);    /* 36px */
+  }
+  
+  h2, .h2 {
+    font-size: var(--cc-text-3xl);    /* 30px */
+  }
+  
+  h3, .h3 {
+    font-size: var(--cc-text-2xl);    /* 24px */
+  }
+  
+  h4, .h4 {
+    font-size: var(--cc-text-xl);     /* 20px */
+  }
+  
+  .lead {
+    font-size: var(--cc-text-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  h1, .h1 {
+    font-size: var(--cc-text-3xl);    /* 30px */
+  }
+  
+  h2, .h2 {
+    font-size: var(--cc-text-2xl);    /* 24px */
+  }
+}
+
+
+/* ============================================================================
+ * ACCESIBILIDAD
+ * ============================================================================
+ */
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--cc-primary);
+  color: white;
+  padding: var(--cc-space-2) var(--cc-space-4);
+  text-decoration: none;
+  border-radius: 0 0 var(--cc-radius) 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

@@ -8,7 +8,7 @@ layout('header');
     <div class="row" style="gap:10px">
       <div class="logo">
         <a href="<?php echo BASE_URL; ?>">
-          <img src="<?php echo asset('images/logo.jpeg'); ?>" alt="<?php echo APP_NAME; ?>" style="height:36px;vertical-align:middle">
+          <img src="<?php echo asset('logo.jpeg'); ?>" alt="<?php echo APP_NAME; ?>" style="height:36px;vertical-align:middle">
         </a>
       </div>
     </div>

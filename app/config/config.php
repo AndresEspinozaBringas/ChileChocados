@@ -5,7 +5,7 @@
  */
 
 // Definir constantes de rutas
-define('ROOT_PATH', dirname(__DIR__));
+define('ROOT_PATH', dirname(dirname(__DIR__)));
 define('APP_PATH', ROOT_PATH . '/app');
 define('PUBLIC_PATH', ROOT_PATH . '/public');
 define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');

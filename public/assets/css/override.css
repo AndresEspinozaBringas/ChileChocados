@@ -1,0 +1,98 @@
+/* ============================================================================
+ * CHILECHOCADOS - OVERRIDE STYLES
+ * ============================================================================
+ * Forzar estilos limpios sin líneas segmentadas
+ */
+
+/* Cards sin líneas segmentadas */
+.card {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Badges sin líneas segmentadas */
+.badge {
+  border: 1px solid rgba(230, 51, 42, 0.2) !important;
+  background: rgba(230, 51, 42, 0.1) !important;
+}
+
+/* Inputs sin líneas segmentadas */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  border: 1px solid #e5e7eb !important;
+}
+
+.search-input-group {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Botones sin líneas segmentadas */
+.btn,
+.header-btn {
+  border-width: 1px !important;
+}
+
+.btn.primary,
+.header-btn.btn-primary {
+  border: 1px solid var(--accent) !important;
+}
+
+.btn.ghost,
+.header-btn.btn-secondary {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Navegación */
+.nav-link {
+  border: none !important;
+}
+
+/* Hero sin líneas segmentadas */
+.hero {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Banner sin líneas segmentadas */
+.banner-below {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* CTA sin líneas segmentadas */
+.sell-cta {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Placeholders con gradiente limpio */
+.ph {
+  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%) !important;
+}
+
+.banner-below .ph {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%) !important;
+}
+
+/* Icon buttons */
+.icon-btn,
+.theme-toggle {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Cat cards */
+.cat-card {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Notices */
+.notice {
+  border-width: 1px !important;
+}
+
+/* Mobile search */
+.mobile-search {
+  border: 1px solid #e5e7eb !important;
+}
