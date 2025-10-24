@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChileChocados · Admin · Categorías – Wireframe v7</title>
+<link rel="stylesheet" href="../styles/style.css">
+<link rel="icon" type="image/png" href="../assets/icon.png">
+</head>
+<body>
+
+<header>
+  <div class="topbar container">
+    <div class="row" style="gap:10px">
+      <button id="burger-toggle" class="icon-btn mobile-only" aria-label="Abrir menú">
+        <span class="icon hamburger"><span></span></span>
+      </button>
+      <div class="logo"><a href="index.html"><img src="../assets/logo.jpeg" alt="ChileChocados" style="height:36px;vertical-align:middle"></a></div>
+    </div>
+    <div class="row">
+      <button id="theme-toggle" class="btn">Oscuro</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+    <div class="h1">Gestión de categorías</div>
+    <div class="card">
+      <div class="h3">Crear categoría padre</div>
+      <div class="form two">
+        <label>Nombre<input type="text" placeholder="Ej: Auto, Moto, Camión"></label>
+        <label>Slug<input type="text" placeholder="auto / moto / camion"></label>
+      </div>
+      <div class="row" style="justify-content:flex-end"><a class="btn primary" href="#" onclick="event.preventDefault();">Crear</a></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="h3">Crear subcategoría</div>
+      <div class="form two">
+        <label>Categoría padre
+          <select><option>Auto</option><option>Moto</option><option>Camión</option><option>Bus</option></select>
+        </label>
+        <label>Nombre subcategoría<input type="text" placeholder="SUV / Sedán / Enduro ..."></label>
+      </div>
+      <div class="row" style="justify-content:flex-end"><a class="btn primary" href="#" onclick="event.preventDefault();">Agregar</a></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="h3">Listado</div>
+      <table class="table">
+        <thead><tr><th>Padre</th><th>Subcategorías</th><th>Acción</th></tr></thead>
+        <tbody>
+          <tr><td>Auto</td><td>SUV, Sedán, Deportivo</td><td><a class="btn">Editar</a> <a class="btn">Eliminar</a></td></tr>
+          <tr><td>Moto</td><td>Scooter, Enduro, Touring</td><td><a class="btn">Editar</a> <a class="btn">Eliminar</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:10px">
+      <a class="btn" href="index.html">Volver al panel</a>
+    </div>
+    
+</main>
+
+<footer>
+  <div class="container row" style="justify-content:space-between;">
+    <div>© ChileChocados – Wireframe</div>
+    <div class="meta">Powered by ToroDigital / Una empresa de Servicios Digitales ChileChocados SpA</div>
+    <a class="btn" href="login.html" style="margin-left:auto">Ir al Admin</a>
+  </div>
+</footer>
+<div id='toast' class='toast'></div>
+
+<script src="../scripts/app.js"></script>
+</body></html>

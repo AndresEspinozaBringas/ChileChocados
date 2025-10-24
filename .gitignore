@@ -22,7 +22,7 @@ composer.lock
 /logs/*.log
 *.log
 
-# Uploads (no subir archivos de usuario)
+# Uploads
 /public/uploads/*
 !/public/uploads/.gitkeep
 
@@ -30,7 +30,7 @@ composer.lock
 /cache/*
 !/cache/.gitkeep
 
-# Temporary files
+# Temporary
 *.tmp
 *.temp
 *.cache

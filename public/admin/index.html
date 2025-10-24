@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChileChocados · Admin – Wireframe v4</title>
+<link rel="stylesheet" href="../styles/style.css">
+<link rel="icon" type="image/png" href="../assets/icon.png">
+</head>
+<body>
+<header>
+  <div class="topbar container">
+    <div class="row" style="gap:10px">
+      <button id="burger-toggle" class="icon-btn mobile-only" aria-label="Abrir menú">
+        <span class="icon hamburger"><span></span></span>
+      </button>
+      <div class="logo"><a href="index.html"><img src="../assets/logo.jpeg" alt="ChileChocados" style="height:36px;vertical-align:middle"></a></div>
+    </div>
+    <nav class="desktop-only">
+      <a href="../index.html">Inicio</a>
+      <a href="../categories.html">Categorías</a>
+      <a href="../list.html">Listado</a>
+      <a href="favorites.html">Favoritos</a>
+      <a href="../publish.html">Publicar</a><a href="sell.html" class="btn primary">Vender mi siniestrado</a>
+      <a href="../messages.html">Mensajes</a>
+      <a href="../login.html" class="btn ghost">Login</a>
+      <a href="../register.html" class="btn primary">Registro</a>
+    </nav>
+    <div class="row">
+      <button id="theme-toggle" class="btn">Oscuro</button>
+    </div>
+  </div>
+  <nav class="mobile-nav container" aria-hidden="true" style="display:none">
+    <a href="../index.html">Inicio</a>
+    <a href="../categories.html">Categorías</a>
+    <a href="../list.html">Listado</a>
+      <a href="favorites.html">Favoritos</a>
+    <a href="../publish.html">Publicar</a><a href="sell.html" class="btn primary">Vender mi siniestrado</a>
+    <a href="../messages.html">Mensajes</a>
+    <a href="login.html">Login</a>
+    <a href="register.html">Registro</a>
+  </nav>
+</header>
+<main class="container">
+
+
+  <div class="h1">Panel de administración</div>
+  <div class="row" style="gap:8px;margin:8px 0">
+    <a class="btn primary" href="newpost.html">+ Crear publicación</a>
+    <a class="btn" href="categories.html">+ Gestionar categorías</a>
+    <a class="btn" href="messages.html">Centro de mensajería</a>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="h3">Publicaciones activas</div><div class="h1">128</div></div>
+    <div class="kpi"><div class="h3">Pendientes por aprobar</div><div class="h1">12</div></div>
+    <div class="kpi"><div class="h3">Banners activos</div><div class="h1">6</div></div>
+    <div class="kpi"><div class="h3">Usuarios</div><div class="h1">940</div></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="h3">Moderación de publicaciones</div>
+    <table class="table">
+      <thead><tr><th>ID</th><th>Título</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr><td>#123</td><td><a href="detail.html">SUV 2016</a></td><td>Pendiente</td><td><a class="btn">Aprobar</a> <a class="btn" href="post-approval.html">Notificar aprobado</a> <a class="btn">Rechazar</a> <a class="btn primary">Destacar ($5.000)</a> <a class="btn" href="messages.html">Contactar</a></td></tr>
+        <tr><td>#124</td><td><a href="detail.html">Moto Enduro</a></td><td>Pendiente</td><td><a class="btn">Aprobar</a> <a class="btn">Rechazar</a> <a class="btn primary">Destacar ($5.000)</a> <a class="btn" href="messages.html">Contactar</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="h3">Gestión de banners</div>
+    <table class="table">
+      <thead><tr><th>ID</th><th>Posición</th><th>Cliente</th><th>Vence</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr><td>#B01</td><td>728x90</td><td>Taller XX</td><td>15 días</td><td><a class="btn">Caducar</a></td></tr>
+        <tr><td>#B02</td><td>300x250</td><td>Seguros YY</td><td>30 días</td><td><a class="btn">Caducar</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+<div class="kpi"><div class="h3">Últimos 7 días</div><div class="h1">42</div><div class="meta">$210.000 CLP</div></div>
+      <div class="kpi"><div class="h3">Últimos 30 días</div><div class="h1">163</div><div class="meta">$815.000 CLP</div></div>
+      <div class="kpi"><div class="h3">Acumulado Año</div><div class="h1">1.920</div><div class="meta">$9.600.000 CLP</div></div>
+    </div>
+    <div class="h3" style="margin-top:12px">Órdenes recientes (Flow)</div>
+    <table class="table">
+      <thead><tr><th>ID Orden</th><th>Publicación</th><th>Monto</th><th>Estado</th><th>Fecha</th></tr></thead>
+      <tbody>
+        <tr><td>FL-98721</td><td><a href="detail.html">SUV 2016</a></td><td>$5.000</td><td>Aprobado</td><td>hoy</td></tr>
+        <tr><td>FL-98718</td><td><a href="detail.html">Moto Enduro</a></td><td>$5.000</td><td>Aprobado</td><td>hoy</td></tr>
+        <tr><td>FL-98690</td><td><a href="detail.html">Camión ligero</a></td><td>$5.000</td><td>Fallido</td><td>ayer</td></tr>
+        <tr><td>FL-98671</td><td><a href="detail.html">Sedán 2014</a></td><td>$5.000</td><td>Aprobado</td><td>ayer</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="card" style="margin-top:16px">
+    <div class="h3">Estadísticas generales</div>
+    <div class="grid cols-4" style="margin-top:8px">
+      <div class="kpi"><div class="h3">Publicaciones activas</div><div class="h1">128</div><div class="meta">Incluye normales y destacadas</div></div>
+      <div class="kpi"><div class="h3">Pendientes por aprobar</div><div class="h1">12</div><div class="meta">Últimas 24h</div></div>
+      <div class="kpi"><div class="h3">Usuarios registrados</div><div class="h1">940</div><div class="meta">Nuevos esta semana: 37</div></div>
+      <div class="kpi"><div class="h3">Banners activos</div><div class="h1">6</div><div class="meta">Vencen en 15–30 días</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div class="h3">Publicaciones destacadas – Flow $5.000</div>
+    <div class="grid cols-4" style="margin-top:8px">
+      <div class="kpi"><div class="h3">Destacadas activas</div><div class="h1">78</div><div class="meta">Vigentes hoy</div></div>
+      <div class="kpi"><div class="h3">Nuevas (7 días)</div><div class="h1">42</div><div class="meta">Ingresos: $210.000</div></div>
+      <div class="kpi"><div class="h3">Nuevas (30 días)</div><div class="h1">163</div><div class="meta">Ingresos: $815.000</div></div>
+      <div class="kpi"><div class="h3">Tasa de aprobación</div><div class="h1">96%</div><div class="meta">Flow aprobado / total</div></div>
+    </div>
+    <div class="h3" style="margin-top:12px">Órdenes recientes (Flow)</div>
+    <table class="table">
+      <thead><tr><th>ID Orden</th><th>Publicación</th><th>Monto</th><th>Estado</th><th>Fecha</th></tr></thead>
+      <tbody>
+        <tr><td>FL-98721</td><td><a href="detail.html">SUV 2016</a></td><td>$5.000</td><td>Aprobado</td><td>hoy</td></tr>
+        <tr><td>FL-98718</td><td><a href="detail.html">Moto Enduro</a></td><td>$5.000</td><td>Aprobado</td><td>hoy</td></tr>
+        <tr><td>FL-98690</td><td><a href="detail.html">Camión ligero</a></td><td>$5.000</td><td>Fallido</td><td>ayer</td></tr>
+        <tr><td>FL-98671</td><td><a href="detail.html">Sedán 2014</a></td><td>$5.000</td><td>Aprobado</td><td>ayer</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+<div class="row" style="margin-top:12px"><a id="mark-sold-demo" class="btn primary" href="#" onclick="event.preventDefault()">Marcar favorito como vendido (demo notif.)</a></div>
+</main>
+<footer>
+  <div class="container row" style="justify-content:space-between;">
+    <div>© ChileChocados – Wireframe</div>
+    <div class="meta">Powered by ToroDigital / Una empresa de Servicios Digitales ChileChocados SpA</div>
+  <a class="btn" href="login.html" style="margin-left:auto">Ir al Admin</a></div>
+</footer>
+<div id='toast' class='toast'></div>
+<script src="../scripts/app.js"></script>
+</body>
+</html>
