@@ -231,7 +231,7 @@
          ====================================================================== -->
     
     <!-- Scripts principales -->
-    <script src="<?php echo BASE_URL; ?>/assets/scripts/app.js"></script>
+    <!-- <script src="<?php echo BASE_URL; ?>/assets/js/app.js"></script> -->
     
     <!-- Scripts adicionales de página -->
     <?php if (isset($additionalJS)): ?>

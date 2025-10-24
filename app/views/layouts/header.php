@@ -27,9 +27,9 @@
     <!-- CSS - Sistema de Diseño ChileChocados -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/design-system.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/layout.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/components.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/typography.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/components.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/fixes.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/override.css?v=<?php echo time(); ?>">
     
     <!-- Lucide Icons -->

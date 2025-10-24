@@ -1,23 +1,132 @@
 /* ============================================================================
- * CHILECHOCADOS - OVERRIDE STYLES
+ * CHILECHOCADOS - OVERRIDE STYLES v2.0
  * ============================================================================
- * Forzar estilos limpios sin líneas segmentadas
+ * Forzar estilos profesionales sin wireframe
+ * Prioridad máxima con !important
  */
 
-/* Cards sin líneas segmentadas */
+/* ============================================================================
+ * ELIMINAR TODOS LOS BORDES SEGMENTADOS
+ * ============================================================================ */
+/* Removido selector universal para evitar bordes gruesos */
+
+/* ============================================================================
+ * BOTONES - Diseño profesional
+ * ============================================================================ */
+.btn,
+.header-btn,
+button[class*="btn"] {
+  border-style: solid !important;
+  border-width: 1px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Botón primario - Rojo ChileChocados */
+.btn.primary,
+.header-btn.btn-primary,
+button.btn-primary {
+  background: #e6332a !important;
+  color: #ffffff !important;
+  border-color: #e6332a !important;
+  box-shadow: 0 2px 8px rgba(230, 51, 42, 0.2) !important;
+}
+
+.btn.primary:hover,
+.header-btn.btn-primary:hover,
+button.btn-primary:hover {
+  background: #c72920 !important;
+  border-color: #c72920 !important;
+  box-shadow: 0 4px 12px rgba(230, 51, 42, 0.3) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Botón secundario */
+.btn.ghost,
+.btn.secondary,
+.header-btn.btn-secondary,
+button.btn-secondary {
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: #e5e7eb !important;
+}
+
+.btn.ghost:hover,
+.btn.secondary:hover,
+.header-btn.btn-secondary:hover,
+button.btn-secondary:hover {
+  background: #f9fafb !important;
+  border-color: #d1d5db !important;
+}
+
+/* ============================================================================
+ * CARDS - Sin líneas segmentadas
+ * ============================================================================ */
 .card {
   border: 1px solid #e5e7eb !important;
   border-radius: 16px !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  background: #ffffff !important;
 }
 
-/* Badges sin líneas segmentadas */
+.card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+  border-color: #e6332a !important;
+}
+
+/* ============================================================================
+ * PLACEHOLDERS - Gradientes limpios (sin rayas)
+ * ============================================================================ */
+.ph,
+.card .ph,
+.placeholder {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+  border-radius: 12px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Animación shimmer para placeholders */
+.ph::after,
+.placeholder::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent) !important;
+  animation: shimmer 2s infinite !important;
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+.banner-below .ph {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%) !important;
+}
+
+/* ============================================================================
+ * BADGES - Diseño moderno
+ * ============================================================================ */
 .badge {
   border: 1px solid rgba(230, 51, 42, 0.2) !important;
   background: rgba(230, 51, 42, 0.1) !important;
+  color: #e6332a !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
 }
 
-/* Inputs sin líneas segmentadas */
+/* ============================================================================
+ * INPUTS Y FORMULARIOS
+ * ============================================================================ */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -25,74 +134,115 @@ input[type="search"],
 textarea,
 select {
   border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #e6332a !important;
+  box-shadow: 0 0 0 3px rgba(230, 51, 42, 0.1) !important;
+  outline: none !important;
 }
 
 .search-input-group {
   border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
 }
 
-/* Botones sin líneas segmentadas */
-.btn,
-.header-btn {
-  border-width: 1px !important;
+.search-input-group:focus-within {
+  border-color: #e6332a !important;
+  box-shadow: 0 0 0 3px rgba(230, 51, 42, 0.1) !important;
 }
 
-.btn.primary,
-.header-btn.btn-primary {
-  border: 1px solid var(--accent) !important;
-}
-
-.btn.ghost,
-.header-btn.btn-secondary {
-  border: 1px solid #e5e7eb !important;
-}
-
-/* Navegación */
+/* ============================================================================
+ * NAVEGACIÓN
+ * ============================================================================ */
 .nav-link {
   border: none !important;
+  border-radius: 8px !important;
 }
 
-/* Hero sin líneas segmentadas */
+.nav-link:hover {
+  background: #f9fafb !important;
+}
+
+.nav-link.active {
+  background: rgba(230, 51, 42, 0.1) !important;
+  color: #e6332a !important;
+}
+
+/* ============================================================================
+ * SECCIONES
+ * ============================================================================ */
 .hero {
   border: 1px solid #e5e7eb !important;
+  border-radius: 20px !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Banner sin líneas segmentadas */
 .banner-below {
   border: 1px solid #e5e7eb !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
 }
 
-/* CTA sin líneas segmentadas */
 .sell-cta {
   border: 1px solid #e5e7eb !important;
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Placeholders con gradiente limpio */
-.ph {
-  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%) !important;
-}
-
-.banner-below .ph {
-  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%) !important;
-}
-
-/* Icon buttons */
+/* ============================================================================
+ * OTROS ELEMENTOS
+ * ============================================================================ */
 .icon-btn,
 .theme-toggle {
   border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
 }
 
-/* Cat cards */
+.icon-btn:hover,
+.theme-toggle:hover {
+  background: #f9fafb !important;
+  border-color: #d1d5db !important;
+}
+
 .cat-card {
   border: 1px solid #e5e7eb !important;
 }
 
-/* Notices */
 .notice {
   border-width: 1px !important;
+  border-style: solid !important;
+  border-radius: 12px !important;
 }
 
-/* Mobile search */
-.mobile-search {
-  border: 1px solid #e5e7eb !important;
+/* ============================================================================
+ * COOKIE BANNER
+ * ============================================================================ */
+.cookie-banner {
+  border-top: 1px solid #e5e7eb !important;
+  background: #ffffff !important;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.cookie-banner .btn {
+  border-radius: 8px !important;
+}
+
+/* ============================================================================
+ * RESPONSIVE
+ * ============================================================================ */
+@media (max-width: 768px) {
+  .btn,
+  .header-btn {
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+  }
 }

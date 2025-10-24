@@ -1,0 +1,489 @@
+/* ============================================================================
+ * CHILECHOCADOS - COMPONENTES JAVASCRIPT
+ * ============================================================================
+ * Estilos para componentes creados dinámicamente con JavaScript
+ * Debe importarse después de style.css
+ * ============================================================================ */
+
+/* ==========================================================================
+ * LIGHTBOX - Modal de imágenes
+ * ========================================================================== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: var(--cc-space-6);
+  animation: fadeIn 0.3s ease;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: var(--cc-radius-xl);
+  box-shadow: var(--cc-shadow-xl);
+  animation: zoomIn 0.3s ease;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.lightbox-close svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* ==========================================================================
+ * AUTOCOMPLETE - Resultados de búsqueda
+ * ========================================================================== */
+.autocomplete-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--cc-bg-surface);
+  border: 1px solid var(--cc-border-light);
+  border-radius: var(--cc-radius-xl);
+  box-shadow: var(--cc-shadow-lg);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 100;
+  display: none;
+}
+
+.autocomplete-results.active {
+  display: block;
+  animation: slideDown 0.2s ease;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: var(--cc-space-3);
+  padding: var(--cc-space-3) var(--cc-space-4);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid var(--cc-border-light);
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover {
+  background: var(--cc-bg-muted);
+}
+
+.autocomplete-item svg {
+  width: 16px;
+  height: 16px;
+  color: var(--cc-text-tertiary);
+  flex-shrink: 0;
+}
+
+.autocomplete-item span {
+  flex: 1;
+  font-size: var(--cc-text-sm);
+  color: var(--cc-text-primary);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ==========================================================================
+ * TOOLTIP - Mensajes flotantes
+ * ========================================================================== */
+.tooltip {
+  position: fixed;
+  background: var(--cc-gray-900);
+  color: var(--cc-white);
+  padding: 8px 12px;
+  border-radius: var(--cc-radius-lg);
+  font-size: var(--cc-text-xs);
+  font-weight: var(--cc-font-medium);
+  white-space: nowrap;
+  box-shadow: var(--cc-shadow-lg);
+  z-index: 9999;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.2s ease;
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--cc-gray-900);
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ==========================================================================
+ * SCROLL TO TOP - Botón flotante
+ * ========================================================================== */
+.scroll-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cc-primary);
+  color: var(--cc-white);
+  border: none;
+  border-radius: 50%;
+  box-shadow: var(--cc-shadow-lg);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+  background: var(--cc-primary-dark);
+  transform: translateY(-4px);
+  box-shadow: var(--cc-shadow-xl);
+}
+
+.scroll-to-top svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 768px) {
+  .scroll-to-top {
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+
+/* ==========================================================================
+ * MOBILE MENU - Menú móvil mejorado
+ * ========================================================================== */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background: var(--cc-bg-surface);
+  box-shadow: var(--cc-shadow-xl);
+  z-index: 1001;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+
+.mobile-menu.active {
+  transform: translateX(0);
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu.active ~ .mobile-menu-overlay,
+.mobile-menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-menu-header {
+  padding: var(--cc-space-6);
+  border-bottom: 1px solid var(--cc-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-menu-close {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--cc-radius-lg);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mobile-menu-close:hover {
+  background: var(--cc-bg-muted);
+}
+
+.mobile-menu-body {
+  padding: var(--cc-space-4) 0;
+}
+
+.mobile-menu-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-menu-nav li {
+  margin: 0;
+}
+
+.mobile-menu-nav a {
+  display: flex;
+  align-items: center;
+  gap: var(--cc-space-3);
+  padding: var(--cc-space-4) var(--cc-space-6);
+  color: var(--cc-text-primary);
+  text-decoration: none;
+  font-weight: var(--cc-font-medium);
+  transition: background 0.2s;
+}
+
+.mobile-menu-nav a:hover,
+.mobile-menu-nav a.active {
+  background: var(--cc-bg-muted);
+  color: var(--cc-primary);
+}
+
+.mobile-menu-nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+
+/* ==========================================================================
+ * LOADING OVERLAY - Overlay de carga
+ * ========================================================================== */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cc-space-4);
+  z-index: 10000;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--cc-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  color: var(--cc-white);
+  font-size: var(--cc-text-lg);
+  font-weight: var(--cc-font-semibold);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ==========================================================================
+ * FORM ERROR STATES - Estados de error en formularios
+ * ========================================================================== */
+.form-input.error,
+.form-textarea.error,
+.form-select.error {
+  border-color: var(--cc-danger);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.form-input.error:focus,
+.form-textarea.error:focus,
+.form-select.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--cc-text-xs);
+  color: var(--cc-danger);
+  margin-top: 4px;
+}
+
+.form-error::before {
+  content: '⚠';
+  font-size: 14px;
+}
+
+
+/* ==========================================================================
+ * LAZY LOADING STATES - Estados de carga diferida
+ * ========================================================================== */
+img.lazy-loading {
+  background: linear-gradient(
+    90deg,
+    var(--cc-gray-200) 25%,
+    var(--cc-gray-100) 50%,
+    var(--cc-gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+img.lazy-loaded {
+  animation: imageFadeIn 0.3s ease;
+}
+
+@keyframes imageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* ==========================================================================
+ * DARK MODE OVERRIDES - Ajustes para modo oscuro
+ * ========================================================================== */
+:root[data-theme="dark"] .lightbox {
+  background: rgba(0, 0, 0, 0.98);
+}
+
+:root[data-theme="dark"] .autocomplete-results {
+  background: var(--cc-gray-800);
+  border-color: var(--cc-gray-700);
+}
+
+:root[data-theme="dark"] .autocomplete-item {
+  border-color: var(--cc-gray-700);
+}
+
+:root[data-theme="dark"] .mobile-menu {
+  background: var(--cc-gray-900);
+}
+
+:root[data-theme="dark"] img.lazy-loading {
+  background: linear-gradient(
+    90deg,
+    #1a1f26 25%,
+    #242931 50%,
+    #1a1f26 75%
+  );
+  background-size: 200% 100%;
+}
+
+
+/* ==========================================================================
+ * RESPONSIVE - Ajustes móviles
+ * ========================================================================== */
+@media (max-width: 768px) {
+  .lightbox {
+    padding: var(--cc-space-4);
+  }
+
+  .lightbox img {
+    max-width: 100%;
+    max-height: 80vh;
+  }
+
+  .lightbox-close {
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .autocomplete-results {
+    max-height: 250px;
+  }
+
+  .mobile-menu {
+    width: 280px;
+  }
+}
