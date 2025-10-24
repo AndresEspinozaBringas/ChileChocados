@@ -1,13 +1,30 @@
-# Environment
+# ChileChocados - Git Ignore
+
+# Archivos de archivo
+_archive/
+
+# Logs
+logs/
+*.log
+
+# Archivos de entorno
 .env
+.env.local
 
-# MacOS
+# Uploads de usuarios (opcional, según necesidad)
+# public/uploads/*
+# !public/uploads/.gitkeep
+
+# Sistema operativo
 .DS_Store
-.AppleDouble
-.LSOverride
+.DS_Store?
 ._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# IDEs
+# IDE
 .vscode/
 .idea/
 *.swp
@@ -15,22 +32,26 @@
 *~
 
 # Composer
-/vendor/
+vendor/
 composer.lock
 
-# Logs
-/logs/*.log
-*.log
-
-# Uploads
-/public/uploads/*
-!/public/uploads/.gitkeep
+# Node modules (si se usa)
+node_modules/
+package-lock.json
 
 # Cache
-/cache/*
-!/cache/.gitkeep
-
-# Temporary
-*.tmp
-*.temp
+cache/
 *.cache
+
+# Backups
+*.bak
+*.backup
+*.sql.gz
+
+# Temporales
+tmp/
+temp/
+*.tmp
+
+# PHP
+*.php~
