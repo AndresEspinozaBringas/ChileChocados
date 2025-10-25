@@ -2,7 +2,17 @@
 /**
  * ChileChocados - Home Controller
  * Controlador para la página principal
+ * 
+ * @version 2.0 - Actualizado con conexión a Base de Datos
+ * @date 2025-10-25
  */
+
+// Importar modelos necesarios
+require_once APP_PATH . '/models/Publicacion.php';
+require_once APP_PATH . '/models/Categoria.php';
+
+use App\Models\Publicacion;
+use App\Models\Categoria;
 
 class HomeController {
     
@@ -12,29 +22,23 @@ class HomeController {
     public function index() {
         $pageTitle = 'ChileChocados – Marketplace de bienes siniestrados';
         
-        // TODO: Obtener publicaciones destacadas de la BD
-        $publicacionesDestacadas = [];
-        
-        // TODO: Obtener categorías de la BD
-        $categorias = $this->getCategoriasMock();
+        try {
+            // Obtener publicaciones destacadas de la BD
+            $publicacionModel = new Publicacion();
+            $publicacionesDestacadas = $publicacionModel->getDestacadas(8);
+            
+            // Obtener categorías con conteo de publicaciones de la BD
+            $categoriaModel = new Categoria();
+            $categorias = $categoriaModel->getConConteoPublicaciones();
+            
+        } catch (Exception $e) {
+            // En caso de error, usar arrays vacíos y log del error
+            error_log("Error en HomeController::index() - " . $e->getMessage());
+            $publicacionesDestacadas = [];
+            $categorias = [];
+        }
         
         // Cargar vista
         require_once APP_PATH . '/views/pages/home.php';
-    }
-    
-    /**
-     * Categorías mock (temporal)
-     */
-    private function getCategoriasMock() {
-        return [
-            ['id' => 1, 'nombre' => 'Auto', 'icon' => 'car', 'subcategorias' => 'Sedán • SUV • Deportivo', 'count' => 230],
-            ['id' => 2, 'nombre' => 'Moto', 'icon' => 'bike', 'subcategorias' => 'Scooter • Enduro • Touring', 'count' => 84],
-            ['id' => 3, 'nombre' => 'Camión', 'icon' => 'truck', 'subcategorias' => 'Ligero • Pesado', 'count' => 45],
-            ['id' => 4, 'nombre' => 'Casa Rodante', 'icon' => 'rv', 'subcategorias' => 'RV • Camper', 'count' => 12],
-            ['id' => 5, 'nombre' => 'Náutica', 'icon' => 'boat', 'subcategorias' => 'Lanchas • Yates', 'count' => 9],
-            ['id' => 6, 'nombre' => 'Bus', 'icon' => 'bus', 'subcategorias' => 'Urbano • Interurbano', 'count' => 21],
-            ['id' => 7, 'nombre' => 'Maquinaria', 'icon' => 'gear', 'subcategorias' => 'Retro • Grúa', 'count' => 33],
-            ['id' => 8, 'nombre' => 'Aéreos', 'icon' => 'plane', 'subcategorias' => 'Ligera • Drones', 'count' => 5],
-        ];
     }
 }
