@@ -51,6 +51,7 @@
     <!-- ======================================================================
          HEADER - Navegación Principal
          ====================================================================== -->
+    <?php if (!isset($hideNav) || !$hideNav): ?>
     <header class="site-header">
         <div class="header-container">
             
@@ -212,6 +213,7 @@
         <!-- Navegación -->
         <?php require_once APP_PATH . '/views/layouts/nav.php'; ?>
     </header>
+    <?php endif; ?>
 
     <!-- ======================================================================
          MAIN CONTENT

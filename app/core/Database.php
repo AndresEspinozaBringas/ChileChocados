@@ -4,6 +4,12 @@
  * Gestión de conexión PDO a MySQL
  */
 
+namespace App\Core;
+
+use PDO;
+use PDOException;
+use Exception;
+
 class Database {
     private static $instance = null;
     private $connection;
@@ -66,7 +72,11 @@ class Database {
      * Registrar errores en log
      */
     private function logError($error) {
-        $logFile = LOGS_PATH . '/database_errors.log';
+        $logDir = dirname(__DIR__, 2) . '/logs';
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0755, true);
+        }
+        $logFile = $logDir . '/database_errors.log';
         $message = date('Y-m-d H:i:s') . ' - ' . $error->getMessage() . PHP_EOL;
         error_log($message, 3, $logFile);
     }
@@ -77,11 +87,4 @@ class Database {
     public function closeConnection() {
         $this->connection = null;
     }
-}
-
-/**
- * Función helper para obtener la conexión PDO
- */
-function getDB() {
-    return Database::getInstance()->getConnection();
 }

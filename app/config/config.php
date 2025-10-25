@@ -1,4 +1,5 @@
-<?php
+<?php  // phpcs:ignore PSR1.Files.SideEffects.FoundWithSymbols
+
 /**
  * ChileChocados - Configuración Principal
  * Archivo de configuración central de la aplicación
@@ -12,19 +13,21 @@ define('UPLOAD_PATH', PUBLIC_PATH . '/uploads');
 define('LOGS_PATH', ROOT_PATH . '/logs');
 
 // Cargar variables de entorno desde .env
-function loadEnv($path) {
+function loadEnv($path)
+{
     if (!file_exists($path)) {
         die('Archivo .env no encontrado. Copie .env.example a .env y configure sus variables.');
     }
-    
+
     $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0) continue;
-        
+        if (strpos(trim($line), '#') === 0)
+            continue;
+
         list($name, $value) = explode('=', $line, 2);
         $name = trim($name);
         $value = trim($value);
-        
+
         if (!array_key_exists($name, $_ENV)) {
             putenv("$name=$value");
             $_ENV[$name] = $value;
@@ -62,21 +65,43 @@ define('APP_URL', getenv('APP_URL') ?: 'http://localhost');
 define('APP_ENV', getenv('APP_ENV') ?: 'development');
 
 // Configuración de uploads
-define('UPLOAD_MAX_SIZE', getenv('UPLOAD_MAX_SIZE') ?: 5242880); // 5MB
+define('UPLOAD_MAX_SIZE', getenv('UPLOAD_MAX_SIZE') ?: 5242880);  // 5MB
 define('UPLOAD_ALLOWED_TYPES', explode(',', getenv('UPLOAD_ALLOWED_TYPES') ?: 'jpg,jpeg,png,gif'));
 
-// Autoload simple de clases
+// Autoload con soporte para namespaces
 spl_autoload_register(function ($class) {
-    $paths = [
-        APP_PATH . '/controllers/' . $class . '.php',
-        APP_PATH . '/models/' . $class . '.php',
-    ];
+    // Convertir namespace a ruta de archivo
+    // Ej: App\Models\Usuario -> app/models/Usuario.php
+    // Ej: App\Core\Database -> app/core/Database.php
     
-    foreach ($paths as $path) {
-        if (file_exists($path)) {
-            require_once $path;
-            return;
-        }
+    // Solo procesar clases con namespace App\
+    if (strpos($class, 'App\\') !== 0) {
+        return;
+    }
+    
+    // Remover el prefijo App\
+    $classPath = substr($class, 4); // Remover "App\"
+    
+    // Convertir namespace separators a directory separators
+    $classPath = str_replace('\\', '/', $classPath);
+    
+    // Separar directorio y nombre de clase
+    $parts = explode('/', $classPath);
+    $className = array_pop($parts);
+    $directory = strtolower(implode('/', $parts));
+    
+    // Construir la ruta del archivo
+    $file = APP_PATH . '/' . $directory . '/' . $className . '.php';
+    
+    // Si el archivo existe, cargarlo
+    if (file_exists($file)) {
+        require_once $file;
+        return;
+    }
+    
+    // Log para debugging (solo en desarrollo)
+    if (getenv('APP_DEBUG') === 'true') {
+        error_log("Autoloader: No se pudo cargar la clase {$class}. Buscado en: {$file}");
     }
 });
 

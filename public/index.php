@@ -8,7 +8,13 @@
 // Cargar configuración
 require_once __DIR__ . '/../app/config/config.php';
 
-// Intentar cargar database si existe
+// Cargar clase Database desde core
+$dbCoreFile = __DIR__ . '/../app/core/Database.php';
+if (file_exists($dbCoreFile)) {
+    require_once $dbCoreFile;
+}
+
+// Cargar configuración de database (helpers)
 $dbFile = __DIR__ . '/../app/config/database.php';
 if (file_exists($dbFile)) {
     require_once $dbFile;
@@ -69,6 +75,15 @@ $specialRoutes = [
     'recuperar-contrasena' => ['controller' => 'AuthController', 'method' => 'forgotPassword'],
     'reset-password' => ['controller' => 'AuthController', 'method' => 'resetPassword'],
     'verificar-email' => ['controller' => 'AuthController', 'method' => 'verifyEmail'],
+    
+    // Rutas legales
+    'terminos' => ['controller' => 'LegalController', 'method' => 'terminos'],
+    'privacidad' => ['controller' => 'LegalController', 'method' => 'privacidad'],
+    'cookies' => ['controller' => 'LegalController', 'method' => 'cookies'],
+    'denuncias' => ['controller' => 'LegalController', 'method' => 'denuncias'],
+    
+    // Ruta de contacto
+    'contacto' => ['controller' => 'ContactoController', 'method' => 'index'],
 ];
 
 // Aplicar rutas especiales si coincide
