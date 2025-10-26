@@ -114,6 +114,12 @@ $specialRoutes = [
     // ====================================
     'categorias' => ['controller' => 'CategoriaController', 'method' => 'index'],
     'categoria' => ['controller' => 'CategoriaController', 'method' => 'show'],
+    
+    // ====================================
+    // RUTAS ADMIN
+    // ====================================
+    'admin' => ['controller' => 'AdminController', 'method' => 'index'],
+    'categoria' => ['controller' => 'CategoriaController', 'method' => 'show'],
 ];
 
 // Aplicar rutas especiales si coincide
@@ -191,6 +197,50 @@ if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numer
     $method = 'edit';
     $params = [$url[1]];  // ID de la publicación
 }
+
+// ====================================
+// RUTAS ADMIN - TODO: Migrar a sistema de rutas actual
+// ====================================
+// NOTA: Estas rutas están comentadas porque usan $url como string
+// pero el sistema actual usa $url como array
+// Se deben migrar al sistema de specialRoutes o manejar en AdminController
+
+/*
+// Ruta principal del panel de moderación
+if ($url === '/admin/publicaciones') {
+    $controller = new AdminController();
+    $controller->publicaciones();
+    exit;
+}
+
+// Ver detalle de publicación (AJAX)
+if (preg_match('/^\/admin\/publicaciones\/(\d+)$/', $url, $matches)) {
+    $controller = new AdminController();
+    $controller->verPublicacion($matches[1]);
+    exit;
+}
+
+// Aprobar publicación (POST)
+if (preg_match('/^\/admin\/publicaciones\/(\d+)\/aprobar$/', $url, $matches)) {
+    $controller = new AdminController();
+    $controller->aprobarPublicacion($matches[1]);
+    exit;
+}
+
+// Rechazar publicación (POST)
+if (preg_match('/^\/admin\/publicaciones\/(\d+)\/rechazar$/', $url, $matches)) {
+    $controller = new AdminController();
+    $controller->rechazarPublicacion($matches[1]);
+    exit;
+}
+
+// Eliminar publicación (DELETE)
+if (preg_match('/^\/admin\/publicaciones\/(\d+)$/', $url, $matches) && $_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $controller = new AdminController();
+    $controller->eliminarPublicacion($matches[1]);
+    exit;
+}
+*/
 
 // ====================================
 // RUTAS API (AJAX)
