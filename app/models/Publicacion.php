@@ -401,14 +401,14 @@ class Publicacion extends Model
      */
     public function agregarImagen($publicacionId, $datos)
     {
-        $sql = "INSERT INTO publicacion_fotos (publicacion_id, url, orden, es_principal, fecha_creacion)
+        $sql = "INSERT INTO publicacion_fotos (publicacion_id, ruta, orden, es_principal, fecha_subida)
                 VALUES (?, ?, ?, ?, NOW())";
         
         try {
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([
                 $publicacionId,
-                $datos['url'],
+                $datos['ruta'],
                 $datos['orden'] ?? 1,
                 $datos['es_principal'] ?? 0
             ]);
