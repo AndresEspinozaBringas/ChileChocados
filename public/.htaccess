@@ -8,8 +8,8 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # Todas las peticiones pasan por index.php
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 
-# Proteger acceso directo a archivos PHP (excepto index.php)
-<FilesMatch "^(?!index\.php$).*\.php$">
+# Proteger acceso directo a archivos PHP (excepto index.php y archivos de test)
+<FilesMatch "^(?!index\.php$|check-config\.php$|test-post\.php$|simple-test\.php$|clear-cache\.php$).*\.php$">
     Order allow,deny
     Deny from all
 </FilesMatch>

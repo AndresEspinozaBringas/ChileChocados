@@ -62,6 +62,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Configuración de la aplicación
 define('APP_NAME', getenv('APP_NAME') ?: 'ChileChocados');
 define('APP_URL', getenv('APP_URL') ?: 'http://localhost');
+define('BASE_URL', getenv('APP_URL') ?: 'http://localhost');  // Alias para compatibilidad
 define('APP_ENV', getenv('APP_ENV') ?: 'development');
 
 // Configuración de uploads

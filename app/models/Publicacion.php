@@ -17,6 +17,7 @@ class Publicacion extends Model
         'categoria_padre_id',
         'subcategoria_id',
         'titulo',
+        'tipificacion',
         'marca',
         'modelo',
         'anio',
@@ -393,5 +394,181 @@ class Publicacion extends Model
         }
         
         return $errores;
+    }
+    
+    /**
+     * Agregar imagen a la publicación
+     */
+    public function agregarImagen($publicacionId, $datos)
+    {
+        $sql = "INSERT INTO publicacion_fotos (publicacion_id, url, orden, es_principal, fecha_creacion)
+                VALUES (?, ?, ?, ?, NOW())";
+        
+        try {
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                $publicacionId,
+                $datos['url'],
+                $datos['orden'] ?? 1,
+                $datos['es_principal'] ?? 0
+            ]);
+        } catch (\PDOException $e) {
+            error_log("ERROR al guardar imagen: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Obtener imágenes de una publicación
+     */
+    public function getImagenes($publicacionId)
+    {
+        $sql = "SELECT * FROM publicacion_fotos 
+                WHERE publicacion_id = ? 
+                ORDER BY es_principal DESC, orden ASC";
+        
+        return $this->query($sql, [$publicacionId]);
+    }
+    
+    /**
+     * Eliminar imagen
+     */
+    public function eliminarImagen($imagenId)
+    {
+        $sql = "DELETE FROM publicacion_fotos WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$imagenId]);
+    }
+    
+    /**
+     * Obtener publicaciones similares
+     */
+    public function getSimilares($publicacionId, $categoriaId, $limit = 4)
+    {
+        $sql = "SELECT p.*, cp.nombre as categoria_nombre, r.nombre as region_nombre
+                FROM {$this->table} p
+                INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+                INNER JOIN regiones r ON p.region_id = r.id
+                WHERE p.categoria_padre_id = ?
+                AND p.id != ?
+                AND p.estado = ?
+                ORDER BY RAND()
+                LIMIT {$limit}";
+        
+        return $this->query($sql, [$categoriaId, $publicacionId, self::ESTADO_APROBADA]);
+    }
+    
+    /**
+     * Listar con filtros (método mejorado)
+     */
+    public function listarConFiltros($filtros = [])
+    {
+        $sql = "SELECT 
+                    p.*,
+                    u.nombre as vendedor_nombre,
+                    cp.nombre as categoria_nombre,
+                    cp.slug as categoria_slug,
+                    r.nombre as region_nombre,
+                    c.nombre as comuna_nombre
+                FROM {$this->table} p
+                INNER JOIN usuarios u ON p.usuario_id = u.id
+                INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+                INNER JOIN regiones r ON p.region_id = r.id
+                LEFT JOIN comunas c ON p.comuna_id = c.id
+                WHERE p.estado = ?";
+        
+        $params = [self::ESTADO_APROBADA];
+        
+        // Aplicar filtros
+        if (!empty($filtros['categoria_id'])) {
+            $sql .= " AND p.categoria_padre_id = ?";
+            $params[] = $filtros['categoria_id'];
+        }
+        
+        if (!empty($filtros['subcategoria_id'])) {
+            $sql .= " AND p.subcategoria_id = ?";
+            $params[] = $filtros['subcategoria_id'];
+        }
+        
+        if (!empty($filtros['region_id'])) {
+            $sql .= " AND p.region_id = ?";
+            $params[] = $filtros['region_id'];
+        }
+        
+        if (!empty($filtros['comuna_id'])) {
+            $sql .= " AND p.comuna_id = ?";
+            $params[] = $filtros['comuna_id'];
+        }
+        
+        if (!empty($filtros['tipo_venta'])) {
+            $sql .= " AND p.tipo_venta = ?";
+            $params[] = $filtros['tipo_venta'];
+        }
+        
+        if (!empty($filtros['precio_min'])) {
+            $sql .= " AND p.precio >= ?";
+            $params[] = $filtros['precio_min'];
+        }
+        
+        if (!empty($filtros['precio_max'])) {
+            $sql .= " AND p.precio <= ?";
+            $params[] = $filtros['precio_max'];
+        }
+        
+        if (!empty($filtros['buscar'])) {
+            $sql .= " AND (p.titulo LIKE ? OR p.marca LIKE ? OR p.modelo LIKE ? OR p.descripcion LIKE ?)";
+            $busqueda = "%{$filtros['buscar']}%";
+            $params[] = $busqueda;
+            $params[] = $busqueda;
+            $params[] = $busqueda;
+            $params[] = $busqueda;
+        }
+        
+        // Ordenamiento
+        $orden = $filtros['orden'] ?? 'recientes';
+        switch ($orden) {
+            case 'precio_asc':
+                $sql .= " ORDER BY p.precio ASC";
+                break;
+            case 'precio_desc':
+                $sql .= " ORDER BY p.precio DESC";
+                break;
+            case 'antiguos':
+                $sql .= " ORDER BY p.fecha_publicacion ASC";
+                break;
+            default:
+                $sql .= " ORDER BY p.fecha_publicacion DESC";
+        }
+        
+        // Paginación
+        $page = $filtros['page'] ?? 1;
+        $perPage = 12;
+        $offset = ($page - 1) * $perPage;
+        $sql .= " LIMIT {$perPage} OFFSET {$offset}";
+        
+        $publicaciones = $this->query($sql, $params);
+        
+        // Contar total
+        $sqlCount = "SELECT COUNT(*) as total
+                     FROM {$this->table} p
+                     WHERE p.estado = ?";
+        
+        $paramsCount = [self::ESTADO_APROBADA];
+        
+        if (!empty($filtros['categoria_id'])) {
+            $sqlCount .= " AND p.categoria_padre_id = ?";
+            $paramsCount[] = $filtros['categoria_id'];
+        }
+        
+        $stmt = $this->db->prepare($sqlCount);
+        $stmt->execute($paramsCount);
+        $totalResult = $stmt->fetch(PDO::FETCH_OBJ);
+        $total = $totalResult ? $totalResult->total : 0;
+        
+        return [
+            'publicaciones' => $publicaciones,
+            'total' => $total,
+            'total_paginas' => ceil($total / $perPage)
+        ];
     }
 }

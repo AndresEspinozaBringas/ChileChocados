@@ -52,11 +52,25 @@ if (file_exists($envFile)) {
     }
 }
 
+// DEBUG: Siempre crear log para POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $logFile = __DIR__ . '/logs/debug.txt';
+    @mkdir(__DIR__ . '/logs', 0777, true);
+    file_put_contents($logFile, "\n=== " . date('Y-m-d H:i:s') . " ===\n", FILE_APPEND);
+    file_put_contents($logFile, "REQUEST_URI: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
+    file_put_contents($logFile, "GET url param: " . ($_GET['url'] ?? 'NO URL') . "\n", FILE_APPEND);
+}
+
 // Obtener la URL solicitada
 $url = $_GET['url'] ?? '';
 $url = rtrim($url, '/');
 $url = filter_var($url, FILTER_SANITIZE_URL);
 $url = explode('/', $url);
+
+// DEBUG: Log de la URL parseada
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    file_put_contents($logFile, "URL array: " . print_r($url, true) . "\n", FILE_APPEND);
+}
 
 // Determinar controlador y acción
 $controllerName = !empty($url[0]) ? ucfirst($url[0]) . 'Controller' : 'HomeController';
@@ -82,6 +96,10 @@ $specialRoutes = [
     'denuncias' => ['controller' => 'LegalController', 'method' => 'denuncias'],
     // Ruta de contacto
     'contacto' => ['controller' => 'ContactoController', 'method' => 'index'],
+    
+    // Rutas API
+    'api' => ['controller' => 'ApiController', 'method' => 'index'],
+    
     // ====================================
     // NUEVAS RUTAS - PUBLICACIONES
     // ====================================
@@ -104,6 +122,17 @@ if (!empty($url[0]) && isset($specialRoutes[$url[0]])) {
 }
 
 // ====================================
+// MANEJO DE RUTAS API
+// ====================================
+if (!empty($url[0]) && $url[0] === 'api') {
+    if (!empty($url[1]) && $url[1] === 'comunas') {
+        $controllerName = 'PublicacionController';
+        $method = 'getComunas';
+        $params = [];
+    }
+}
+
+// ====================================
 // MANEJO DE MÉTODOS POST ESPECÍFICOS
 // ====================================
 
@@ -123,6 +152,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
         $method = 'updatePassword';
     }
     // Publicaciones - POST
+    elseif ($url[0] === 'publicar' && isset($url[1]) && $url[1] === 'procesar') {
+        $controllerName = 'PublicacionController';
+        $method = 'store';
+        $params = [];
+    }
     elseif ($url[0] === 'publicaciones' && isset($url[1])) {
         $controllerName = 'PublicacionController';
         if ($url[1] === 'store') {
@@ -180,6 +214,15 @@ if (!empty($url[0]) && $url[0] === 'api') {
 // Ruta del controlador
 $controllerFile = APP_PATH . '/controllers/' . $controllerName . '.php';
 
+// DEBUG: Log del controlador y método
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    file_put_contents(__DIR__ . '/logs/debug.txt', "Controller: $controllerName\n", FILE_APPEND);
+    file_put_contents(__DIR__ . '/logs/debug.txt', "Method: $method\n", FILE_APPEND);
+    file_put_contents(__DIR__ . '/logs/debug.txt', "Params: " . print_r($params, true) . "\n", FILE_APPEND);
+    file_put_contents(__DIR__ . '/logs/debug.txt', "Controller file: $controllerFile\n", FILE_APPEND);
+    file_put_contents(__DIR__ . '/logs/debug.txt', "File exists: " . (file_exists($controllerFile) ? 'YES' : 'NO') . "\n", FILE_APPEND);
+}
+
 // Verificar si existe el controlador
 if (file_exists($controllerFile)) {
     require_once $controllerFile;
@@ -196,6 +239,11 @@ if (file_exists($controllerFile)) {
         $controller = new $controllerClass();
 
         if (method_exists($controller, $method)) {
+            // DEBUG
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                file_put_contents(__DIR__ . '/logs/debug.txt', "Calling method: $controllerClass::$method\n", FILE_APPEND);
+            }
+            
             // Llamar al método con parámetros
             call_user_func_array([$controller, $method], $params);
         } else {

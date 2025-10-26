@@ -129,42 +129,64 @@ class PublicacionController {
      * Ruta: POST /publicaciones/store
      */
     public function store() {
+        // DEBUG: Verificar que el método se está ejecutando
+        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "STORE METHOD CALLED\n", FILE_APPEND);
+        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "POST data: " . print_r($_POST, true) . "\n", FILE_APPEND);
+        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "FILES data: " . print_r($_FILES, true) . "\n", FILE_APPEND);
+        
         // Verificar autenticación
         Auth::require();
         
         // Verificar token CSRF
         if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            $_SESSION['error'] = 'Token de seguridad inválido';
+            file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "CSRF TOKEN INVALID\n", FILE_APPEND);
+            file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "Session token: " . ($_SESSION['csrf_token'] ?? 'NO SESSION TOKEN') . "\n", FILE_APPEND);
+            file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "POST token: " . ($_POST['csrf_token'] ?? 'NO POST TOKEN') . "\n", FILE_APPEND);
+            $_SESSION['error'] = 'Token de seguridad inválido. Por favor, intenta nuevamente.';
             header('Location: ' . BASE_URL . '/publicar');
             exit;
         }
         
-        // Validar datos del formulario
-        $errores = $this->validarDatosPublicacion($_POST);
+        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "CSRF TOKEN VALID - Continuando...\n", FILE_APPEND);
         
-        if (!empty($errores)) {
-            $_SESSION['errores'] = $errores;
-            $_SESSION['old'] = $_POST;
-            header('Location: ' . BASE_URL . '/publicar');
-            exit;
+        // Determinar si es borrador
+        $es_borrador = isset($_POST['guardar_borrador']);
+        
+        // Validar datos del formulario (solo si no es borrador)
+        if (!$es_borrador) {
+            $errores = $this->validarDatosPublicacion($_POST);
+            
+            if (!empty($errores)) {
+                $_SESSION['errores'] = $errores;
+                $_SESSION['old'] = $_POST;
+                header('Location: ' . BASE_URL . '/publicar');
+                exit;
+            }
+        }
+        
+        // Generar título automático
+        $titulo = trim(sanitize($_POST['marca'] ?? '') . ' ' . sanitize($_POST['modelo'] ?? '') . ' ' . ($_POST['anio'] ?? ''));
+        if (empty(trim($titulo))) {
+            $titulo = 'Borrador sin título';
         }
         
         // Preparar datos para guardar
         $datos = [
             'usuario_id' => $_SESSION['user_id'],
-            'categoria_padre_id' => sanitize($_POST['categoria_padre_id']),
+            'tipificacion' => !empty($_POST['tipificacion']) ? sanitize($_POST['tipificacion']) : null,
+            'categoria_padre_id' => !empty($_POST['categoria_padre_id']) ? sanitize($_POST['categoria_padre_id']) : null,
             'subcategoria_id' => !empty($_POST['subcategoria_id']) ? sanitize($_POST['subcategoria_id']) : null,
-            'titulo' => sanitize($_POST['titulo']),
-            'marca' => sanitize($_POST['marca']),
-            'modelo' => sanitize($_POST['modelo']),
-            'anio' => (int)$_POST['anio'],
-            'descripcion' => sanitize($_POST['descripcion']),
-            'tipo_venta' => sanitize($_POST['tipo_venta']),
-            'precio' => $_POST['tipo_venta'] === 'completo' ? (float)$_POST['precio'] : null,
-            'region_id' => (int)$_POST['region_id'],
+            'titulo' => $titulo,
+            'marca' => !empty($_POST['marca']) ? sanitize($_POST['marca']) : null,
+            'modelo' => !empty($_POST['modelo']) ? sanitize($_POST['modelo']) : null,
+            'anio' => !empty($_POST['anio']) ? (int)$_POST['anio'] : null,
+            'descripcion' => !empty($_POST['descripcion']) ? sanitize($_POST['descripcion']) : null,
+            'tipo_venta' => !empty($_POST['tipo_venta']) ? sanitize($_POST['tipo_venta']) : 'completo',
+            'precio' => (!empty($_POST['tipo_venta']) && $_POST['tipo_venta'] === 'completo' && !empty($_POST['precio'])) ? (float)$_POST['precio'] : null,
+            'region_id' => !empty($_POST['region_id']) ? (int)$_POST['region_id'] : null,
             'comuna_id' => !empty($_POST['comuna_id']) ? (int)$_POST['comuna_id'] : null,
-            'estado' => 'pendiente', // Requiere aprobación del admin
-            'fecha_publicacion' => date('Y-m-d H:i:s')
+            'estado' => $es_borrador ? 'borrador' : 'pendiente',
+            'fecha_publicacion' => $es_borrador ? null : date('Y-m-d H:i:s')
         ];
         
         // Guardar publicación en BD
@@ -177,15 +199,20 @@ class PublicacionController {
         }
         
         // Procesar y guardar imágenes
-        if (!empty($_FILES['imagenes']['name'][0])) {
-            $this->procesarImagenes($publicacion_id, $_FILES['imagenes']);
+        if (!empty($_FILES['fotos']['name'][0])) {
+            $foto_principal_index = isset($_POST['foto_principal']) ? (int)$_POST['foto_principal'] : 1;
+            $this->procesarImagenes($publicacion_id, $_FILES['fotos'], $foto_principal_index);
         }
         
-        // Guardar ID de publicación en sesión para página de confirmación
-        $_SESSION['publicacion_creada_id'] = $publicacion_id;
-        
-        // Redirigir a página de aprobación/confirmación
-        header('Location: ' . BASE_URL . '/publicaciones/approval');
+        // Redirigir según el tipo de guardado
+        if ($es_borrador) {
+            $_SESSION['success'] = 'Borrador guardado exitosamente. Puedes continuar editándolo más tarde.';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+        } else {
+            // Guardar ID de publicación en sesión para página de confirmación
+            $_SESSION['publicacion_creada_id'] = $publicacion_id;
+            header('Location: ' . BASE_URL . '/publicaciones/approval');
+        }
         exit;
     }
     
@@ -377,16 +404,14 @@ class PublicacionController {
     private function validarDatosPublicacion($datos) {
         $errores = [];
         
-        // Validar categoría
-        if (empty($datos['categoria_padre_id'])) {
-            $errores['categoria_padre_id'] = 'Debes seleccionar una categoría';
+        // Validar tipificación
+        if (empty($datos['tipificacion'])) {
+            $errores['tipificacion'] = 'Debes seleccionar el tipo de vehículo';
         }
         
-        // Validar título
-        if (empty($datos['titulo']) || strlen($datos['titulo']) < 10) {
-            $errores['titulo'] = 'El título debe tener al menos 10 caracteres';
-        } elseif (strlen($datos['titulo']) > 100) {
-            $errores['titulo'] = 'El título no puede exceder 100 caracteres';
+        // Validar tipo de venta
+        if (empty($datos['tipo_venta'])) {
+            $errores['tipo_venta'] = 'Debes seleccionar un tipo de venta';
         }
         
         // Validar marca
@@ -401,24 +426,27 @@ class PublicacionController {
         
         // Validar año
         $anio_actual = (int)date('Y');
-        if (empty($datos['anio']) || $datos['anio'] < 1970 || $datos['anio'] > $anio_actual + 1) {
-            $errores['anio'] = 'El año debe estar entre 1970 y ' . ($anio_actual + 1);
+        if (empty($datos['anio']) || $datos['anio'] < 1900 || $datos['anio'] > 2025) {
+            $errores['anio'] = 'El año debe estar entre 1900 y 2025';
         }
         
-        // Validar descripción
-        if (empty($datos['descripcion']) || strlen($datos['descripcion']) < 50) {
-            $errores['descripcion'] = 'La descripción debe tener al menos 50 caracteres';
-        } elseif (strlen($datos['descripcion']) > 2000) {
-            $errores['descripcion'] = 'La descripción no puede exceder 2000 caracteres';
+        // Validar categoría
+        if (empty($datos['categoria_padre_id'])) {
+            $errores['categoria_padre_id'] = 'Debes seleccionar una categoría';
         }
         
-        // Validar tipo de venta
-        if (empty($datos['tipo_venta']) || !in_array($datos['tipo_venta'], ['completo', 'desarme'])) {
-            $errores['tipo_venta'] = 'Debes seleccionar un tipo de venta válido';
+        // Validar región
+        if (empty($datos['region_id'])) {
+            $errores['region_id'] = 'Debes seleccionar una región';
+        }
+        
+        // Validar comuna
+        if (empty($datos['comuna_id'])) {
+            $errores['comuna_id'] = 'Debes seleccionar una comuna';
         }
         
         // Validar precio si es venta completa
-        if ($datos['tipo_venta'] === 'completo') {
+        if (!empty($datos['tipo_venta']) && $datos['tipo_venta'] === 'completo') {
             if (empty($datos['precio']) || $datos['precio'] <= 0) {
                 $errores['precio'] = 'El precio debe ser mayor a 0';
             } elseif ($datos['precio'] > 50000000) {
@@ -426,9 +454,16 @@ class PublicacionController {
             }
         }
         
-        // Validar región
-        if (empty($datos['region_id'])) {
-            $errores['region_id'] = 'Debes seleccionar una región';
+        // Validar descripción
+        if (empty($datos['descripcion']) || strlen($datos['descripcion']) < 20) {
+            $errores['descripcion'] = 'La descripción debe tener al menos 20 caracteres';
+        } elseif (strlen($datos['descripcion']) > 2000) {
+            $errores['descripcion'] = 'La descripción no puede exceder 2000 caracteres';
+        }
+        
+        // Validar que haya al menos una foto
+        if (empty($_FILES['fotos']['name'][0])) {
+            $errores['fotos'] = 'Debes subir al menos una foto del vehículo';
         }
         
         return $errores;
@@ -437,8 +472,9 @@ class PublicacionController {
     /**
      * Procesa y guarda las imágenes subidas
      */
-    private function procesarImagenes($publicacion_id, $archivos) {
+    private function procesarImagenes($publicacion_id, $archivos, $foto_principal_index = 1) {
         $total_imagenes = count($archivos['name']);
+        $foto_principal_url = null;
         
         // Validar cantidad (máximo 6 imágenes)
         if ($total_imagenes > 6) {
@@ -447,8 +483,8 @@ class PublicacionController {
         }
         
         for ($i = 0; $i < $total_imagenes; $i++) {
-            // Saltar si hay error en el archivo
-            if ($archivos['error'][$i] !== UPLOAD_ERR_OK) {
+            // Saltar si hay error en el archivo o no se subió archivo
+            if ($archivos['error'][$i] !== UPLOAD_ERR_OK || empty($archivos['name'][$i])) {
                 continue;
             }
             
@@ -483,17 +519,25 @@ class PublicacionController {
                 // Guardar en BD
                 $url_relativa = 'publicaciones/' . date('Y') . '/' . date('m') . '/' . $nombre_archivo;
                 
+                // Determinar si es la foto principal (índice comienza en 1)
+                $es_principal = ($i + 1) === $foto_principal_index ? 1 : 0;
+                
                 $this->publicacionModel->agregarImagen($publicacion_id, [
                     'url' => $url_relativa,
                     'orden' => $i + 1,
-                    'es_principal' => $i === 0 ? 1 : 0
+                    'es_principal' => $es_principal
                 ]);
                 
-                // Actualizar foto principal en la publicación si es la primera
-                if ($i === 0) {
-                    $this->publicacionModel->update($publicacion_id, ['foto_principal' => $url_relativa]);
+                // Guardar URL de la foto principal
+                if ($es_principal) {
+                    $foto_principal_url = $url_relativa;
                 }
             }
+        }
+        
+        // Actualizar foto principal en la tabla publicaciones
+        if ($foto_principal_url) {
+            $this->publicacionModel->update($publicacion_id, ['foto_principal' => $foto_principal_url]);
         }
     }
     
@@ -530,5 +574,31 @@ class PublicacionController {
         $db = getDB();
         $stmt = $db->query("SELECT * FROM regiones ORDER BY nombre ASC");
         return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * API: Obtiene las comunas de una región
+     * Ruta: GET /api/comunas?region_id=X
+     */
+    public function getComunas() {
+        header('Content-Type: application/json');
+        
+        $regionId = $_GET['region_id'] ?? null;
+        
+        if (!$regionId) {
+            echo json_encode(['error' => 'region_id es requerido', 'comunas' => []]);
+            return;
+        }
+        
+        try {
+            $db = getDB();
+            $stmt = $db->prepare("SELECT id, nombre FROM comunas WHERE region_id = ? ORDER BY nombre ASC");
+            $stmt->execute([$regionId]);
+            $comunas = $stmt->fetchAll(PDO::FETCH_OBJ);
+            
+            echo json_encode(['comunas' => $comunas]);
+        } catch (\Exception $e) {
+            echo json_encode(['error' => 'Error al obtener comunas', 'comunas' => []]);
+        }
     }
 }
