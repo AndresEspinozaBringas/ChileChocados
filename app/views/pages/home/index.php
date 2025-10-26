@@ -24,7 +24,7 @@ layout('nav');
   <section>
     <div class="h2">Publicaciones destacadas</div>
     <div class="grid cols-4">
-      <?php for($i = 1; $i <= 4; $i++): ?>
+      <?php for ($i = 1; $i <= 4; $i++): ?>
       <a class="card" href="<?php echo BASE_URL; ?>/detalle/<?php echo $i; ?>">
         <div class="ph"></div>
         <div class="h3">Título publicación <?php echo $i; ?></div>
@@ -43,7 +43,7 @@ layout('nav');
       <div class="h2">Explora publicaciones</div>
     </div>
     <div class="grid cols-4">
-      <?php for($i = 1; $i <= 8; $i++): ?>
+      <?php for ($i = 1; $i <= 8; $i++): ?>
       <a class="card" href="<?php echo BASE_URL; ?>/detalle/<?php echo $i; ?>">
         <div class="ph"></div>
         <div class="h3">Publicación aleatoria <?php echo $i; ?></div>
@@ -72,9 +72,9 @@ layout('nav');
         ['id' => 'gear', 'nombre' => 'Maquinaria', 'sub' => 'Retro • Grúa', 'count' => 33],
         ['id' => 'plane', 'nombre' => 'Aéreos', 'sub' => 'Ligera • Drones', 'count' => 5]
       ];
-      
-      foreach($categorias as $cat):
-      ?>
+
+      foreach ($categorias as $cat):
+        ?>
       <a class="card cat-card" href="<?php echo BASE_URL; ?>/listado?cat=<?php echo e($cat['id']); ?>">
         <div class="left">
           <span class="iconify"><svg><use href="#<?php echo $cat['id']; ?>"/></svg></span>

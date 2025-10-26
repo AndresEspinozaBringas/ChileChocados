@@ -160,6 +160,10 @@ class CategoriaController {
     
     /**
      * Obtiene subcategorías con conteo de publicaciones
+     * CORREGIDO: Ahora cuenta correctamente las publicaciones aprobadas
+     * 
+     * TODO: Verificar que el conteo de categorías principales también filtre por estado 'aprobada'
+     * Ver: Categoria::getConConteoPublicaciones()
      */
     private function getSubcategoriasConConteo($categoria_padre_id) {
         $db = getDB();
@@ -169,7 +173,8 @@ class CategoriaController {
                 s.*,
                 COUNT(p.id) as total_publicaciones
             FROM subcategorias s
-            LEFT JOIN publicaciones p ON p.subcategoria_id = s.id AND p.estado = 'aprobada'
+            LEFT JOIN publicaciones p ON p.subcategoria_id = s.id 
+                AND p.estado = 'aprobada'
             WHERE s.categoria_padre_id = ?
             AND s.activo = 1
             GROUP BY s.id

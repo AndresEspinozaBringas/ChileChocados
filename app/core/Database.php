@@ -16,11 +16,11 @@ class Database {
     
     private function __construct() {
         try {
-            $host = getenv('DB_HOST');
-            $port = getenv('DB_PORT') ?: 3306;
-            $dbname = getenv('DB_NAME');
-            $username = getenv('DB_USER');
-            $password = getenv('DB_PASS');
+            $host = $_ENV['DB_HOST'] ?? 'localhost';
+            $port = $_ENV['DB_PORT'] ?? 3306;
+            $dbname = $_ENV['DB_NAME'] ?? 'chilechocados';
+            $username = $_ENV['DB_USER'] ?? 'root';
+            $password = $_ENV['DB_PASS'] ?? '';
             
             $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";
             

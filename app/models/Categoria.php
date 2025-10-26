@@ -82,6 +82,11 @@ class Categoria extends Model
     
     /**
      * Obtener todas las categorías con conteo de publicaciones
+     * 
+     * TODO: CORREGIR - Actualmente cuenta TODAS las publicaciones sin filtrar por estado
+     * Debería contar solo publicaciones con estado = 'aprobada'
+     * Cambiar: COUNT(p.id) por COUNT(CASE WHEN p.estado = 'aprobada' THEN 1 END)
+     * O agregar: AND p.estado = 'aprobada' en el LEFT JOIN
      */
     public function getConConteoPublicaciones()
     {

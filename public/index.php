@@ -105,8 +105,10 @@ $specialRoutes = [
     // ====================================
     'publicaciones' => ['controller' => 'PublicacionController', 'method' => 'index'],
     'publicacion' => ['controller' => 'PublicacionController', 'method' => 'show'],
+    'detalle' => ['controller' => 'PublicacionController', 'method' => 'show'],
     'publicar' => ['controller' => 'PublicacionController', 'method' => 'create'],
     'vender' => ['controller' => 'PublicacionController', 'method' => 'sell'],
+    'listado' => ['controller' => 'PublicacionController', 'method' => 'index'],
     // ====================================
     // NUEVAS RUTAS - CATEGORÍAS
     // ====================================

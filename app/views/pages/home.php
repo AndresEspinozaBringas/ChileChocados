@@ -55,15 +55,15 @@
     <div class="h2">Categorías padre</div>
     <div class="grid cols-4">
         <?php foreach ($categorias as $cat): ?>
-        <a class="card cat-card" href="<?php echo url('listado?categoria=' . $cat['id']); ?>">
+        <a class="card cat-card" href="<?php echo url('listado?categoria=' . $cat->id); ?>">
             <div class="left">
-                <span class="iconify"><svg><use href="<?php echo url('assets/icons/icons.svg#' . $cat['icon']); ?>"/></svg></span>
+                <span class="iconify"><svg><use href="<?php echo url('assets/icons/icons.svg#' . ($cat->icon ?? 'car')); ?>"/></svg></span>
                 <div>
-                    <div class="h3"><?php echo sanitize($cat['nombre']); ?></div>
-                    <p class="meta"><?php echo sanitize($cat['subcategorias']); ?></p>
+                    <div class="h3"><?php echo sanitize($cat->nombre); ?></div>
+                    <p class="meta"><?php echo sanitize($cat->subcategorias ?? ''); ?></p>
                 </div>
             </div>
-            <span class="cat-count"><?php echo $cat['count']; ?></span>
+            <span class="cat-count"><?php echo $cat->count ?? 0; ?></span>
         </a>
         <?php endforeach; ?>
     </div>

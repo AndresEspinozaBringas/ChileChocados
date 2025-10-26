@@ -1,4 +1,5 @@
-<?php
+<?php // phpcs:ignore PSR12.Files.FileHeader.SpacingAfterTagBlock
+
 /**
  * Vista: Categorías
  * Ruta: /categorias
@@ -41,18 +42,18 @@ require_once APP_PATH . '/views/layouts/header.php';
                 <?php
                 // SVG icons según tipo de categoría
                 $iconos = [
-                    'auto' => '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2z"></path><path d="M5 17H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h1"></path><path d="M19 17h2a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-1"></path><path d="M5 14l1-4h12l1 4"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>',
-                    'moto' => '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle><path d="M16 8h3l2 5"></path><path d="M5 19L14 9h-3L8 5"></path><path d="M14 9l3 10"></path></svg>',
-                    'default' => '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="22" height="18" rx="2" ry="2"></rect><line x1="1" y1="9" x2="23" y2="9"></line></svg>'
+                  'auto' => '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14v2a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-2z"></path><path d="M5 17H3a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h1"></path><path d="M19 17h2a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-1"></path><path d="M5 14l1-4h12l1 4"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>',
+                  'moto' => '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle><path d="M16 8h3l2 5"></path><path d="M5 19L14 9h-3L8 5"></path><path d="M14 9l3 10"></path></svg>',
+                  'default' => '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="22" height="18" rx="2" ry="2"></rect><line x1="1" y1="9" x2="23" y2="9"></line></svg>'
                 ];
-                
+
                 $slug = strtolower($categoria->slug ?? '');
                 $icono_key = 'default';
                 foreach (array_keys($iconos) as $key) {
-                    if (strpos($slug, $key) !== false) {
-                        $icono_key = $key;
-                        break;
-                    }
+                  if (strpos($slug, $key) !== false) {
+                    $icono_key = $key;
+                    break;
+                  }
                 }
                 echo $iconos[$icono_key];
                 ?>
@@ -65,16 +66,16 @@ require_once APP_PATH . '/views/layouts/header.php';
                 <?php if (!empty($categoria->subcategorias)): ?>
                   <p class="meta">
                     <?php
-                      $subs = array_slice($categoria->subcategorias, 0, 3);
-                      $nombres = array_map(function($s) { 
-                          return htmlspecialchars($s->nombre); 
-                      }, $subs);
-                      echo implode(' • ', $nombres);
-                      
-                      $total_subs = count($categoria->subcategorias);
-                      if ($total_subs > 3) {
-                          echo ' (+' . ($total_subs - 3) . ' más)';
-                      }
+                    $subs = array_slice($categoria->subcategorias, 0, 3);
+                    $nombres = array_map(function ($s) {
+                      return htmlspecialchars($s->nombre);
+                    }, $subs);
+                    echo implode(' • ', $nombres);
+
+                    $total_subs = count($categoria->subcategorias);
+                    if ($total_subs > 3) {
+                      echo ' (+' . ($total_subs - 3) . ' más)';
+                    }
                     ?>
                   </p>
                 <?php endif; ?>
