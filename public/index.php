@@ -75,15 +75,25 @@ $specialRoutes = [
     'recuperar-contrasena' => ['controller' => 'AuthController', 'method' => 'forgotPassword'],
     'reset-password' => ['controller' => 'AuthController', 'method' => 'resetPassword'],
     'verificar-email' => ['controller' => 'AuthController', 'method' => 'verifyEmail'],
-    
     // Rutas legales
     'terminos' => ['controller' => 'LegalController', 'method' => 'terminos'],
     'privacidad' => ['controller' => 'LegalController', 'method' => 'privacidad'],
     'cookies' => ['controller' => 'LegalController', 'method' => 'cookies'],
     'denuncias' => ['controller' => 'LegalController', 'method' => 'denuncias'],
-    
     // Ruta de contacto
     'contacto' => ['controller' => 'ContactoController', 'method' => 'index'],
+    // ====================================
+    // NUEVAS RUTAS - PUBLICACIONES
+    // ====================================
+    'publicaciones' => ['controller' => 'PublicacionController', 'method' => 'index'],
+    'publicacion' => ['controller' => 'PublicacionController', 'method' => 'show'],
+    'publicar' => ['controller' => 'PublicacionController', 'method' => 'create'],
+    'vender' => ['controller' => 'PublicacionController', 'method' => 'sell'],
+    // ====================================
+    // NUEVAS RUTAS - CATEGORÍAS
+    // ====================================
+    'categorias' => ['controller' => 'CategoriaController', 'method' => 'index'],
+    'categoria' => ['controller' => 'CategoriaController', 'method' => 'show'],
 ];
 
 // Aplicar rutas especiales si coincide
@@ -93,8 +103,12 @@ if (!empty($url[0]) && isset($specialRoutes[$url[0]])) {
     $params = array_slice($url, 1);  // Parámetros después de la ruta
 }
 
-// Manejar métodos POST específicos para autenticación
+// ====================================
+// MANEJO DE MÉTODOS POST ESPECÍFICOS
+// ====================================
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
+    // Autenticación
     if ($url[0] === 'registro') {
         $controllerName = 'AuthController';
         $method = 'processRegister';
@@ -108,6 +122,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
         $controllerName = 'AuthController';
         $method = 'updatePassword';
     }
+    // Publicaciones - POST
+    elseif ($url[0] === 'publicaciones' && isset($url[1])) {
+        $controllerName = 'PublicacionController';
+        if ($url[1] === 'store') {
+            $method = 'store';
+            $params = [];
+        } elseif (isset($url[2]) && $url[2] === 'update') {
+            $method = 'update';
+            $params = [$url[1]];  // ID de la publicación
+        } elseif (isset($url[2]) && $url[2] === 'eliminar') {
+            $method = 'destroy';
+            $params = [$url[1]];  // ID de la publicación
+        }
+    }
+}
+
+// ====================================
+// RUTAS ESPECIALES PARA PUBLICACIONES
+// ====================================
+
+// Ruta: /publicaciones/approval
+if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && $url[1] === 'approval') {
+    $controllerName = 'PublicacionController';
+    $method = 'approval';
+    $params = [];
+}
+
+// Ruta: /publicaciones/{id}/editar
+if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numeric($url[1]) && isset($url[2]) && $url[2] === 'editar') {
+    $controllerName = 'PublicacionController';
+    $method = 'edit';
+    $params = [$url[1]];  // ID de la publicación
+}
+
+// ====================================
+// RUTAS API (AJAX)
+// ====================================
+
+if (!empty($url[0]) && $url[0] === 'api') {
+    if (isset($url[1]) && $url[1] === 'categorias') {
+        $controllerName = 'CategoriaController';
+
+        // /api/categorias/buscar
+        if (isset($url[2]) && $url[2] === 'buscar') {
+            $method = 'buscar';
+            $params = [];
+        }
+        // /api/categorias/{id}/subcategorias
+        elseif (isset($url[2]) && is_numeric($url[2]) && isset($url[3]) && $url[3] === 'subcategorias') {
+            $method = 'getSubcategorias';
+            $params = [$url[2]];  // ID de la categoría
+        }
+    }
 }
 
 // Ruta del controlador
@@ -119,45 +186,42 @@ if (file_exists($controllerFile)) {
 
     // Intentar con namespace primero
     $controllerClass = 'App\\Controllers\\' . $controllerName;
+
     if (!class_exists($controllerClass)) {
-        // Intentar sin namespace (compatibilidad)
+        // Si no existe con namespace, intentar sin namespace
         $controllerClass = $controllerName;
     }
 
-    // Instanciar controlador
     if (class_exists($controllerClass)) {
         $controller = new $controllerClass();
 
-        // Verificar si existe el método
         if (method_exists($controller, $method)) {
+            // Llamar al método con parámetros
             call_user_func_array([$controller, $method], $params);
         } else {
-            // Método no encontrado
+            // Método no encontrado - 404
             http_response_code(404);
-            $notFoundPage = APP_PATH . '/views/pages/404.php';
-            if (file_exists($notFoundPage)) {
-                require_once $notFoundPage;
+            if (file_exists(APP_PATH . '/views/pages/404.php')) {
+                require_once APP_PATH . '/views/pages/404.php';
             } else {
-                echo "Error 404: Método '$method' no encontrado en $controllerName";
+                echo "404 - Método no encontrado: $method";
             }
         }
     } else {
-        // Clase no encontrada
+        // Clase no encontrada - 404
         http_response_code(404);
-        $notFoundPage = APP_PATH . '/views/pages/404.php';
-        if (file_exists($notFoundPage)) {
-            require_once $notFoundPage;
+        if (file_exists(APP_PATH . '/views/pages/404.php')) {
+            require_once APP_PATH . '/views/pages/404.php';
         } else {
-            echo "Error 404: Controlador '$controllerClass' no encontrado";
+            echo "404 - Controlador no encontrado: $controllerClass";
         }
     }
 } else {
-    // Controlador no encontrado
+    // Controlador no existe - 404
     http_response_code(404);
-    $notFoundPage = APP_PATH . '/views/pages/404.php';
-    if (file_exists($notFoundPage)) {
-        require_once $notFoundPage;
+    if (file_exists(APP_PATH . '/views/pages/404.php')) {
+        require_once APP_PATH . '/views/pages/404.php';
     } else {
-        echo "Error 404: Archivo de controlador no encontrado: $controllerFile";
+        echo '404 - Página no encontrada';
     }
 }

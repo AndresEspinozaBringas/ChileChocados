@@ -1,11 +1,19 @@
 <?php
 /**
  * PublicacionController
- * Maneja todas las operaciones relacionadas con publicaciones
+ * Controlador para gestionar todas las operaciones de publicaciones
+ * 
+ * @author ToroDigital
+ * @date 2025-10-25
  */
 
-require_once APP_PATH . '/models/Publicacion.php';
-require_once APP_PATH . '/models/Categoria.php';
+namespace App\Controllers;
+
+use App\Models\Publicacion;
+use App\Models\Categoria;
+use App\Helpers\Auth;
+use App\Helpers\Session;
+use PDO;
 
 class PublicacionController {
     
@@ -19,9 +27,10 @@ class PublicacionController {
     
     /**
      * Muestra el listado de publicaciones con filtros
+     * Ruta: GET /publicaciones
      */
     public function index() {
-        // Obtener parámetros de búsqueda/filtro
+        // Obtener parámetros de filtros desde URL
         $filtros = [
             'categoria_id' => $_GET['categoria'] ?? null,
             'subcategoria_id' => $_GET['subcategoria'] ?? null,
@@ -29,267 +38,497 @@ class PublicacionController {
             'comuna_id' => $_GET['comuna'] ?? null,
             'precio_min' => $_GET['precio_min'] ?? null,
             'precio_max' => $_GET['precio_max'] ?? null,
-            'estado' => $_GET['estado'] ?? null, // 'siniestrado' o 'desarme'
+            'tipo_venta' => $_GET['tipo'] ?? null, // 'completo' o 'desarme'
             'buscar' => $_GET['q'] ?? null,
-            'orden' => $_GET['orden'] ?? 'recientes', // recientes, precio_asc, precio_desc
+            'orden' => $_GET['orden'] ?? 'recientes',
             'page' => $_GET['page'] ?? 1
         ];
         
-        // Obtener publicaciones aplicando filtros
+        // Obtener publicaciones con filtros aplicados
         $resultado = $this->publicacionModel->listarConFiltros($filtros);
         
-        // Obtener datos para los filtros
-        $categorias = $this->categoriaModel->obtenerCategoriasActivas();
-        $regiones = $this->obtenerRegiones();
+        // Obtener datos para los selectores de filtros
+        $categorias = $this->categoriaModel->getActivas();
         
         $data = [
             'title' => 'Listado de Vehículos Siniestrados - ChileChocados',
             'meta_description' => 'Encuentra vehículos siniestrados y en desarme en todo Chile',
-            'publicaciones' => $resultado['publicaciones'],
-            'total' => $resultado['total'],
-            'pagina_actual' => $filtros['page'],
-            'total_paginas' => $resultado['total_paginas'],
+            'publicaciones' => $resultado['publicaciones'] ?? [],
+            'total' => $resultado['total'] ?? 0,
+            'pagina_actual' => (int)$filtros['page'],
+            'total_paginas' => $resultado['total_paginas'] ?? 1,
             'filtros_aplicados' => $filtros,
-            'categorias' => $categorias,
-            'regiones' => $regiones
+            'categorias' => $categorias
         ];
         
-        require_once APP_PATH . '/views/pages/publicaciones/listado.php';
+        // Cargar vista
+        require_once __DIR__ . '/../views/pages/publicaciones/list.php';
     }
     
     /**
      * Muestra el detalle de una publicación
-     * 
-     * @param int $id ID de la publicación
+     * Ruta: GET /publicacion/{id}
      */
-    public function detalle($id) {
-        $publicacion = $this->publicacionModel->obtenerPorIdCompleto($id);
+    public function show($id) {
+        // Obtener publicación con toda su información
+        $publicacion = $this->publicacionModel->getConRelaciones($id);
         
-        if (!$publicacion || $publicacion['estado'] !== 'activa') {
-            header('Location: ' . BASE_URL . '/listado');
+        if (!$publicacion || $publicacion->estado !== 'aprobada') {
+            header('Location: ' . BASE_URL . '/404');
             exit;
         }
         
         // Incrementar contador de vistas
         $this->publicacionModel->incrementarVistas($id);
         
+        // Obtener imágenes de la publicación
+        $imagenes = $this->publicacionModel->getImagenes($id);
+        
         // Obtener publicaciones similares
-        $similares = $this->publicacionModel->obtenerSimilares(
-            $publicacion['categoria_id'],
-            $publicacion['region_id'],
-            $id,
-            4
-        );
-        
-        // Verificar si el usuario actual es el propietario
-        $es_propietario = false;
-        if (isset($_SESSION['usuario_id'])) {
-            $es_propietario = ($publicacion['usuario_id'] == $_SESSION['usuario_id']);
-        }
+        $similares = $this->publicacionModel->getSimilares($id, $publicacion->categoria_padre_id, 4);
         
         $data = [
-            'title' => $publicacion['titulo'] . ' - ChileChocados',
-            'meta_description' => substr(strip_tags($publicacion['descripcion']), 0, 160),
+            'title' => $publicacion->titulo . ' - ChileChocados',
+            'meta_description' => substr($publicacion->descripcion, 0, 160),
             'publicacion' => $publicacion,
-            'similares' => $similares,
-            'es_propietario' => $es_propietario
+            'imagenes' => $imagenes,
+            'similares' => $similares
         ];
         
-        require_once APP_PATH . '/views/pages/publicaciones/detalle.php';
+        // Cargar vista
+        require_once __DIR__ . '/../views/pages/publicaciones/detail.php';
     }
     
     /**
-     * Muestra el formulario para crear una nueva publicación
-     * Requiere autenticación
+     * Muestra el formulario para crear nueva publicación
+     * Ruta: GET /publicar
      */
-    public function crear() {
-        // Verificar autenticación
-        if (!isset($_SESSION['usuario_id'])) {
-            $_SESSION['redirect_after_login'] = BASE_URL . '/publicaciones/crear';
-            header('Location: ' . BASE_URL . '/login');
-            exit;
-        }
+    public function create() {
+        // Verificar que el usuario esté autenticado
+        Auth::require();
         
-        // Obtener datos para el formulario
-        $categorias = $this->categoriaModel->obtenerCategoriasConSubcategorias();
-        $regiones = $this->obtenerRegiones();
+        // Obtener categorías para el formulario
+        $categorias = $this->categoriaModel->getConSubcategorias();
+        
+        // Obtener regiones para el selector
+        $regiones = $this->getRegiones();
         
         $data = [
-            'title' => 'Publicar Vehículo - ChileChocados',
-            'meta_description' => 'Publica tu vehículo siniestrado o en desarme',
+            'title' => 'Publicar Vehículo Siniestrado - ChileChocados',
             'categorias' => $categorias,
-            'regiones' => $regiones
+            'regiones' => $regiones,
+            'csrf_token' => generateCsrfToken()
         ];
         
-        require_once APP_PATH . '/views/pages/publicaciones/crear.php';
+        // Cargar vista del formulario
+        require_once __DIR__ . '/../views/pages/publicaciones/publish.php';
     }
     
     /**
-     * Procesa el guardado de una nueva publicación
+     * Procesa y guarda una nueva publicación
+     * Ruta: POST /publicaciones/store
      */
-    public function guardar() {
+    public function store() {
         // Verificar autenticación
-        if (!isset($_SESSION['usuario_id'])) {
-            header('Location: ' . BASE_URL . '/login');
-            exit;
-        }
-        
-        // Verificar método POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . BASE_URL . '/publicaciones/crear');
-            exit;
-        }
+        Auth::require();
         
         // Verificar token CSRF
-        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
             $_SESSION['error'] = 'Token de seguridad inválido';
-            header('Location: ' . BASE_URL . '/publicaciones/crear');
+            header('Location: ' . BASE_URL . '/publicar');
             exit;
         }
         
-        // Validar y sanitizar datos
-        $datos = [
-            'usuario_id' => $_SESSION['usuario_id'],
-            'categoria_id' => filter_input(INPUT_POST, 'categoria_id', FILTER_VALIDATE_INT),
-            'subcategoria_id' => filter_input(INPUT_POST, 'subcategoria_id', FILTER_VALIDATE_INT),
-            'titulo' => filter_input(INPUT_POST, 'titulo', FILTER_SANITIZE_STRING),
-            'descripcion' => filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_STRING),
-            'precio' => filter_input(INPUT_POST, 'precio', FILTER_VALIDATE_FLOAT),
-            'precio_negociable' => isset($_POST['precio_negociable']) ? 1 : 0,
-            'region_id' => filter_input(INPUT_POST, 'region_id', FILTER_VALIDATE_INT),
-            'comuna_id' => filter_input(INPUT_POST, 'comuna_id', FILTER_VALIDATE_INT),
-            'marca' => filter_input(INPUT_POST, 'marca', FILTER_SANITIZE_STRING),
-            'modelo' => filter_input(INPUT_POST, 'modelo', FILTER_SANITIZE_STRING),
-            'ano' => filter_input(INPUT_POST, 'ano', FILTER_VALIDATE_INT),
-            'kilometraje' => filter_input(INPUT_POST, 'kilometraje', FILTER_VALIDATE_INT),
-            'tipo_vehiculo' => filter_input(INPUT_POST, 'tipo_vehiculo', FILTER_SANITIZE_STRING),
-            'estado_vehiculo' => filter_input(INPUT_POST, 'estado_vehiculo', FILTER_SANITIZE_STRING)
-        ];
-        
-        // Validaciones
-        $errores = $this->validarDatosPublicacion($datos);
+        // Validar datos del formulario
+        $errores = $this->validarDatosPublicacion($_POST);
         
         if (!empty($errores)) {
             $_SESSION['errores'] = $errores;
-            $_SESSION['datos_publicacion'] = $datos;
-            header('Location: ' . BASE_URL . '/publicaciones/crear');
+            $_SESSION['old'] = $_POST;
+            header('Location: ' . BASE_URL . '/publicar');
             exit;
         }
         
-        // Guardar publicación
-        try {
-            $publicacion_id = $this->publicacionModel->crear($datos);
-            
-            // Procesar imágenes si hay
-            if (!empty($_FILES['imagenes']['name'][0])) {
-                $this->procesarImagenes($publicacion_id, $_FILES['imagenes']);
-            }
-            
-            $_SESSION['success'] = 'Publicación creada exitosamente. Está en revisión.';
-            header('Location: ' . BASE_URL . '/publicaciones/detalle/' . $publicacion_id);
-            exit;
-            
-        } catch (Exception $e) {
+        // Preparar datos para guardar
+        $datos = [
+            'usuario_id' => $_SESSION['user_id'],
+            'categoria_padre_id' => sanitize($_POST['categoria_padre_id']),
+            'subcategoria_id' => !empty($_POST['subcategoria_id']) ? sanitize($_POST['subcategoria_id']) : null,
+            'titulo' => sanitize($_POST['titulo']),
+            'marca' => sanitize($_POST['marca']),
+            'modelo' => sanitize($_POST['modelo']),
+            'anio' => (int)$_POST['anio'],
+            'descripcion' => sanitize($_POST['descripcion']),
+            'tipo_venta' => sanitize($_POST['tipo_venta']),
+            'precio' => $_POST['tipo_venta'] === 'completo' ? (float)$_POST['precio'] : null,
+            'region_id' => (int)$_POST['region_id'],
+            'comuna_id' => !empty($_POST['comuna_id']) ? (int)$_POST['comuna_id'] : null,
+            'estado' => 'pendiente', // Requiere aprobación del admin
+            'fecha_publicacion' => date('Y-m-d H:i:s')
+        ];
+        
+        // Guardar publicación en BD
+        $publicacion_id = $this->publicacionModel->create($datos);
+        
+        if (!$publicacion_id) {
             $_SESSION['error'] = 'Error al crear la publicación. Intenta nuevamente.';
-            error_log('Error al crear publicación: ' . $e->getMessage());
-            header('Location: ' . BASE_URL . '/publicaciones/crear');
+            header('Location: ' . BASE_URL . '/publicar');
             exit;
         }
+        
+        // Procesar y guardar imágenes
+        if (!empty($_FILES['imagenes']['name'][0])) {
+            $this->procesarImagenes($publicacion_id, $_FILES['imagenes']);
+        }
+        
+        // Guardar ID de publicación en sesión para página de confirmación
+        $_SESSION['publicacion_creada_id'] = $publicacion_id;
+        
+        // Redirigir a página de aprobación/confirmación
+        header('Location: ' . BASE_URL . '/publicaciones/approval');
+        exit;
     }
     
     /**
-     * Valida los datos de una publicación
-     * 
-     * @param array $datos Datos a validar
-     * @return array Array de errores (vacío si no hay errores)
+     * Muestra página de confirmación tras crear publicación
+     * Ruta: GET /publicaciones/approval
+     */
+    public function approval() {
+        // Verificar autenticación
+        Auth::require();
+        
+        // Verificar que existe una publicación recién creada
+        if (!isset($_SESSION['publicacion_creada_id'])) {
+            header('Location: ' . BASE_URL);
+            exit;
+        }
+        
+        $publicacion_id = $_SESSION['publicacion_creada_id'];
+        unset($_SESSION['publicacion_creada_id']); // Limpiar sesión
+        
+        // Obtener datos de la publicación
+        $publicacion = $this->publicacionModel->find($publicacion_id);
+        
+        $data = [
+            'title' => 'Publicación Creada - ChileChocados',
+            'publicacion' => $publicacion
+        ];
+        
+        // Cargar vista de confirmación
+        require_once __DIR__ . '/../views/pages/publicaciones/approval.php';
+    }
+    
+    /**
+     * Muestra formulario para editar publicación
+     * Ruta: GET /publicaciones/{id}/editar
+     */
+    public function edit($id) {
+        Auth::require();
+        
+        // Obtener publicación
+        $publicacion = $this->publicacionModel->find($id);
+        
+        // Verificar que la publicación existe y pertenece al usuario
+        if (!$publicacion || $publicacion->usuario_id != $_SESSION['user_id']) {
+            $_SESSION['error'] = 'No tienes permiso para editar esta publicación';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Obtener categorías y regiones
+        $categorias = $this->categoriaModel->getConSubcategorias();
+        $regiones = $this->getRegiones();
+        $imagenes = $this->publicacionModel->getImagenes($id);
+        
+        $data = [
+            'title' => 'Editar Publicación - ChileChocados',
+            'publicacion' => $publicacion,
+            'categorias' => $categorias,
+            'regiones' => $regiones,
+            'imagenes' => $imagenes,
+            'csrf_token' => generateCsrfToken()
+        ];
+        
+        require_once __DIR__ . '/../views/pages/publicaciones/edit.php';
+    }
+    
+    /**
+     * Actualiza una publicación existente
+     * Ruta: POST /publicaciones/{id}/update
+     */
+    public function update($id) {
+        Auth::require();
+        
+        // Verificar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Token de seguridad inválido';
+            header('Location: ' . BASE_URL . '/publicaciones/' . $id . '/editar');
+            exit;
+        }
+        
+        // Obtener publicación
+        $publicacion = $this->publicacionModel->find($id);
+        
+        // Verificar permisos
+        if (!$publicacion || $publicacion->usuario_id != $_SESSION['user_id']) {
+            $_SESSION['error'] = 'No tienes permiso para editar esta publicación';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Validar datos
+        $errores = $this->validarDatosPublicacion($_POST);
+        
+        if (!empty($errores)) {
+            $_SESSION['errores'] = $errores;
+            $_SESSION['old'] = $_POST;
+            header('Location: ' . BASE_URL . '/publicaciones/' . $id . '/editar');
+            exit;
+        }
+        
+        // Preparar datos actualizados
+        $datos = [
+            'categoria_padre_id' => sanitize($_POST['categoria_padre_id']),
+            'subcategoria_id' => !empty($_POST['subcategoria_id']) ? sanitize($_POST['subcategoria_id']) : null,
+            'titulo' => sanitize($_POST['titulo']),
+            'marca' => sanitize($_POST['marca']),
+            'modelo' => sanitize($_POST['modelo']),
+            'anio' => (int)$_POST['anio'],
+            'descripcion' => sanitize($_POST['descripcion']),
+            'tipo_venta' => sanitize($_POST['tipo_venta']),
+            'precio' => $_POST['tipo_venta'] === 'completo' ? (float)$_POST['precio'] : null,
+            'region_id' => (int)$_POST['region_id'],
+            'comuna_id' => !empty($_POST['comuna_id']) ? (int)$_POST['comuna_id'] : null,
+            'estado' => 'pendiente' // Vuelve a revisión tras editar
+        ];
+        
+        // Actualizar en BD
+        $this->publicacionModel->update($id, $datos);
+        
+        // Procesar nuevas imágenes si existen
+        if (!empty($_FILES['imagenes']['name'][0])) {
+            $this->procesarImagenes($id, $_FILES['imagenes']);
+        }
+        
+        $_SESSION['success'] = 'Publicación actualizada exitosamente. Está pendiente de revisión.';
+        header('Location: ' . BASE_URL . '/mis-publicaciones');
+        exit;
+    }
+    
+    /**
+     * Elimina una publicación
+     * Ruta: POST /publicaciones/{id}/eliminar
+     */
+    public function destroy($id) {
+        Auth::require();
+        
+        // Verificar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Token de seguridad inválido';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Obtener publicación
+        $publicacion = $this->publicacionModel->find($id);
+        
+        // Verificar permisos
+        if (!$publicacion || $publicacion->usuario_id != $_SESSION['user_id']) {
+            $_SESSION['error'] = 'No tienes permiso para eliminar esta publicación';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Eliminar imágenes físicas del servidor
+        $imagenes = $this->publicacionModel->getImagenes($id);
+        foreach ($imagenes as $imagen) {
+            $ruta = __DIR__ . '/../../public/uploads/' . $imagen->url;
+            if (file_exists($ruta)) {
+                unlink($ruta);
+            }
+        }
+        
+        // Eliminar publicación de BD (soft delete - cambiar estado)
+        $this->publicacionModel->update($id, ['estado' => 'archivada']);
+        
+        $_SESSION['success'] = 'Publicación eliminada exitosamente';
+        header('Location: ' . BASE_URL . '/mis-publicaciones');
+        exit;
+    }
+    
+    /**
+     * Muestra landing page "Vende tu vehículo"
+     * Ruta: GET /vender
+     */
+    public function sell() {
+        $data = [
+            'title' => 'Vende tu Vehículo Siniestrado - ChileChocados',
+            'meta_description' => 'Publica gratis tu vehículo siniestrado en el marketplace líder de Chile'
+        ];
+        
+        require_once __DIR__ . '/../views/pages/publicaciones/sell.php';
+    }
+    
+    // ==================== MÉTODOS PRIVADOS ====================
+    
+    /**
+     * Valida los datos del formulario de publicación
      */
     private function validarDatosPublicacion($datos) {
         $errores = [];
         
+        // Validar categoría
+        if (empty($datos['categoria_padre_id'])) {
+            $errores['categoria_padre_id'] = 'Debes seleccionar una categoría';
+        }
+        
+        // Validar título
         if (empty($datos['titulo']) || strlen($datos['titulo']) < 10) {
-            $errores[] = 'El título debe tener al menos 10 caracteres';
+            $errores['titulo'] = 'El título debe tener al menos 10 caracteres';
+        } elseif (strlen($datos['titulo']) > 100) {
+            $errores['titulo'] = 'El título no puede exceder 100 caracteres';
         }
         
+        // Validar marca
+        if (empty($datos['marca'])) {
+            $errores['marca'] = 'La marca es obligatoria';
+        }
+        
+        // Validar modelo
+        if (empty($datos['modelo'])) {
+            $errores['modelo'] = 'El modelo es obligatorio';
+        }
+        
+        // Validar año
+        $anio_actual = (int)date('Y');
+        if (empty($datos['anio']) || $datos['anio'] < 1970 || $datos['anio'] > $anio_actual + 1) {
+            $errores['anio'] = 'El año debe estar entre 1970 y ' . ($anio_actual + 1);
+        }
+        
+        // Validar descripción
         if (empty($datos['descripcion']) || strlen($datos['descripcion']) < 50) {
-            $errores[] = 'La descripción debe tener al menos 50 caracteres';
+            $errores['descripcion'] = 'La descripción debe tener al menos 50 caracteres';
+        } elseif (strlen($datos['descripcion']) > 2000) {
+            $errores['descripcion'] = 'La descripción no puede exceder 2000 caracteres';
         }
         
-        if (empty($datos['categoria_id'])) {
-            $errores[] = 'Debes seleccionar una categoría';
+        // Validar tipo de venta
+        if (empty($datos['tipo_venta']) || !in_array($datos['tipo_venta'], ['completo', 'desarme'])) {
+            $errores['tipo_venta'] = 'Debes seleccionar un tipo de venta válido';
         }
         
+        // Validar precio si es venta completa
+        if ($datos['tipo_venta'] === 'completo') {
+            if (empty($datos['precio']) || $datos['precio'] <= 0) {
+                $errores['precio'] = 'El precio debe ser mayor a 0';
+            } elseif ($datos['precio'] > 50000000) {
+                $errores['precio'] = 'El precio no puede exceder $50.000.000';
+            }
+        }
+        
+        // Validar región
         if (empty($datos['region_id'])) {
-            $errores[] = 'Debes seleccionar una región';
-        }
-        
-        if (empty($datos['comuna_id'])) {
-            $errores[] = 'Debes seleccionar una comuna';
-        }
-        
-        if ($datos['precio'] !== null && $datos['precio'] < 0) {
-            $errores[] = 'El precio no puede ser negativo';
+            $errores['region_id'] = 'Debes seleccionar una región';
         }
         
         return $errores;
     }
     
     /**
-     * Procesa y guarda las imágenes de una publicación
-     * 
-     * @param int $publicacion_id ID de la publicación
-     * @param array $files Array de archivos $_FILES
+     * Procesa y guarda las imágenes subidas
      */
-    private function procesarImagenes($publicacion_id, $files) {
-        $upload_dir = PUBLIC_PATH . '/uploads/publicaciones/' . $publicacion_id . '/';
+    private function procesarImagenes($publicacion_id, $archivos) {
+        $total_imagenes = count($archivos['name']);
         
-        // Crear directorio si no existe
-        if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0755, true);
+        // Validar cantidad (máximo 6 imágenes)
+        if ($total_imagenes > 6) {
+            $_SESSION['warning'] = 'Solo se procesaron las primeras 6 imágenes';
+            $total_imagenes = 6;
         }
         
-        $tipos_permitidos = ['image/jpeg', 'image/png', 'image/webp'];
-        $max_size = 5 * 1024 * 1024; // 5MB
-        
-        $orden = 1;
-        foreach ($files['tmp_name'] as $key => $tmp_name) {
-            if (empty($tmp_name)) continue;
+        for ($i = 0; $i < $total_imagenes; $i++) {
+            // Saltar si hay error en el archivo
+            if ($archivos['error'][$i] !== UPLOAD_ERR_OK) {
+                continue;
+            }
             
-            $file_type = $files['type'][$key];
-            $file_size = $files['size'][$key];
+            $archivo = [
+                'name' => $archivos['name'][$i],
+                'type' => $archivos['type'][$i],
+                'tmp_name' => $archivos['tmp_name'][$i],
+                'error' => $archivos['error'][$i],
+                'size' => $archivos['size'][$i]
+            ];
             
-            // Validar tipo y tamaño
-            if (!in_array($file_type, $tipos_permitidos) || $file_size > $max_size) {
+            // Validar imagen
+            if (!$this->validarImagen($archivo)) {
                 continue;
             }
             
             // Generar nombre único
-            $extension = pathinfo($files['name'][$key], PATHINFO_EXTENSION);
-            $nombre_archivo = uniqid() . '.' . $extension;
-            $ruta_completa = $upload_dir . $nombre_archivo;
+            $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
+            $nombre_archivo = uniqid('pub_' . $publicacion_id . '_') . '.' . $extension;
             
-            // Mover archivo
-            if (move_uploaded_file($tmp_name, $ruta_completa)) {
-                // Guardar en base de datos
-                $this->publicacionModel->guardarFoto([
-                    'publicacion_id' => $publicacion_id,
-                    'ruta' => '/uploads/publicaciones/' . $publicacion_id . '/' . $nombre_archivo,
-                    'orden' => $orden,
-                    'es_principal' => ($orden === 1) ? 1 : 0
+            // Crear directorio si no existe
+            $directorio = __DIR__ . '/../../public/uploads/publicaciones/' . date('Y') . '/' . date('m');
+            if (!is_dir($directorio)) {
+                mkdir($directorio, 0777, true);
+            }
+            
+            // Ruta completa del archivo
+            $ruta_completa = $directorio . '/' . $nombre_archivo;
+            
+            // Mover archivo subido
+            if (move_uploaded_file($archivo['tmp_name'], $ruta_completa)) {
+                // Guardar en BD
+                $url_relativa = 'publicaciones/' . date('Y') . '/' . date('m') . '/' . $nombre_archivo;
+                
+                $this->publicacionModel->agregarImagen($publicacion_id, [
+                    'url' => $url_relativa,
+                    'orden' => $i + 1,
+                    'es_principal' => $i === 0 ? 1 : 0
                 ]);
                 
-                $orden++;
+                // Actualizar foto principal en la publicación si es la primera
+                if ($i === 0) {
+                    $this->publicacionModel->update($publicacion_id, ['foto_principal' => $url_relativa]);
+                }
             }
         }
     }
     
     /**
-     * Obtiene el listado de regiones
-     * 
-     * @return array
+     * Valida que el archivo sea una imagen válida
      */
-    private function obtenerRegiones() {
-        // Esto debería venir de un modelo Region
-        // Por ahora retornamos un array simple
-        return $this->publicacionModel->obtenerRegiones();
+    private function validarImagen($archivo) {
+        // Validar tamaño (máximo 5MB)
+        $max_size = 5 * 1024 * 1024; // 5MB
+        if ($archivo['size'] > $max_size) {
+            return false;
+        }
+        
+        // Validar extensión
+        $extensiones_permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+        $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
+        if (!in_array($extension, $extensiones_permitidas)) {
+            return false;
+        }
+        
+        // Validar MIME type
+        $tipos_permitidos = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!in_array($archivo['type'], $tipos_permitidos)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Obtiene las regiones de Chile
+     */
+    private function getRegiones() {
+        $db = getDB();
+        $stmt = $db->query("SELECT * FROM regiones ORDER BY nombre ASC");
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 }

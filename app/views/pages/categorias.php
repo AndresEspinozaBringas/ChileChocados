@@ -19,11 +19,8 @@ require_once APP_PATH . '/views/layouts/header.php';
     <div class="h1" style="color: white;">Explora por Categoría</div>
     <p class="meta" style="margin-top: 8px; color: rgba(255,255,255,0.9);">
       Encuentra vehículos siniestrados y en desarme organizados por tipo. 
-      <?php echo count($data['categorias']); ?> categorías disponibles con 
-      <?php 
-        $total_publicaciones = array_sum(array_column($data['categorias'], 'total_publicaciones'));
-        echo number_format($total_publicaciones, 0, ',', '.');
-      ?> publicaciones activas.
+      <?php echo count($categorias); ?> categorías disponibles con 
+      <?php echo number_format($total_publicaciones, 0, ',', '.'); ?> publicaciones activas.
     </p>
   </div>
 
@@ -35,9 +32,9 @@ require_once APP_PATH . '/views/layouts/header.php';
     </p>
 
     <div class="grid cols-4" style="margin-top: 16px;">
-      <?php if (!empty($data['categorias'])): ?>
-        <?php foreach ($data['categorias'] as $categoria): ?>
-          <a class="card cat-card" href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $categoria['id']; ?>">
+      <?php if (!empty($categorias)): ?>
+        <?php foreach ($categorias as $categoria): ?>
+          <a class="card cat-card" href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $categoria->id; ?>">
             <div class="left">
               <!-- Icono según categoría -->
               <span class="iconify" style="font-size: 32px; color: #0066CC;">
@@ -49,7 +46,7 @@ require_once APP_PATH . '/views/layouts/header.php';
                     'default' => '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="22" height="18" rx="2" ry="2"></rect><line x1="1" y1="9" x2="23" y2="9"></line></svg>'
                 ];
                 
-                $slug = strtolower($categoria['slug'] ?? '');
+                $slug = strtolower($categoria->slug ?? '');
                 $icono_key = 'default';
                 foreach (array_keys($iconos) as $key) {
                     if (strpos($slug, $key) !== false) {
@@ -62,19 +59,19 @@ require_once APP_PATH . '/views/layouts/header.php';
               </span>
               
               <div>
-                <div class="h3"><?php echo htmlspecialchars($categoria['nombre']); ?></div>
+                <div class="h3"><?php echo htmlspecialchars($categoria->nombre); ?></div>
                 
                 <!-- Mostrar hasta 3 subcategorías -->
-                <?php if (!empty($categoria['subcategorias'])): ?>
+                <?php if (!empty($categoria->subcategorias)): ?>
                   <p class="meta">
                     <?php
-                      $subs = array_slice($categoria['subcategorias'], 0, 3);
+                      $subs = array_slice($categoria->subcategorias, 0, 3);
                       $nombres = array_map(function($s) { 
-                          return htmlspecialchars($s['nombre']); 
+                          return htmlspecialchars($s->nombre); 
                       }, $subs);
                       echo implode(' • ', $nombres);
                       
-                      $total_subs = count($categoria['subcategorias']);
+                      $total_subs = count($categoria->subcategorias);
                       if ($total_subs > 3) {
                           echo ' (+' . ($total_subs - 3) . ' más)';
                       }
@@ -86,7 +83,7 @@ require_once APP_PATH . '/views/layouts/header.php';
             
             <!-- Contador de publicaciones -->
             <span class="cat-count" style="background: #0066CC; color: white; padding: 4px 12px; border-radius: 12px; font-size: 14px; font-weight: 600;">
-              <?php echo number_format($categoria['total_publicaciones'], 0, ',', '.'); ?>
+              <?php echo number_format($categoria->total_publicaciones, 0, ',', '.'); ?>
             </span>
           </a>
         <?php endforeach; ?>
@@ -99,28 +96,28 @@ require_once APP_PATH . '/views/layouts/header.php';
   </section>
 
   <!-- Sección de subcategorías destacadas -->
-  <?php if (!empty($data['categorias'])): ?>
+  <?php if (!empty($categorias)): ?>
     <section style="margin-top: 48px;">
       <div class="h2">Explora por Subcategoría</div>
       <p class="meta" style="margin-top: 8px;">
         Accede directamente a tipos específicos de vehículos
       </p>
 
-      <?php foreach ($data['categorias'] as $categoria): ?>
-        <?php if (!empty($categoria['subcategorias'])): ?>
+      <?php foreach ($categorias as $categoria): ?>
+        <?php if (!empty($categoria->subcategorias)): ?>
           <div class="card" style="margin-top: 16px;">
-            <div class="h3"><?php echo htmlspecialchars($categoria['nombre']); ?></div>
+            <div class="h3"><?php echo htmlspecialchars($categoria->nombre); ?></div>
             
             <div class="grid cols-4" style="margin-top: 12px; gap: 8px;">
-              <?php foreach ($categoria['subcategorias'] as $subcategoria): ?>
+              <?php foreach ($categoria->subcategorias as $subcategoria): ?>
                 <a 
-                  href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $categoria['id']; ?>&subcategoria=<?php echo $subcategoria['id']; ?>" 
+                  href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $categoria->id; ?>&subcategoria=<?php echo $subcategoria->id; ?>" 
                   class="btn" 
                   style="justify-content: flex-start; text-align: left;"
                 >
-                  <?php echo htmlspecialchars($subcategoria['nombre']); ?>
+                  <?php echo htmlspecialchars($subcategoria->nombre); ?>
                   <span style="margin-left: auto; opacity: 0.6; font-size: 12px;">
-                    (<?php echo $subcategoria['total_publicaciones'] ?? 0; ?>)
+                    (<?php echo $subcategoria->total_publicaciones ?? 0; ?>)
                   </span>
                 </a>
               <?php endforeach; ?>

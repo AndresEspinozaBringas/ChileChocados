@@ -7,12 +7,11 @@
  * @date 2025-10-25
  */
 
-// Importar modelos necesarios
-require_once APP_PATH . '/models/Publicacion.php';
-require_once APP_PATH . '/models/Categoria.php';
+namespace App\Controllers;
 
 use App\Models\Publicacion;
 use App\Models\Categoria;
+use Exception;
 
 class HomeController {
     
