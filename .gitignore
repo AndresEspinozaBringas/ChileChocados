@@ -11,9 +11,9 @@ logs/
 .env
 .env.local
 
-# Uploads de usuarios (opcional, según necesidad)
-# public/uploads/*
-# !public/uploads/.gitkeep
+# Uploads de usuarios (NO subir imágenes a Git)
+public/uploads/*
+!public/uploads/.gitkeep
 
 # Sistema operativo
 .DS_Store
