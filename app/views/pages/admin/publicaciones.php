@@ -29,28 +29,28 @@ require_once __DIR__ . '/../../layouts/header.php';
   <div class="grid cols-4" style="gap: 16px; margin-bottom: 32px;">
     <div class="card" style="text-align: center; padding: 24px; border-left: 4px solid #0066CC;">
       <div class="h1" style="color: #0066CC; margin-bottom: 8px;">
-        <?php echo number_format($stats['total'] ?? 0); ?>
+        <?php echo number_format($stats->total ?? 0); ?>
       </div>
       <div class="meta">Total Publicaciones</div>
     </div>
     
     <div class="card" style="text-align: center; padding: 24px; border-left: 4px solid #FF9500;">
       <div class="h1" style="color: #FF9500; margin-bottom: 8px;">
-        <?php echo number_format($stats['pendientes'] ?? 0); ?>
+        <?php echo number_format($stats->pendientes ?? 0); ?>
       </div>
       <div class="meta">Pendientes Aprobación</div>
     </div>
     
     <div class="card" style="text-align: center; padding: 24px; border-left: 4px solid #34C759;">
       <div class="h1" style="color: #34C759; margin-bottom: 8px;">
-        <?php echo number_format($stats['aprobadas'] ?? 0); ?>
+        <?php echo number_format($stats->aprobadas ?? 0); ?>
       </div>
       <div class="meta">Aprobadas</div>
     </div>
     
     <div class="card" style="text-align: center; padding: 24px; border-left: 4px solid #FF3B30;">
       <div class="h1" style="color: #FF3B30; margin-bottom: 8px;">
-        <?php echo number_format($stats['rechazadas'] ?? 0); ?>
+        <?php echo number_format($stats->rechazadas ?? 0); ?>
       </div>
       <div class="meta">Rechazadas</div>
     </div>
@@ -385,7 +385,7 @@ function verDetallePublicacion(id) {
   document.getElementById('modalDetalle').style.display = 'flex';
   document.getElementById('contenidoDetalle').innerHTML = '<div style="text-align: center; padding: 48px;"><p>Cargando...</p></div>';
 
-  fetch(`<?php echo BASE_URL; ?>/admin/publicaciones/${id}?ajax=1`)
+  fetch(`<?php echo BASE_URL; ?>/admin?action=ver&id=${id}&ajax=1`)
     .then(response => response.json())
     .then(data => {
       const pub = data.publicacion;

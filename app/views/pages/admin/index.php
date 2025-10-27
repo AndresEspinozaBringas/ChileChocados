@@ -1,12 +1,7 @@
 <?php
-$pageTitle = 'Panel de Administración';
+// La verificación de admin se hace en el controlador
 layout('header');
 layout('nav');
-
-// Verificar que el usuario sea administrador
-if (!isAdmin()) {
-    redirect('admin/login');
-}
 ?>
 
 <main class="container">
@@ -19,22 +14,26 @@ if (!isAdmin()) {
     <a class="btn" href="<?php echo BASE_URL; ?>/admin/mensajes">Centro de mensajería</a>
   </div>
   
-  <div class="kpis">
-    <div class="kpi">
-      <div class="h3">Publicaciones activas</div>
-      <div class="h1">128</div>
+  <div class="grid cols-4" style="gap: 16px; margin: 24px 0;">
+    <div class="card" style="text-align: center; padding: 24px;">
+      <div class="meta">Publicaciones activas</div>
+      <div class="h1" style="margin-top: 8px;">128</div>
+      <p class="meta" style="margin-top: 4px; font-size: 12px;">Incluye normales y destacadas</p>
     </div>
-    <div class="kpi">
-      <div class="h3">Pendientes por aprobar</div>
-      <div class="h1">12</div>
+    <div class="card" style="text-align: center; padding: 24px;">
+      <div class="meta">Pendientes por aprobar</div>
+      <div class="h1" style="margin-top: 8px;">12</div>
+      <p class="meta" style="margin-top: 4px; font-size: 12px;">Últimas 24h</p>
     </div>
-    <div class="kpi">
-      <div class="h3">Banners activos</div>
-      <div class="h1">6</div>
+    <div class="card" style="text-align: center; padding: 24px;">
+      <div class="meta">Banners activos</div>
+      <div class="h1" style="margin-top: 8px;">6</div>
+      <p class="meta" style="margin-top: 4px; font-size: 12px;">Vencen en 15-30 días</p>
     </div>
-    <div class="kpi">
-      <div class="h3">Usuarios</div>
-      <div class="h1">940</div>
+    <div class="card" style="text-align: center; padding: 24px;">
+      <div class="meta">Usuarios</div>
+      <div class="h1" style="margin-top: 8px;">940</div>
+      <p class="meta" style="margin-top: 4px; font-size: 12px;">Nuevos esta semana: 37</p>
     </div>
   </div>
 
@@ -57,7 +56,7 @@ if (!isAdmin()) {
           <td>
             <a class="btn" href="#">Aprobar</a>
             <a class="btn" href="#">Rechazar</a>
-            <a class="btn primary" href="#">Destacar (<?php echo formatPrice(PRECIO_DESTACADO_15_DIAS); ?>)</a>
+            <a class="btn primary" href="#">Destacar ($5.000)</a>
             <a class="btn" href="<?php echo BASE_URL; ?>/admin/mensajes">Contactar</a>
           </td>
         </tr>
@@ -68,7 +67,7 @@ if (!isAdmin()) {
           <td>
             <a class="btn" href="#">Aprobar</a>
             <a class="btn" href="#">Rechazar</a>
-            <a class="btn primary" href="#">Destacar (<?php echo formatPrice(PRECIO_DESTACADO_15_DIAS); ?>)</a>
+            <a class="btn primary" href="#">Destacar ($5.000)</a>
             <a class="btn" href="<?php echo BASE_URL; ?>/admin/mensajes">Contactar</a>
           </td>
         </tr>
@@ -109,26 +108,26 @@ if (!isAdmin()) {
 
   <div class="card" style="margin-top:16px">
     <div class="h3">Estadísticas de Destacados (Flow)</div>
-    <div class="grid cols-4" style="margin-top:8px">
-      <div class="kpi">
-        <div class="h3">Últimos 7 días</div>
-        <div class="h1">42</div>
-        <div class="meta"><?php echo formatPrice(210000); ?> CLP</div>
+    <div class="grid cols-4" style="gap: 16px; margin-top: 16px;">
+      <div class="card" style="text-align: center; padding: 20px;">
+        <div class="meta">Destacadas activas</div>
+        <div class="h1" style="margin-top: 8px;">78</div>
+        <p class="meta" style="margin-top: 4px; font-size: 12px;">Vigentes hoy</p>
       </div>
-      <div class="kpi">
-        <div class="h3">Últimos 30 días</div>
-        <div class="h1">163</div>
-        <div class="meta"><?php echo formatPrice(815000); ?> CLP</div>
+      <div class="card" style="text-align: center; padding: 20px;">
+        <div class="meta">Nuevas (7 días)</div>
+        <div class="h1" style="margin-top: 8px;">42</div>
+        <p class="meta" style="margin-top: 4px; font-size: 12px;">Ingresos: $210.000</p>
       </div>
-      <div class="kpi">
-        <div class="h3">Acumulado Año</div>
-        <div class="h1">1.920</div>
-        <div class="meta"><?php echo formatPrice(9600000); ?> CLP</div>
+      <div class="card" style="text-align: center; padding: 20px;">
+        <div class="meta">Nuevas (30 días)</div>
+        <div class="h1" style="margin-top: 8px;">163</div>
+        <p class="meta" style="margin-top: 4px; font-size: 12px;">Ingresos: $815.000</p>
       </div>
-      <div class="kpi">
-        <div class="h3">Tasa de aprobación</div>
-        <div class="h1">96%</div>
-        <div class="meta">Flow aprobado / total</div>
+      <div class="card" style="text-align: center; padding: 20px;">
+        <div class="meta">Tasa de aprobación</div>
+        <div class="h1" style="margin-top: 8px;">96%</div>
+        <p class="meta" style="margin-top: 4px; font-size: 12px;">Flow aprobado / total</p>
       </div>
     </div>
     

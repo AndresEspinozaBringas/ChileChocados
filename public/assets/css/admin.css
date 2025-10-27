@@ -1,0 +1,535 @@
+/**
+ * ADMIN PANEL - ESTILOS ADICIONALES
+ * ChileChocados Admin Moderación
+ * 
+ * Este archivo es OPCIONAL - El sistema funciona con design-system.css
+ * Solo agregar si necesitas personalización adicional
+ * 
+ * Ruta de instalación: /public/assets/css/admin.css
+ */
+
+/* ============================================================================
+ * COMPONENTES ADMIN
+ * ============================================================================ */
+
+/* Alert Messages */
+.alert {
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.alert.success {
+  background-color: #D4EDDA;
+  color: #155724;
+  border-left: 4px solid #28A745;
+}
+
+.alert.error {
+  background-color: #F8D7DA;
+  color: #721C24;
+  border-left: 4px solid #DC3545;
+}
+
+.alert.warning {
+  background-color: #FFF3CD;
+  color: #856404;
+  border-left: 4px solid #FFC107;
+}
+
+.alert.info {
+  background-color: #D1ECF1;
+  color: #0C5460;
+  border-left: 4px solid #17A2B8;
+}
+
+/* ============================================================================
+ * BADGES Y ESTADOS
+ * ============================================================================ */
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.badge.pendiente {
+  background-color: #FFF3CD;
+  color: #856404;
+}
+
+.badge.aprobada {
+  background-color: #D4EDDA;
+  color: #155724;
+}
+
+.badge.rechazada {
+  background-color: #F8D7DA;
+  color: #721C24;
+}
+
+.badge.borrador {
+  background-color: #E2E3E5;
+  color: #383D41;
+}
+
+/* ============================================================================
+ * TABLAS
+ * ============================================================================ */
+
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table thead {
+  background-color: var(--cc-gray-50, #F9FAFB);
+}
+
+.table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--cc-text-primary, #1F2937);
+  border-bottom: 2px solid var(--cc-border-default, #E5E7EB);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--cc-border-light, #F3F4F6);
+  color: var(--cc-text-primary, #1F2937);
+}
+
+.table tbody tr:hover {
+  background-color: var(--cc-gray-25, #FAFAFA);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Tabla responsive */
+@media (max-width: 1024px) {
+  .table {
+    font-size: 13px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .table {
+    font-size: 12px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 6px;
+  }
+}
+
+/* ============================================================================
+ * FORMULARIOS Y FILTROS
+ * ============================================================================ */
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cc-text-secondary, #6B7280);
+  margin-bottom: 4px;
+}
+
+.input,
+.select {
+  padding: 10px 14px;
+  border: 1px solid var(--cc-border-default, #E5E7EB);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background-color: var(--cc-bg-surface, #FFFFFF);
+  color: var(--cc-text-primary, #1F2937);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--cc-primary, #E6332A);
+  box-shadow: 0 0 0 3px rgba(230, 51, 42, 0.1);
+}
+
+.input::placeholder {
+  color: var(--cc-text-tertiary, #9CA3AF);
+}
+
+textarea.input {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* ============================================================================
+ * KPIS Y ESTADÍSTICAS
+ * ============================================================================ */
+
+.kpi-card {
+  background: var(--cc-bg-surface, #FFFFFF);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.kpi-value {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: var(--cc-text-secondary, #6B7280);
+  font-weight: 500;
+}
+
+/* ============================================================================
+ * MODAL / OVERLAY
+ * ============================================================================ */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  animation: fadeIn 0.2s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: var(--cc-bg-surface, #FFFFFF);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: scale(0.95);
+  animation: scaleIn 0.2s forwards;
+}
+
+@keyframes scaleIn {
+  to {
+    transform: scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--cc-border-light, #F3F4F6);
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cc-text-primary, #1F2937);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--cc-text-secondary, #6B7280);
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.modal-close:hover {
+  background-color: var(--cc-gray-100, #F3F4F6);
+}
+
+/* ============================================================================
+ * PAGINACIÓN
+ * ============================================================================ */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: var(--cc-text-secondary, #6B7280);
+}
+
+.pagination-info strong {
+  color: var(--cc-text-primary, #1F2937);
+  font-weight: 600;
+}
+
+/* ============================================================================
+ * GALERÍA DE FOTOS
+ * ============================================================================ */
+
+.photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.photo-thumbnail {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.photo-thumbnail:hover {
+  transform: scale(1.05);
+}
+
+.photo-thumbnail.active {
+  border-color: var(--cc-primary, #E6332A);
+}
+
+.photo-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-main {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--cc-gray-100, #F3F4F6);
+  margin-bottom: 16px;
+}
+
+.photo-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================================================
+ * BOTONES ADICIONALES
+ * ============================================================================ */
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-icon {
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: none;
+  border: 1px solid var(--cc-border-default, #E5E7EB);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: var(--cc-gray-50, #F9FAFB);
+  border-color: var(--cc-gray-300, #D1D5DB);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* ============================================================================
+ * UTILIDADES
+ * ============================================================================ */
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 8px; }
+.p-2 { padding: 16px; }
+.p-3 { padding: 24px; }
+.p-4 { padding: 32px; }
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 16px; }
+.gap-3 { gap: 24px; }
+.gap-4 { gap: 32px; }
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.align-center {
+  align-items: center;
+}
+
+/* ============================================================================
+ * RESPONSIVE
+ * ============================================================================ */
+
+@media (max-width: 768px) {
+  .kpi-card {
+    padding: 16px;
+  }
+  
+  .kpi-value {
+    font-size: 28px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .filter-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+ * DARK MODE (Opcional - Para futuro)
+ * ============================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="dark"] .table thead {
+    background-color: #1F2937;
+  }
+  
+  :root[data-theme="dark"] .kpi-card {
+    background: #1F2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  :root[data-theme="dark"] .modal-content {
+    background: #1F2937;
+  }
+}
+
+/* ============================================================================
+ * PRINT STYLES
+ * ============================================================================ */
+
+@media print {
+  .btn,
+  .filter-bar,
+  .pagination,
+  .modal-overlay {
+    display: none !important;
+  }
+  
+  .table {
+    font-size: 10px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 4px;
+  }
+}

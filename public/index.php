@@ -199,48 +199,87 @@ if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numer
 }
 
 // ====================================
-// RUTAS ADMIN - TODO: Migrar a sistema de rutas actual
+// RUTAS ADMIN - SISTEMA DE MODERACIÓN
 // ====================================
-// NOTA: Estas rutas están comentadas porque usan $url como string
-// pero el sistema actual usa $url como array
-// Se deben migrar al sistema de specialRoutes o manejar en AdminController
 
-/*
-// Ruta principal del panel de moderación
-if ($url === '/admin/publicaciones') {
-    $controller = new AdminController();
-    $controller->publicaciones();
+// Rutas específicas para administración que deben manejarse antes del routing genérico
+if (!empty($url[0]) && $url[0] === 'admin') {
+    require_once APP_PATH . '/controllers/AdminController.php';
+    $controller = new App\Controllers\AdminController();
+    
+    // /admin - Dashboard principal (redirige a publicaciones)
+    if (count($url) === 1) {
+        $controller->index();
+        exit;
+    }
+    
+    // /admin/login - Login del admin
+    if ($url[1] === 'login') {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $controller->login();
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->authenticate();
+        }
+        exit;
+    }
+    
+    // /admin/logout - Cerrar sesión
+    if ($url[1] === 'logout') {
+        $controller->logout();
+        exit;
+    }
+    
+    // /admin/publicaciones - Lista de publicaciones
+    if ($url[1] === 'publicaciones' && count($url) === 2) {
+        $controller->publicaciones();
+        exit;
+    }
+    
+    // /admin/publicaciones/{id} - Ver detalle de publicación
+    if ($url[1] === 'publicaciones' && count($url) === 3 && is_numeric($url[2])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $controller->verPublicacion($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/publicaciones/{id}/aprobar - Aprobar publicación (POST)
+    if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'aprobar') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->aprobarPublicacion($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/publicaciones/{id}/rechazar - Rechazar publicación (POST)
+    if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'rechazar') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->rechazarPublicacion($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/publicaciones/{id}/destacar - Destacar publicación (POST)
+    if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'destacar') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->destacarPublicacion($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/publicaciones/{id}/contactar - Contactar usuario (POST)
+    if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'contactar') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->contactarUsuario($url[2]);
+            exit;
+        }
+    }
+    
+    // Si llegamos aquí, la ruta admin no fue encontrada
+    http_response_code(404);
+    echo "Ruta admin no encontrada";
     exit;
 }
-
-// Ver detalle de publicación (AJAX)
-if (preg_match('/^\/admin\/publicaciones\/(\d+)$/', $url, $matches)) {
-    $controller = new AdminController();
-    $controller->verPublicacion($matches[1]);
-    exit;
-}
-
-// Aprobar publicación (POST)
-if (preg_match('/^\/admin\/publicaciones\/(\d+)\/aprobar$/', $url, $matches)) {
-    $controller = new AdminController();
-    $controller->aprobarPublicacion($matches[1]);
-    exit;
-}
-
-// Rechazar publicación (POST)
-if (preg_match('/^\/admin\/publicaciones\/(\d+)\/rechazar$/', $url, $matches)) {
-    $controller = new AdminController();
-    $controller->rechazarPublicacion($matches[1]);
-    exit;
-}
-
-// Eliminar publicación (DELETE)
-if (preg_match('/^\/admin\/publicaciones\/(\d+)$/', $url, $matches) && $_SERVER['REQUEST_METHOD'] === 'DELETE') {
-    $controller = new AdminController();
-    $controller->eliminarPublicacion($matches[1]);
-    exit;
-}
-*/
 
 // ====================================
 // RUTAS API (AJAX)
