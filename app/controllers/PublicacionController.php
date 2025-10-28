@@ -76,7 +76,7 @@ class PublicacionController
     {
         // TODO: Conectar con base de datos en futuras etapas
         // Por ahora usamos datos estáticos para mostrar la página
-        
+
         // Datos estáticos de publicaciones
         $publicaciones_estaticas = [
             1 => [
@@ -176,7 +176,7 @@ class PublicacionController
         // Verificar si existe la publicación
         if (!isset($publicaciones_estaticas[$id])) {
             http_response_code(404);
-            echo "404 - Publicación no encontrada";
+            echo '404 - Publicación no encontrada';
             exit;
         }
 
@@ -188,7 +188,7 @@ class PublicacionController
         if ($id == 1) {
             // Imágenes para Ford Territory (4 imágenes en total)
             $imagenes = [
-                (object) ['ruta_archivo' => 'ford-territory.jpg'], // Imagen principal
+                (object) ['ruta_archivo' => 'ford-territory.jpg'],  // Imagen principal
                 (object) ['ruta_archivo' => 'ford-territory-1.jpg'],
                 (object) ['ruta_archivo' => 'ford-territory-2.jpg'],
                 (object) ['ruta_archivo' => 'ford-territory-3.jpg']
@@ -267,7 +267,7 @@ class PublicacionController
             $errores = $this->validarDatosPublicacion($_POST);
 
             if (!empty($errores)) {
-                file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "ERRORES DE VALIDACIÓN: " . print_r($errores, true) . "\n", FILE_APPEND);
+                file_put_contents(__DIR__ . '/../../public/logs/debug.txt', 'ERRORES DE VALIDACIÓN: ' . print_r($errores, true) . "\n", FILE_APPEND);
                 $_SESSION['errores'] = $errores;
                 $_SESSION['old'] = $_POST;
                 header('Location: ' . BASE_URL . '/publicar');
@@ -309,7 +309,7 @@ class PublicacionController
             header('Location: ' . BASE_URL . '/publicar');
             exit;
         }
-        
+
         file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "✓ Publicación creada con ID: $publicacion_id\n", FILE_APPEND);
 
         // Procesar y guardar imágenes

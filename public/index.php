@@ -79,6 +79,12 @@ $specialRoutes = [
     // RUTAS ADMIN
     // ====================================
     'admin' => ['controller' => 'AdminController', 'method' => 'index'],
+    
+    // ====================================
+    // RUTAS DE PERFIL DE USUARIO
+    // ====================================
+    'perfil' => ['controller' => 'UsuarioController', 'method' => 'perfil'],
+    'usuario' => ['controller' => 'UsuarioController', 'method' => 'verPerfil'],
 ];
 
 // Aplicar rutas especiales si coincide
@@ -179,6 +185,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
         } elseif (isset($url[2]) && $url[2] === 'eliminar') {
             $method = 'destroy';
             $params = [$url[1]];  // ID de la publicación
+        }
+    }
+    // Perfil de usuario - POST
+    elseif ($url[0] === 'perfil' && isset($url[1])) {
+        $controllerName = 'UsuarioController';
+        if ($url[1] === 'actualizar') {
+            $method = 'actualizarPerfil';
+            $params = [];
+        } elseif ($url[1] === 'cambiar-password') {
+            $method = 'cambiarPassword';
+            $params = [];
+        } elseif ($url[1] === 'subir-foto') {
+            $method = 'subirFoto';
+            $params = [];
         }
     }
 }
