@@ -21,16 +21,20 @@ class MensajeController
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['user_id'] = 1; // Usuario mock para desarrollo
             $_SESSION['user_nombre'] = 'Juan Pérez';
+            $_SESSION['user_role'] = 'vendedor'; // Por defecto vendedor
         }
         
         $userId = $_SESSION['user_id'];
+        $userRole = $_SESSION['user_role'] ?? 'vendedor';
         
         // Obtener ID de publicación desde URL (si viene desde "Contactar vendedor")
         $publicacionId = isset($_GET['publicacion']) ? (int)$_GET['publicacion'] : null;
         $conversacionActiva = isset($_GET['conversacion']) ? (int)$_GET['conversacion'] : null;
         
-        // DATOS MOCK: Conversaciones del usuario
-        $conversaciones = $this->getMockConversaciones($userId);
+        // DATOS MOCK: Conversaciones según el rol del usuario
+        // Vendedor: solo sus publicaciones
+        // Admin: todas las conversaciones del sistema (se maneja en admin)
+        $conversaciones = $this->getMockConversaciones($userId, $userRole);
         
         // Si viene desde una publicación, buscar/crear conversación
         if ($publicacionId && !$conversacionActiva) {
@@ -131,53 +135,60 @@ class MensajeController
     
     /**
      * DATOS MOCK: Obtener conversaciones del usuario
+     * @param int $userId ID del usuario
+     * @param string $userRole Rol del usuario (vendedor, comprador, admin)
      */
-    private function getMockConversaciones($userId)
+    private function getMockConversaciones($userId, $userRole = 'vendedor')
     {
-        return [
+        // Conversaciones de ejemplo para un vendedor (usuario_id = 1)
+        // Muestra compradores interesados en sus publicaciones
+        $conversacionesVendedor = [
             [
                 'id' => 1,
                 'publicacion_id' => 1,
-                'publicacion_titulo' => 'Toyota Corolla 2018 - Chocado frontal',
-                'publicacion_foto' => 'https://via.placeholder.com/80x80?text=Toyota',
-                'otro_usuario_id' => 2,
-                'otro_usuario_nombre' => 'María González',
-                'otro_usuario_tipo' => 'vendedor',
-                'ultimo_mensaje' => 'Hola, ¿el vehículo aún está disponible?',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-2 hours')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 2 horas',
-                'mensajes_no_leidos' => 2,
+                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
+                'publicacion_foto' => 'ford-territory.jpg',
+                'otro_usuario_id' => 10,
+                'otro_usuario_nombre' => 'Pedro Sánchez',
+                'otro_usuario_tipo' => 'comprador',
+                'ultimo_mensaje' => '¿Puedo ir a verlo mañana?',
+                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 hour')),
+                'ultimo_mensaje_fecha_relativa' => 'Hace 1 hora',
+                'mensajes_no_leidos' => 1,
                 'esta_activa' => true
             ],
             [
                 'id' => 2,
-                'publicacion_id' => 5,
-                'publicacion_titulo' => 'Honda CRV 2020 - Impacto lateral',
-                'publicacion_foto' => 'https://via.placeholder.com/80x80?text=Honda',
-                'otro_usuario_id' => 3,
-                'otro_usuario_nombre' => 'Carlos Ramírez',
-                'otro_usuario_tipo' => 'vendedor',
-                'ultimo_mensaje' => 'El precio es negociable según el estado',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 day')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 1 día',
+                'publicacion_id' => 1,
+                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
+                'publicacion_foto' => 'ford-territory.jpg',
+                'otro_usuario_id' => 11,
+                'otro_usuario_nombre' => 'Laura Díaz',
+                'otro_usuario_tipo' => 'comprador',
+                'ultimo_mensaje' => '¿Acepta permuta?',
+                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-3 hours')),
+                'ultimo_mensaje_fecha_relativa' => 'Hace 3 horas',
                 'mensajes_no_leidos' => 0,
                 'esta_activa' => false
             ],
             [
                 'id' => 3,
-                'publicacion_id' => 8,
-                'publicacion_titulo' => 'Mazda 3 2019 - Desarme completo',
-                'publicacion_foto' => 'https://via.placeholder.com/80x80?text=Mazda',
-                'otro_usuario_id' => 4,
-                'otro_usuario_nombre' => 'Ana Martínez',
-                'otro_usuario_tipo' => 'vendedor',
+                'publicacion_id' => 2,
+                'publicacion_titulo' => 'Kia Cerato 2020 - Choque Lateral',
+                'publicacion_foto' => 'kia-cerato.jpg',
+                'otro_usuario_id' => 12,
+                'otro_usuario_nombre' => 'Roberto Muñoz',
+                'otro_usuario_tipo' => 'comprador',
                 'ultimo_mensaje' => 'Perfecto, quedamos en contacto',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-3 days')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 3 días',
+                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 day')),
+                'ultimo_mensaje_fecha_relativa' => 'Hace 1 día',
                 'mensajes_no_leidos' => 0,
                 'esta_activa' => false
             ]
         ];
+        
+        // Si es vendedor, retornar solo sus conversaciones
+        return $conversacionesVendedor;
     }
     
     /**

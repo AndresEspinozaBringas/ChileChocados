@@ -573,4 +573,179 @@ class AdminController
         // Aquí iría la lógica real de envío de email
         // sendEmail($publicacion->email, $asunto, $contenido);
     }
+    
+    /**
+     * Vista de mensajería para administrador
+     * Muestra TODAS las conversaciones del sistema
+     * Ruta: GET /admin/mensajes
+     */
+    public function mensajes()
+    {
+        $this->requireAdmin();
+        
+        // Obtener conversación activa desde URL
+        $conversacionActiva = isset($_GET['conversacion']) ? (int)$_GET['conversacion'] : null;
+        
+        // DATOS MOCK: Todas las conversaciones del sistema (admin ve todo)
+        $conversaciones = $this->getMockTodasConversaciones();
+        
+        // Seleccionar primera conversación si no hay una activa
+        if (!$conversacionActiva && !empty($conversaciones)) {
+            $conversacionActiva = $conversaciones[0]['id'];
+        }
+        
+        // Obtener mensajes de la conversación activa
+        $mensajes = $conversacionActiva ? $this->getMockMensajesAdmin($conversacionActiva) : [];
+        
+        // Obtener info de la conversación activa
+        $conversacionInfo = null;
+        if ($conversacionActiva) {
+            foreach ($conversaciones as $conv) {
+                if ($conv['id'] == $conversacionActiva) {
+                    $conversacionInfo = $conv;
+                    break;
+                }
+            }
+        }
+        
+        // Datos para la vista
+        $data = [
+            'title' => 'Mensajes - Panel Admin',
+            'conversaciones' => $conversaciones,
+            'conversacion_activa_id' => $conversacionActiva,
+            'conversacion_info' => $conversacionInfo,
+            'mensajes' => $mensajes,
+            'user_id' => $_SESSION['user_id'] ?? 1,
+            'is_admin' => true
+        ];
+        
+        // Renderizar vista de mensajes (misma vista, diferente data)
+        require_once __DIR__ . '/../views/pages/mensajes/index.php';
+    }
+    
+    /**
+     * MOCK: Obtener todas las conversaciones del sistema (vista admin)
+     */
+    private function getMockTodasConversaciones()
+    {
+        return [
+            [
+                'id' => 1,
+                'publicacion_id' => 1,
+                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
+                'publicacion_foto' => 'ford-territory.jpg',
+                'vendedor_id' => 5,
+                'vendedor_nombre' => 'Juan Pérez',
+                'comprador_id' => 10,
+                'comprador_nombre' => 'Pedro Sánchez',
+                'otro_usuario_id' => 10,
+                'otro_usuario_nombre' => 'Pedro Sánchez (Comprador) → Juan Pérez (Vendedor)',
+                'otro_usuario_tipo' => 'comprador',
+                'ultimo_mensaje' => '¿Puedo ir a verlo mañana?',
+                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 hour')),
+                'ultimo_mensaje_fecha_relativa' => 'Hace 1 hora',
+                'mensajes_no_leidos' => 1,
+                'esta_activa' => true
+            ],
+            [
+                'id' => 2,
+                'publicacion_id' => 1,
+                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
+                'publicacion_foto' => 'ford-territory.jpg',
+                'vendedor_id' => 5,
+                'vendedor_nombre' => 'Juan Pérez',
+                'comprador_id' => 11,
+                'comprador_nombre' => 'Laura Díaz',
+                'otro_usuario_id' => 11,
+                'otro_usuario_nombre' => 'Laura Díaz (Comprador) → Juan Pérez (Vendedor)',
+                'otro_usuario_tipo' => 'comprador',
+                'ultimo_mensaje' => '¿Acepta permuta?',
+                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-3 hours')),
+                'ultimo_mensaje_fecha_relativa' => 'Hace 3 horas',
+                'mensajes_no_leidos' => 0,
+                'esta_activa' => false
+            ],
+            [
+                'id' => 3,
+                'publicacion_id' => 2,
+                'publicacion_titulo' => 'Kia Cerato 2020 - Choque Lateral',
+                'publicacion_foto' => 'kia-cerato.jpg',
+                'vendedor_id' => 6,
+                'vendedor_nombre' => 'María González',
+                'comprador_id' => 12,
+                'comprador_nombre' => 'Roberto Muñoz',
+                'otro_usuario_id' => 12,
+                'otro_usuario_nombre' => 'Roberto Muñoz (Comprador) → María González (Vendedor)',
+                'otro_usuario_tipo' => 'comprador',
+                'ultimo_mensaje' => 'Perfecto, quedamos en contacto',
+                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 day')),
+                'ultimo_mensaje_fecha_relativa' => 'Hace 1 día',
+                'mensajes_no_leidos' => 0,
+                'esta_activa' => false
+            ],
+            [
+                'id' => 4,
+                'publicacion_id' => 3,
+                'publicacion_titulo' => 'Kia Rio 5 2019 - Choque Trasero',
+                'publicacion_foto' => 'kia-rio-5.jpg',
+                'vendedor_id' => 7,
+                'vendedor_nombre' => 'Carlos Muñoz',
+                'comprador_id' => 13,
+                'comprador_nombre' => 'Ana Torres',
+                'otro_usuario_id' => 13,
+                'otro_usuario_nombre' => 'Ana Torres (Comprador) → Carlos Muñoz (Vendedor)',
+                'otro_usuario_tipo' => 'comprador',
+                'ultimo_mensaje' => '¿Tiene más fotos del motor?',
+                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-2 days')),
+                'ultimo_mensaje_fecha_relativa' => 'Hace 2 días',
+                'mensajes_no_leidos' => 0,
+                'esta_activa' => false
+            ]
+        ];
+    }
+    
+    /**
+     * MOCK: Obtener mensajes de una conversación (vista admin)
+     */
+    private function getMockMensajesAdmin($conversacionId)
+    {
+        // Retornar mensajes mock según la conversación
+        $mensajesPorConversacion = [
+            1 => [
+                [
+                    'id' => 1,
+                    'remitente_id' => 10,
+                    'remitente_nombre' => 'Pedro Sánchez',
+                    'destinatario_id' => 5,
+                    'mensaje' => 'Hola, me interesa el Ford Territory',
+                    'fecha' => date('Y-m-d H:i:s', strtotime('-2 hours')),
+                    'fecha_relativa' => 'Hace 2 horas',
+                    'leido' => true
+                ],
+                [
+                    'id' => 2,
+                    'remitente_id' => 5,
+                    'remitente_nombre' => 'Juan Pérez',
+                    'destinatario_id' => 10,
+                    'mensaje' => 'Hola Pedro, sí está disponible',
+                    'fecha' => date('Y-m-d H:i:s', strtotime('-1.5 hours')),
+                    'fecha_relativa' => 'Hace 1.5 horas',
+                    'leido' => true
+                ],
+                [
+                    'id' => 3,
+                    'remitente_id' => 10,
+                    'remitente_nombre' => 'Pedro Sánchez',
+                    'destinatario_id' => 5,
+                    'mensaje' => '¿Puedo ir a verlo mañana?',
+                    'fecha' => date('Y-m-d H:i:s', strtotime('-1 hour')),
+                    'fecha_relativa' => 'Hace 1 hora',
+                    'leido' => false
+                ]
+            ]
+        ];
+        
+        return $mensajesPorConversacion[$conversacionId] ?? [];
+    }
+
 }

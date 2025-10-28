@@ -230,6 +230,12 @@ if (!empty($url[0]) && $url[0] === 'admin') {
         exit;
     }
     
+    // /admin/mensajes - Sistema de mensajería (vista admin)
+    if ($url[1] === 'mensajes') {
+        $controller->mensajes();
+        exit;
+    }
+    
     // /admin/publicaciones - Lista de publicaciones
     if ($url[1] === 'publicaciones' && count($url) === 2) {
         $controller->publicaciones();
