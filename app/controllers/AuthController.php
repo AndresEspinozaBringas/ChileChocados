@@ -1,19 +1,15 @@
 <?php
 /**
  * AuthController - ChileChocados
- * Controlador de autenticación completo
- * 
- * @author Andrés Espinoza
- * @version 1.0
+ * Controlador de autenticación y gestión de usuarios
  */
 
 namespace App\Controllers;
 
-use App\Helpers\Session;
-use App\Helpers\Email;
-use App\Helpers\Auth;
-use App\Helpers\Validator;
 use App\Models\Usuario;
+use App\Helpers\Session;
+use App\Helpers\Auth;
+use App\Helpers\Email;
 
 class AuthController
 {
@@ -22,7 +18,6 @@ class AuthController
     public function __construct()
     {
         $this->usuarioModel = new Usuario();
-        Session::start();
     }
     
     /**
@@ -31,19 +26,18 @@ class AuthController
      */
     public function register()
     {
-        // Solo invitados pueden registrarse
+        // Si ya está autenticado, redirigir
         if (Auth::check()) {
-            Session::flash('info', 'Ya tienes una sesión activa');
             header('Location: /');
             exit;
         }
         
-        require_once __DIR__ . '/../views/pages/auth/register.php';
+        require_once __DIR__ . '/../views/pages/auth/registro.php';
     }
     
     /**
      * POST /registro
-     * Procesar registro de nuevo usuario
+     * Procesar registro de usuario
      */
     public function processRegister()
     {
@@ -53,81 +47,67 @@ class AuthController
             exit;
         }
         
-        // Obtener datos del formulario
+        // Recoger datos del formulario
         $data = [
             'nombre' => trim($_POST['nombre'] ?? ''),
             'apellido' => trim($_POST['apellido'] ?? ''),
+            'rut' => trim($_POST['rut'] ?? ''),
             'email' => trim($_POST['email'] ?? ''),
+            'telefono' => trim($_POST['telefono'] ?? ''),
             'password' => $_POST['password'] ?? '',
             'password_confirm' => $_POST['password_confirm'] ?? '',
-            'telefono' => trim($_POST['telefono'] ?? ''),
-            'rol' => $_POST['rol'] ?? 'comprador'
+            'rol' => $_POST['rol'] ?? 'comprador', // Por defecto comprador
+            'terminos' => isset($_POST['terminos'])
         ];
         
         // Validaciones
-        $validator = new Validator($data);
+        $errors = [];
         
-        $validator->required('nombre', 'El nombre es obligatorio')
-                  ->min('nombre', 2, 'El nombre debe tener al menos 2 caracteres')
-                  ->max('nombre', 100, 'El nombre no puede exceder 100 caracteres');
+        if (empty($data['nombre']) || empty($data['apellido'])) {
+            $errors[] = 'Nombre y apellido son obligatorios';
+        }
         
-        $validator->required('apellido', 'El apellido es obligatorio')
-                  ->min('apellido', 2, 'El apellido debe tener al menos 2 caracteres');
+        if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Email inválido';
+        }
         
-        $validator->required('email', 'El email es obligatorio')
-                  ->email('email', 'El email no es válido');
+        if (empty($data['password']) || strlen($data['password']) < 8) {
+            $errors[] = 'La contraseña debe tener al menos 8 caracteres';
+        }
         
-        $validator->required('password', 'La contraseña es obligatoria')
-                  ->min('password', 8, 'La contraseña debe tener al menos 8 caracteres')
-                  ->passwordStrength('password', 'La contraseña debe contener mayúsculas, minúsculas y números');
-        
-        // Verificar coincidencia de contraseñas
         if ($data['password'] !== $data['password_confirm']) {
-            $validator->addError('password_confirm', 'Las contraseñas no coinciden');
+            $errors[] = 'Las contraseñas no coinciden';
         }
         
-        // Validar teléfono chileno si se proporciona
-        if (!empty($data['telefono'])) {
-            $validator->phoneChile('telefono', 'El formato del teléfono no es válido');
-        }
-        
-        // Si hay errores, volver al formulario
-        if ($validator->fails()) {
-            Session::flash('errors', $validator->getErrors());
-            Session::flash('old', $data);
-            header('Location: /registro');
-            exit;
+        if (!$data['terminos']) {
+            $errors[] = 'Debes aceptar los términos y condiciones';
         }
         
         // Verificar si el email ya existe
-        if ($this->usuarioModel->emailExists($data['email'])) {
-            Session::flash('error', 'Este email ya está registrado');
-            Session::flash('old', $data);
+        if ($this->usuarioModel->findByEmail($data['email'])) {
+            $errors[] = 'El email ya está registrado';
+        }
+        
+        // Si hay errores, volver al formulario
+        if (!empty($errors)) {
+            Session::flash('error', implode('<br>', $errors));
             header('Location: /registro');
             exit;
         }
         
+        // Hash de contraseña
+        $data['password'] = password_hash($data['password'], PASSWORD_ARGON2ID);
+        
         // Generar token de verificación
         $verificationToken = bin2hex(random_bytes(32));
+        $data['token_recuperacion'] = $verificationToken;
+        $data['token_expira'] = date('Y-m-d H:i:s', strtotime('+24 hours'));
         
         // Crear usuario
-        $userData = [
-            'nombre' => $data['nombre'],
-            'apellido' => $data['apellido'],
-            'email' => $data['email'],
-            'password' => password_hash($data['password'], PASSWORD_ARGON2ID),
-            'telefono' => $data['telefono'],
-            'rol' => $data['rol'],
-            'estado' => 'activo',
-            'verificado' => 0,
-            'token_recuperacion' => $verificationToken,
-            'token_expira' => date('Y-m-d H:i:s', strtotime('+24 hours'))
-        ];
-        
-        $userId = $this->usuarioModel->create($userData);
+        $userId = $this->usuarioModel->create($data);
         
         if (!$userId) {
-            Session::flash('error', 'Error al crear el usuario. Inténtalo nuevamente');
+            Session::flash('error', 'Error al crear usuario. Inténtalo nuevamente');
             header('Location: /registro');
             exit;
         }
@@ -322,26 +302,31 @@ class AuthController
         
         $email = trim($_POST['email'] ?? '');
         
-        if (empty($email)) {
-            Session::flash('error', 'El email es obligatorio');
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Session::flash('error', 'Email inválido');
             header('Location: /recuperar-contrasena');
             exit;
         }
         
+        // Buscar usuario
         $usuario = $this->usuarioModel->findByEmail($email);
         
-        // Por seguridad, siempre mostrar mensaje de éxito
-        // (no revelar si el email existe o no)
         if ($usuario) {
             // Generar token de recuperación
-            $token = $this->usuarioModel->generateRecoveryToken($usuario->id);
+            $token = bin2hex(random_bytes(32));
+            $expiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
+            
+            $this->usuarioModel->update($usuario->id, [
+                'token_recuperacion' => $token,
+                'token_expira' => $expiry
+            ]);
             
             // Enviar email
             $resetLink = getenv('APP_URL') . '/reset-password/' . $token;
             
             Email::send(
                 $email,
-                'Recuperación de contraseña - ChileChocados',
+                'Recupera tu contraseña - ChileChocados',
                 'reset-password',
                 [
                     'nombre' => $usuario->nombre,
@@ -350,6 +335,7 @@ class AuthController
             );
         }
         
+        // Siempre mostrar el mismo mensaje por seguridad
         Session::flash('success', 'Si el email existe, recibirás un enlace de recuperación');
         header('Location: /login');
         exit;
@@ -361,6 +347,12 @@ class AuthController
      */
     public function resetPassword($token)
     {
+        if (Auth::check()) {
+            header('Location: /');
+            exit;
+        }
+        
+        // Verificar token
         $usuario = $this->usuarioModel->verifyRecoveryToken($token);
         
         if (!$usuario) {
@@ -373,17 +365,16 @@ class AuthController
     }
     
     /**
-     * POST /reset-password
+     * POST /reset-password/{token}
      * Actualizar contraseña
      */
-    public function updatePassword()
+    public function updatePassword($token)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /recuperar-contrasena');
+            header('Location: /reset-password/' . $token);
             exit;
         }
         
-        $token = $_POST['token'] ?? '';
         $password = $_POST['password'] ?? '';
         $passwordConfirm = $_POST['password_confirm'] ?? '';
         
@@ -446,6 +437,7 @@ class AuthController
     
     /**
      * Redirigir según rol del usuario
+     * MODIFICADO: Vendedores ahora van al home (/)
      */
     private function redirectByRole()
     {
@@ -456,7 +448,7 @@ class AuthController
                 header('Location: /admin');
                 break;
             case 'vendedor':
-                header('Location: /panel/vendedor');
+                header('Location: /'); // CAMBIO: ahora redirige al home
                 break;
             case 'comprador':
             default:

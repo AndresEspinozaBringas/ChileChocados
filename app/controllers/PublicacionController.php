@@ -74,30 +74,134 @@ class PublicacionController
      */
     public function show($id)
     {
-        // Obtener publicación con toda su información
-        $publicacion = $this->publicacionModel->getConRelaciones($id);
+        // TODO: Conectar con base de datos en futuras etapas
+        // Por ahora usamos datos estáticos para mostrar la página
+        
+        // Datos estáticos de publicaciones
+        $publicaciones_estaticas = [
+            1 => [
+                'id' => 1,
+                'titulo' => 'Ford Territory 2022 - Chocado Frontal',
+                'descripcion' => 'Ford Territory 2022 en excelente estado mecánico. Choque frontal leve, motor y transmisión funcionando perfectamente. Ideal para reparar o desarme. Documentación al día, sin multas. Vehículo ubicado en Santiago Centro.',
+                'precio' => 8500000,
+                'categoria_nombre' => 'SUV',
+                'marca' => 'Ford',
+                'modelo' => 'Territory',
+                'anio' => 2022,
+                'kilometraje' => 35000,
+                'tipo_combustible' => 'Gasolina',
+                'transmision' => 'Automática',
+                'estado_vehiculo' => 'Chocado',
+                'tipo_venta' => 'completo',
+                'region_nombre' => 'Región Metropolitana',
+                'comuna_nombre' => 'Santiago',
+                'foto_principal' => 'ford-territory.jpg',
+                'usuario_nombre' => 'Juan Pérez',
+                'usuario_telefono' => '+56 9 1234 5678',
+                'usuario_email' => 'juan.perez@example.com',
+                'fecha_publicacion' => '2024-10-20',
+                'vistas' => 245
+            ],
+            2 => [
+                'id' => 2,
+                'titulo' => 'Kia Cerato 2020 - Choque Lateral',
+                'descripcion' => 'Kia Cerato 2020, choque lateral derecho. Motor en perfecto estado, transmisión automática funcionando. Ideal para reparación. Papeles al día.',
+                'precio' => 6200000,
+                'categoria_nombre' => 'Sedán',
+                'marca' => 'Kia',
+                'modelo' => 'Cerato',
+                'anio' => 2020,
+                'kilometraje' => 48000,
+                'tipo_combustible' => 'Gasolina',
+                'transmision' => 'Automática',
+                'estado_vehiculo' => 'Chocado',
+                'tipo_venta' => 'completo',
+                'region_nombre' => 'Región de Valparaíso',
+                'comuna_nombre' => 'Valparaíso',
+                'foto_principal' => 'kia-cerato.jpg',
+                'usuario_nombre' => 'María González',
+                'usuario_telefono' => '+56 9 8765 4321',
+                'usuario_email' => 'maria.gonzalez@example.com',
+                'fecha_publicacion' => '2024-10-18',
+                'vistas' => 189
+            ],
+            3 => [
+                'id' => 3,
+                'titulo' => 'Kia Rio 5 2019 - Choque Trasero',
+                'descripcion' => 'Kia Rio 5 2019, choque trasero. Mecánica en excelente estado. Ideal para reparar y usar. Sin deudas.',
+                'precio' => 4800000,
+                'categoria_nombre' => 'Hatchback',
+                'marca' => 'Kia',
+                'modelo' => 'Rio 5',
+                'anio' => 2019,
+                'kilometraje' => 62000,
+                'tipo_combustible' => 'Gasolina',
+                'transmision' => 'Manual',
+                'estado_vehiculo' => 'Chocado',
+                'tipo_venta' => 'completo',
+                'region_nombre' => 'Región del Biobío',
+                'comuna_nombre' => 'Concepción',
+                'foto_principal' => 'kia-rio-5.jpg',
+                'usuario_nombre' => 'Carlos Muñoz',
+                'usuario_telefono' => '+56 9 5555 6666',
+                'usuario_email' => 'carlos.munoz@example.com',
+                'fecha_publicacion' => '2024-10-15',
+                'vistas' => 156
+            ],
+            4 => [
+                'id' => 4,
+                'titulo' => 'Dodge Journey 2018 - En Desarme',
+                'descripcion' => 'Dodge Journey 2018 disponible para desarme. Todas las piezas disponibles. Motor, transmisión, puertas, vidrios, etc.',
+                'precio' => null,
+                'categoria_nombre' => 'SUV',
+                'marca' => 'Dodge',
+                'modelo' => 'Journey',
+                'anio' => 2018,
+                'kilometraje' => 95000,
+                'tipo_combustible' => 'Gasolina',
+                'transmision' => 'Automática',
+                'estado_vehiculo' => 'En Desarme',
+                'tipo_venta' => 'desarme',
+                'region_nombre' => 'Región de Coquimbo',
+                'comuna_nombre' => 'La Serena',
+                'foto_principal' => 'dodge.jpg',
+                'usuario_nombre' => 'Taller AutoPartes',
+                'usuario_telefono' => '+56 9 7777 8888',
+                'usuario_email' => 'contacto@autopartes.cl',
+                'fecha_publicacion' => '2024-10-12',
+                'vistas' => 98
+            ]
+        ];
 
-        if (!$publicacion || $publicacion->estado !== 'aprobada') {
-            header('Location: ' . BASE_URL . '/404');
+        // Verificar si existe la publicación
+        if (!isset($publicaciones_estaticas[$id])) {
+            http_response_code(404);
+            echo "404 - Publicación no encontrada";
             exit;
         }
 
-        // Incrementar contador de vistas
-        $this->publicacionModel->incrementarVistas($id);
+        // Convertir array a objeto para compatibilidad con la vista
+        $publicacion = (object) $publicaciones_estaticas[$id];
 
-        // Obtener imágenes de la publicación
-        $imagenes = $this->publicacionModel->getImagenes($id);
+        // Imágenes para la galería (incluye la principal + adicionales)
+        $imagenes = [];
+        if ($id == 1) {
+            // Imágenes para Ford Territory (4 imágenes en total)
+            $imagenes = [
+                (object) ['ruta_archivo' => 'ford-territory.jpg'], // Imagen principal
+                (object) ['ruta_archivo' => 'ford-territory-1.jpg'],
+                (object) ['ruta_archivo' => 'ford-territory-2.jpg'],
+                (object) ['ruta_archivo' => 'ford-territory-3.jpg']
+            ];
+        }
 
-        // Obtener publicaciones similares
-        $similares = $this->publicacionModel->getSimilares($id, $publicacion->categoria_padre_id, 4);
-
-        $data = [
-            'title' => $publicacion->titulo . ' - ChileChocados',
-            'meta_description' => substr($publicacion->descripcion, 0, 160),
-            'publicacion' => $publicacion,
-            'imagenes' => $imagenes,
-            'similares' => $similares
-        ];
+        // Publicaciones similares (otras publicaciones)
+        $similares = [];
+        foreach ($publicaciones_estaticas as $pub_id => $pub) {
+            if ($pub_id != $id && count($similares) < 3) {
+                $similares[] = (object) $pub;
+            }
+        }
 
         // Cargar vista
         require_once __DIR__ . '/../views/pages/publicaciones/detail.php';

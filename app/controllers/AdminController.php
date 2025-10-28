@@ -5,11 +5,14 @@
  * 
  * @author ChileChocados
  * @date 2025-10-26
+ * MODIFICADO: Login unificado - se eliminaron métodos login() y authenticate()
  */
 
 namespace App\Controllers;
 
 use PDO;
+use App\Helpers\Auth;
+use App\Helpers\Session;
 
 class AdminController
 {
@@ -22,12 +25,13 @@ class AdminController
 
     /**
      * Verificar que el usuario tiene permisos de administrador
+     * MODIFICADO: Usa Auth helpers en lugar de $_SESSION directo
      */
     private function requireAdmin()
     {
-        if (!isset($_SESSION['user_id']) || ($_SESSION['user_rol'] ?? '') !== 'admin') {
-            $_SESSION['error'] = 'Acceso denegado. Debes ser administrador.';
-            header('Location: ' . BASE_URL . '/admin/login');
+        if (!Auth::check() || !Auth::isAdmin()) {
+            Session::flash('error', 'Acceso denegado. Debes ser administrador.');
+            header('Location: /login');
             exit;
         }
     }
@@ -111,79 +115,15 @@ class AdminController
     }
 
     /**
-     * Login del administrador
-     * Ruta: GET /admin/login
-     */
-    public function login()
-    {
-        // Si ya está autenticado como admin, redirigir al panel
-        if (isset($_SESSION['user_id']) && ($_SESSION['user_rol'] ?? '') === 'admin') {
-            header('Location: ' . BASE_URL . '/admin');
-            exit;
-        }
-
-        $data = [
-            'title' => 'Login Admin - ChileChocados',
-            'csrf_token' => generateCsrfToken()
-        ];
-
-        require_once APP_PATH . '/views/pages/admin/login.php';
-    }
-
-    /**
-     * Procesar login del administrador
-     * Ruta: POST /admin/authenticate
-     */
-    public function authenticate()
-    {
-        // Validar CSRF
-        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            $_SESSION['error'] = 'Token de seguridad inválido';
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
-        $email = sanitize($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
-
-        // Buscar usuario admin
-        $stmt = $this->db->prepare("
-            SELECT * FROM usuarios 
-            WHERE email = ? AND rol = 'admin' AND estado = 'activo'
-        ");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_OBJ);
-
-        if (!$user || !password_verify($password, $user->password)) {
-            $_SESSION['error'] = 'Credenciales incorrectas';
-            header('Location: ' . BASE_URL . '/admin/login');
-            exit;
-        }
-
-        // Establecer sesión
-        $_SESSION['user_id'] = $user->id;
-        $_SESSION['user_nombre'] = $user->nombre;
-        $_SESSION['user_apellido'] = $user->apellido;
-        $_SESSION['user_email'] = $user->email;
-        $_SESSION['user_rol'] = $user->rol;
-
-        // Actualizar última conexión
-        $stmt = $this->db->prepare("UPDATE usuarios SET ultima_conexion = NOW() WHERE id = ?");
-        $stmt->execute([$user->id]);
-
-        $_SESSION['success'] = '¡Bienvenido, ' . $user->nombre . '!';
-        header('Location: ' . BASE_URL . '/admin');
-        exit;
-    }
-
-    /**
      * Cerrar sesión del admin
-     * Ruta: POST /admin/logout
+     * Ruta: GET /admin/logout
+     * MODIFICADO: Usa Auth::logout() helper
      */
     public function logout()
     {
-        session_destroy();
-        header('Location: ' . BASE_URL . '/admin/login');
+        Auth::logout();
+        Session::flash('success', 'Sesión cerrada exitosamente');
+        header('Location: /');
         exit;
     }
 
@@ -259,63 +199,31 @@ class AdminController
         $stmt->execute($params);
         $publicaciones = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-        // Contar total para paginación
-        $count_sql = "SELECT COUNT(*) as total FROM publicaciones p WHERE 1=1";
-        $count_params = [];
+        // Obtener total de registros para paginación
+        $sql_count = str_replace("SELECT p.*", "SELECT COUNT(*) as total", $sql);
+        $sql_count = preg_replace('/ORDER BY.*$/s', '', $sql_count);
+        $sql_count = preg_replace('/LIMIT.*$/s', '', $sql_count);
+        
+        $params_count = array_slice($params, 0, -2); // Remover LIMIT y OFFSET
+        $stmt_count = $this->db->prepare($sql_count);
+        $stmt_count->execute($params_count);
+        $total = $stmt_count->fetch(PDO::FETCH_OBJ)->total;
 
-        if ($estado && $estado !== 'todas') {
-            $count_sql .= " AND p.estado = ?";
-            $count_params[] = $estado;
-        }
-        if ($categoria_id) {
-            $count_sql .= " AND p.categoria_padre_id = ?";
-            $count_params[] = $categoria_id;
-        }
-        if ($busqueda) {
-            $count_sql .= " AND (p.titulo LIKE ? OR p.marca LIKE ? OR p.modelo LIKE ?)";
-            $search_term = "%$busqueda%";
-            $count_params = array_merge($count_params, [$search_term, $search_term, $search_term]);
-        }
+        // Obtener categorías para filtros
+        $stmt_cats = $this->db->query("SELECT * FROM categorias_padre ORDER BY nombre");
+        $categorias = $stmt_cats->fetchAll(PDO::FETCH_OBJ);
 
-        $count_stmt = $this->db->prepare($count_sql);
-        $count_stmt->execute($count_params);
-        $total = $count_stmt->fetch(PDO::FETCH_OBJ)->total;
+        // Calcular paginación
+        $total_pages = ceil($total / $per_page);
 
-        // Obtener estadísticas
-        $stats_sql = "SELECT 
-                        COUNT(*) as total,
-                        SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
-                        SUM(CASE WHEN estado = 'aprobada' THEN 1 ELSE 0 END) as aprobadas,
-                        SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas
-                      FROM publicaciones";
-        $stats = $this->db->query($stats_sql)->fetch(PDO::FETCH_OBJ);
-
-        // Obtener categorías para filtro
-        $categorias = $this->db->query("SELECT id, nombre FROM categorias_padre WHERE activo = 1 ORDER BY nombre")->fetchAll(PDO::FETCH_OBJ);
-
-        $data = [
-            'title' => 'Gestión de Publicaciones - Admin',
-            'publicaciones' => $publicaciones,
-            'stats' => $stats,
-            'categorias' => $categorias,
-            'filtros' => [
-                'estado' => $estado,
-                'categoria' => $categoria_id,
-                'q' => $busqueda
-            ],
-            'pagination' => [
-                'current_page' => $page,
-                'total_pages' => ceil($total / $per_page),
-                'total_items' => $total,
-                'per_page' => $per_page
-            ]
-        ];
-
+        // Vista
+        $pageTitle = 'Gestión de Publicaciones';
+        $currentPage = 'admin-publicaciones';
         require_once APP_PATH . '/views/pages/admin/publicaciones.php';
     }
 
     /**
-     * Ver detalle de una publicación para revisar
+     * Ver detalle completo de una publicación
      * Ruta: GET /admin/publicaciones/{id}
      */
     public function verPublicacion($id)
@@ -347,8 +255,8 @@ class AdminController
         $publicacion = $stmt->fetch(PDO::FETCH_OBJ);
 
         if (!$publicacion) {
-            $_SESSION['error'] = 'Publicación no encontrada';
-            header('Location: ' . BASE_URL . '/admin/publicaciones');
+            Session::flash('error', 'Publicación no encontrada');
+            header('Location: /admin/publicaciones');
             exit;
         }
 
@@ -381,8 +289,8 @@ class AdminController
 
         // Validar CSRF
         if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            $_SESSION['error'] = 'Token de seguridad inválido';
-            header('Location: ' . BASE_URL . '/admin/publicaciones/' . $id);
+            Session::flash('error', 'Token de seguridad inválido');
+            header('Location: /admin/publicaciones/' . $id);
             exit;
         }
 
@@ -397,8 +305,8 @@ class AdminController
         $publicacion = $stmt->fetch(PDO::FETCH_OBJ);
 
         if (!$publicacion) {
-            $_SESSION['error'] = 'Publicación no encontrada';
-            header('Location: ' . BASE_URL . '/admin/publicaciones');
+            Session::flash('error', 'Publicación no encontrada');
+            header('Location: /admin/publicaciones');
             exit;
         }
 
@@ -418,23 +326,23 @@ class AdminController
             VALUES (?, 'publicaciones', ?, 'actualizar', ?, ?)
         ");
         $stmt->execute([
-            $_SESSION['user_id'],
+            Auth::id(),
             $id,
-            json_encode(['estado' => 'aprobada', 'aprobado_por' => $_SESSION['user_id']]),
+            json_encode(['estado' => 'aprobada', 'aprobado_por' => Auth::id()]),
             $_SERVER['REMOTE_ADDR'] ?? null
         ]);
 
         // Enviar notificación por email (si está configurado)
         $this->enviarNotificacionAprobacion($publicacion);
 
-        $_SESSION['success'] = 'Publicación aprobada exitosamente. El usuario ha sido notificado.';
+        Session::flash('success', 'Publicación aprobada exitosamente. El usuario ha sido notificado.');
         
         // Verificar si se debe enviar notificación adicional
         if (isset($_POST['enviar_notificacion']) && $_POST['enviar_notificacion'] === '1') {
             // Aquí se puede agregar lógica adicional para notificación especial
         }
 
-        header('Location: ' . BASE_URL . '/admin/publicaciones');
+        header('Location: /admin/publicaciones');
         exit;
     }
 
@@ -448,16 +356,16 @@ class AdminController
 
         // Validar CSRF
         if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            $_SESSION['error'] = 'Token de seguridad inválido';
-            header('Location: ' . BASE_URL . '/admin/publicaciones/' . $id);
+            Session::flash('error', 'Token de seguridad inválido');
+            header('Location: /admin/publicaciones/' . $id);
             exit;
         }
 
         $motivo = sanitize($_POST['motivo_rechazo'] ?? '');
 
         if (empty($motivo)) {
-            $_SESSION['error'] = 'Debes especificar un motivo de rechazo';
-            header('Location: ' . BASE_URL . '/admin/publicaciones/' . $id);
+            Session::flash('error', 'Debes especificar un motivo de rechazo');
+            header('Location: /admin/publicaciones/' . $id);
             exit;
         }
 
@@ -472,8 +380,8 @@ class AdminController
         $publicacion = $stmt->fetch(PDO::FETCH_OBJ);
 
         if (!$publicacion) {
-            $_SESSION['error'] = 'Publicación no encontrada';
-            header('Location: ' . BASE_URL . '/admin/publicaciones');
+            Session::flash('error', 'Publicación no encontrada');
+            header('Location: /admin/publicaciones');
             exit;
         }
 
@@ -493,17 +401,17 @@ class AdminController
             VALUES (?, 'publicaciones', ?, 'actualizar', ?, ?)
         ");
         $stmt->execute([
-            $_SESSION['user_id'],
+            Auth::id(),
             $id,
-            json_encode(['estado' => 'rechazada', 'motivo' => $motivo, 'rechazado_por' => $_SESSION['user_id']]),
+            json_encode(['estado' => 'rechazada', 'motivo' => $motivo, 'rechazado_por' => Auth::id()]),
             $_SERVER['REMOTE_ADDR'] ?? null
         ]);
 
         // Enviar notificación por email
         $this->enviarNotificacionRechazo($publicacion, $motivo);
 
-        $_SESSION['success'] = 'Publicación rechazada. El usuario ha sido notificado del motivo.';
-        header('Location: ' . BASE_URL . '/admin/publicaciones');
+        Session::flash('success', 'Publicación rechazada. El usuario ha sido notificado del motivo.');
+        header('Location: /admin/publicaciones');
         exit;
     }
 
@@ -517,16 +425,16 @@ class AdminController
 
         // Validar CSRF
         if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            $_SESSION['error'] = 'Token de seguridad inválido';
-            header('Location: ' . BASE_URL . '/admin/publicaciones');
+            Session::flash('error', 'Token de seguridad inválido');
+            header('Location: /admin/publicaciones');
             exit;
         }
 
         $dias = (int)($_POST['dias'] ?? 15);
         
         if (!in_array($dias, [15, 30])) {
-            $_SESSION['error'] = 'Días de destacado inválidos';
-            header('Location: ' . BASE_URL . '/admin/publicaciones');
+            Session::flash('error', 'Días de destacado inválidos');
+            header('Location: /admin/publicaciones');
             exit;
         }
 
@@ -540,8 +448,8 @@ class AdminController
         ");
         $stmt->execute([$dias, $id]);
 
-        $_SESSION['success'] = "Publicación destacada por $dias días";
-        header('Location: ' . BASE_URL . '/admin/publicaciones');
+        Session::flash('success', "Publicación destacada por $dias días");
+        header('Location: /admin/publicaciones');
         exit;
     }
 
@@ -564,24 +472,24 @@ class AdminController
         $publicacion = $stmt->fetch(PDO::FETCH_OBJ);
 
         if (!$publicacion) {
-            $_SESSION['error'] = 'Publicación no encontrada';
-            header('Location: ' . BASE_URL . '/admin/publicaciones');
+            Session::flash('error', 'Publicación no encontrada');
+            header('Location: /admin/publicaciones');
             exit;
         }
 
         $mensaje = sanitize($_POST['mensaje'] ?? '');
 
         if (empty($mensaje)) {
-            $_SESSION['error'] = 'Debes escribir un mensaje';
-            header('Location: ' . BASE_URL . '/admin/publicaciones/' . $id);
+            Session::flash('error', 'Debes escribir un mensaje');
+            header('Location: /admin/publicaciones/' . $id);
             exit;
         }
 
         // Enviar email al usuario
         $this->enviarMensajeContacto($publicacion, $mensaje);
 
-        $_SESSION['success'] = 'Mensaje enviado al usuario';
-        header('Location: ' . BASE_URL . '/admin/publicaciones/' . $id);
+        Session::flash('success', 'Mensaje enviado al usuario');
+        header('Location: /admin/publicaciones/' . $id);
         exit;
     }
 

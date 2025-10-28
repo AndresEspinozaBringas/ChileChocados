@@ -1,11 +1,11 @@
-<?php
+<?php  // phpcs:ignore PSR12.Files.FileHeader.SpacingAfterTagBlock, PSR12.Files.FileHeader.SpacingAfterTagBlock
+
 /**
  * Vista: Detalle de Publicación
  * Muestra toda la información de una publicación específica
  */
 $pageTitle = $publicacion->titulo ?? 'Detalle de Publicación';
 layout('header');
-layout('nav');
 ?>
 
 <main class="container">
@@ -27,9 +27,10 @@ layout('nav');
       <!-- Imagen principal -->
       <div style="width: 100%; height: 400px; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; margin-bottom: 16px;">
         <?php if (!empty($publicacion->foto_principal)): ?>
-          <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($publicacion->foto_principal); ?>" 
+          <img id="imagen-principal" 
+               src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($publicacion->foto_principal); ?>" 
                alt="<?php echo e($publicacion->titulo); ?>"
-               style="width: 100%; height: 100%; object-fit: cover;">
+               style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;">
         <?php else: ?>
           <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
             Sin imagen
@@ -41,7 +42,9 @@ layout('nav');
       <div class="gallery" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
         <?php if (!empty($imagenes)): ?>
           <?php foreach ($imagenes as $index => $imagen): ?>
-            <div style="aspect-ratio: 1; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; cursor: pointer;">
+            <div class="thumbnail-item" 
+                 data-image="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($imagen->ruta_archivo); ?>"
+                 style="aspect-ratio: 1; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
               <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($imagen->ruta_archivo); ?>" 
                    alt="Imagen <?php echo $index + 1; ?>"
                    style="width: 100%; height: 100%; object-fit: cover;">
@@ -200,6 +203,158 @@ document.getElementById('fav-toggle')?.addEventListener('click', function() {
     // Aquí iría la lógica para agregar/quitar de favoritos
     this.classList.toggle('active');
 });
+
+// Cambiar imagen principal al hacer clic en miniaturas
+document.querySelectorAll('.thumbnail-item').forEach(thumbnail => {
+    thumbnail.addEventListener('click', function() {
+        const imagenPrincipal = document.getElementById('imagen-principal');
+        const nuevaImagen = this.dataset.image;
+        
+        if (imagenPrincipal && nuevaImagen) {
+            // Efecto de transición suave
+            imagenPrincipal.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                imagenPrincipal.src = nuevaImagen;
+                imagenPrincipal.style.opacity = '1';
+            }, 150);
+        }
+        
+        // Resaltar miniatura seleccionada
+        document.querySelectorAll('.thumbnail-item').forEach(t => {
+            t.style.transform = 'scale(1)';
+            t.style.boxShadow = 'none';
+        });
+        this.style.transform = 'scale(1.05)';
+        this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    });
+    
+    // Efecto hover
+    thumbnail.addEventListener('mouseenter', function() {
+        if (this.style.transform !== 'scale(1.05)') {
+            this.style.transform = 'scale(1.02)';
+        }
+    });
+    
+    thumbnail.addEventListener('mouseleave', function() {
+        if (this.style.transform !== 'scale(1.05)') {
+            this.style.transform = 'scale(1)';
+        }
+    });
+});
+
+// Cambiar imagen principal al hacer clic en miniaturas
+document.querySelectorAll('.thumbnail-item').forEach(thumbnail => {
+    thumbnail.addEventListener('click', function() {
+        const imagenPrincipal = document.getElementById('imagen-principal');
+        const nuevaImagen = this.dataset.image;
+        
+        if (imagenPrincipal && nuevaImagen) {
+            // Efecto de transición suave
+            imagenPrincipal.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                imagenPrincipal.src = nuevaImagen;
+                imagenPrincipal.style.opacity = '1';
+            }, 150);
+        }
+        
+        // Resaltar miniatura seleccionada
+        document.querySelectorAll('.thumbnail-item').forEach(t => {
+            t.style.transform = 'scale(1)';
+            t.style.boxShadow = 'none';
+        });
+        this.style.transform = 'scale(1.05)';
+        this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    });
+    
+    // Efecto hover
+    thumbnail.addEventListener('mouseenter', function() {
+        if (this.style.transform !== 'scale(1.05)') {
+            this.style.transform = 'scale(1.02)';
+        }
+    });
+    
+    thumbnail.addEventListener('mouseleave', function() {
+        if (this.style.transform !== 'scale(1.05)') {
+            this.style.transform = 'scale(1)';
+        }
+    });
+});
+
+// Cambiar imagen principal al hacer clic en miniaturas
+document.querySelectorAll('.thumbnail-item').forEach(thumbnail => {
+    thumbnail.addEventListener('click', function() {
+        const imagenPrincipal = document.getElementById('imagen-principal');
+        const nuevaImagen = this.dataset.image;
+        
+        if (imagenPrincipal && nuevaImagen) {
+            imagenPrincipal.style.opacity = '0.5';
+            setTimeout(() => {
+                imagenPrincipal.src = nuevaImagen;
+                imagenPrincipal.style.opacity = '1';
+            }, 150);
+        }
+        
+        document.querySelectorAll('.thumbnail-item').forEach(t => {
+            t.style.transform = 'scale(1)';
+            t.style.boxShadow = 'none';
+        });
+        this.style.transform = 'scale(1.05)';
+        this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    });
+    
+    thumbnail.addEventListener('mouseenter', function() {
+        if (this.style.transform !== 'scale(1.05)') {
+            this.style.transform = 'scale(1.02)';
+        }
+    });
+    
+    thumbnail.addEventListener('mouseleave', function() {
+        if (this.style.transform !== 'scale(1.05)') {
+            this.style.transform = 'scale(1)';
+        }
+    });
+});
 </script>
 
 <?php layout('footer'); ?>
+
+<script>
+// Galería de imágenes - Cambiar imagen principal
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.thumbnail-item').forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+            const imagenPrincipal = document.getElementById('imagen-principal');
+            const nuevaImagen = this.dataset.image;
+            
+            if (imagenPrincipal && nuevaImagen) {
+                imagenPrincipal.style.opacity = '0.5';
+                setTimeout(() => {
+                    imagenPrincipal.src = nuevaImagen;
+                    imagenPrincipal.style.opacity = '1';
+                }, 150);
+            }
+            
+            document.querySelectorAll('.thumbnail-item').forEach(t => {
+                t.style.transform = 'scale(1)';
+                t.style.boxShadow = 'none';
+            });
+            this.style.transform = 'scale(1.05)';
+            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        });
+        
+        thumbnail.addEventListener('mouseenter', function() {
+            if (this.style.transform !== 'scale(1.05)') {
+                this.style.transform = 'scale(1.02)';
+            }
+        });
+        
+        thumbnail.addEventListener('mouseleave', function() {
+            if (this.style.transform !== 'scale(1.05)') {
+                this.style.transform = 'scale(1)';
+            }
+        });
+    });
+});
+</script>

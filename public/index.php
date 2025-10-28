@@ -1,78 +1,23 @@
 <?php
-
 /**
  * ChileChocados - Front Controller
- * Punto de entrada principal de la aplicación
+ * Enrutamiento principal de la aplicación
+ * MODIFICADO: /admin/login redirige a /login
  */
 
-// Cargar configuración
+// Cargar configuración y archivos esenciales (config.php maneja la sesión)
 require_once __DIR__ . '/../app/config/config.php';
+require_once __DIR__ . '/../app/config/database.php';
 
-// Cargar clase Database desde core
-$dbCoreFile = __DIR__ . '/../app/core/Database.php';
-if (file_exists($dbCoreFile)) {
-    require_once $dbCoreFile;
-}
+// Cargar helpers
+require_once APP_PATH . '/helpers/Session.php';
+require_once APP_PATH . '/helpers/Auth.php';
 
-// Cargar configuración de database (helpers)
-$dbFile = __DIR__ . '/../app/config/database.php';
-if (file_exists($dbFile)) {
-    require_once $dbFile;
-}
-
-// Cargar helpers necesarios para autenticación
-$sessionHelper = __DIR__ . '/../app/helpers/Session.php';
-if (file_exists($sessionHelper)) {
-    require_once $sessionHelper;
-}
-
-$authHelper = __DIR__ . '/../app/helpers/Auth.php';
-if (file_exists($authHelper)) {
-    require_once $authHelper;
-}
-
-// Cargar Model base
-$modelBase = __DIR__ . '/../app/models/Model.php';
-if (file_exists($modelBase)) {
-    require_once $modelBase;
-}
-
-// Cargar modelos principales
-$models = ['Usuario', 'Publicacion', 'Categoria', 'Mensaje', 'Pago'];
-foreach ($models as $model) {
-    $modelFile = __DIR__ . '/../app/models/' . $model . '.php';
-    if (file_exists($modelFile)) {
-        require_once $modelFile;
-    }
-}
-
-// Iniciar sesión si la clase existe
-if (class_exists('App\Helpers\Session')) {
-    \App\Helpers\Session::start();
-} elseif (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Cargar .env si existe
-$envFile = __DIR__ . '/../.env';
-if (file_exists($envFile)) {
-    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($lines as $line) {
-        if (strpos(trim($line), '#') === 0)
-            continue;
-        if (strpos($line, '=') === false)
-            continue;
-        list($key, $value) = explode('=', $line, 2);
-        putenv(trim($key) . '=' . trim($value));
-    }
-}
-
-// DEBUG: Siempre crear log para POST
+// Log de debugging POST
+$logFile = __DIR__ . '/../logs/post_debug.log';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $logFile = __DIR__ . '/logs/debug.txt';
-    @mkdir(__DIR__ . '/logs', 0777, true);
-    file_put_contents($logFile, "\n=== " . date('Y-m-d H:i:s') . " ===\n", FILE_APPEND);
-    file_put_contents($logFile, "REQUEST_URI: " . $_SERVER['REQUEST_URI'] . "\n", FILE_APPEND);
+    file_put_contents($logFile, "\n\n=== POST REQUEST ===\n", FILE_APPEND);
+    file_put_contents($logFile, "Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
     file_put_contents($logFile, "GET url param: " . ($_GET['url'] ?? 'NO URL') . "\n", FILE_APPEND);
 }
 
@@ -134,7 +79,6 @@ $specialRoutes = [
     // RUTAS ADMIN
     // ====================================
     'admin' => ['controller' => 'AdminController', 'method' => 'index'],
-    'categoria' => ['controller' => 'CategoriaController', 'method' => 'show'],
 ];
 
 // Aplicar rutas especiales si coincide
@@ -215,26 +159,24 @@ if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numer
 
 // ====================================
 // RUTAS ADMIN - SISTEMA DE MODERACIÓN
+// MODIFICADO: /admin/login redirige a /login
 // ====================================
 
 // Rutas específicas para administración que deben manejarse antes del routing genérico
 if (!empty($url[0]) && $url[0] === 'admin') {
+    
+    // CRÍTICO: Redirigir /admin/login a /login (login unificado)
+    if (!empty($url[1]) && $url[1] === 'login') {
+        header('Location: /login');
+        exit;
+    }
+    
     require_once APP_PATH . '/controllers/AdminController.php';
     $controller = new App\Controllers\AdminController();
     
     // /admin - Dashboard principal (redirige a publicaciones)
     if (count($url) === 1) {
         $controller->index();
-        exit;
-    }
-    
-    // /admin/login - Login del admin
-    if ($url[1] === 'login') {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $controller->login();
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->authenticate();
-        }
         exit;
     }
     
@@ -258,7 +200,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
         }
     }
     
-    // /admin/publicaciones/{id}/aprobar - Aprobar publicación (POST)
+    // /admin/publicaciones/{id}/aprobar
     if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'aprobar') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $controller->aprobarPublicacion($url[2]);
@@ -266,116 +208,47 @@ if (!empty($url[0]) && $url[0] === 'admin') {
         }
     }
     
-    // /admin/publicaciones/{id}/rechazar - Rechazar publicación (POST)
+    // /admin/publicaciones/{id}/rechazar
     if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'rechazar') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $controller->rechazarPublicacion($url[2]);
             exit;
         }
     }
-    
-    // /admin/publicaciones/{id}/destacar - Destacar publicación (POST)
-    if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'destacar') {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->destacarPublicacion($url[2]);
-            exit;
-        }
-    }
-    
-    // /admin/publicaciones/{id}/contactar - Contactar usuario (POST)
-    if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'contactar') {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $controller->contactarUsuario($url[2]);
-            exit;
-        }
-    }
-    
-    // Si llegamos aquí, la ruta admin no fue encontrada
+}
+
+// ====================================
+// CARGA ESTÁNDAR DE CONTROLADOR
+// ====================================
+
+// Cargar controlador
+$controllerFile = APP_PATH . '/controllers/' . $controllerName . '.php';
+
+if (!file_exists($controllerFile)) {
     http_response_code(404);
-    echo "Ruta admin no encontrada";
+    echo "404 - Página no encontrada";
     exit;
 }
 
-// ====================================
-// RUTAS API (AJAX)
-// ====================================
+require_once $controllerFile;
 
-if (!empty($url[0]) && $url[0] === 'api') {
-    if (isset($url[1]) && $url[1] === 'categorias') {
-        $controllerName = 'CategoriaController';
+// Instanciar controlador
+$controllerClass = 'App\\Controllers\\' . $controllerName;
 
-        // /api/categorias/buscar
-        if (isset($url[2]) && $url[2] === 'buscar') {
-            $method = 'buscar';
-            $params = [];
-        }
-        // /api/categorias/{id}/subcategorias
-        elseif (isset($url[2]) && is_numeric($url[2]) && isset($url[3]) && $url[3] === 'subcategorias') {
-            $method = 'getSubcategorias';
-            $params = [$url[2]];  // ID de la categoría
-        }
-    }
+if (!class_exists($controllerClass)) {
+    http_response_code(500);
+    echo "Error: Controlador no encontrado";
+    exit;
 }
 
-// Ruta del controlador
-$controllerFile = APP_PATH . '/controllers/' . $controllerName . '.php';
+$controller = new $controllerClass();
 
-// DEBUG: Log del controlador y método
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    file_put_contents(__DIR__ . '/logs/debug.txt', "Controller: $controllerName\n", FILE_APPEND);
-    file_put_contents(__DIR__ . '/logs/debug.txt', "Method: $method\n", FILE_APPEND);
-    file_put_contents(__DIR__ . '/logs/debug.txt', "Params: " . print_r($params, true) . "\n", FILE_APPEND);
-    file_put_contents(__DIR__ . '/logs/debug.txt', "Controller file: $controllerFile\n", FILE_APPEND);
-    file_put_contents(__DIR__ . '/logs/debug.txt', "File exists: " . (file_exists($controllerFile) ? 'YES' : 'NO') . "\n", FILE_APPEND);
-}
-
-// Verificar si existe el controlador
-if (file_exists($controllerFile)) {
-    require_once $controllerFile;
-
-    // Intentar con namespace primero
-    $controllerClass = 'App\\Controllers\\' . $controllerName;
-
-    if (!class_exists($controllerClass)) {
-        // Si no existe con namespace, intentar sin namespace
-        $controllerClass = $controllerName;
-    }
-
-    if (class_exists($controllerClass)) {
-        $controller = new $controllerClass();
-
-        if (method_exists($controller, $method)) {
-            // DEBUG
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                file_put_contents(__DIR__ . '/logs/debug.txt', "Calling method: $controllerClass::$method\n", FILE_APPEND);
-            }
-            
-            // Llamar al método con parámetros
-            call_user_func_array([$controller, $method], $params);
-        } else {
-            // Método no encontrado - 404
-            http_response_code(404);
-            if (file_exists(APP_PATH . '/views/pages/404.php')) {
-                require_once APP_PATH . '/views/pages/404.php';
-            } else {
-                echo "404 - Método no encontrado: $method";
-            }
-        }
-    } else {
-        // Clase no encontrada - 404
-        http_response_code(404);
-        if (file_exists(APP_PATH . '/views/pages/404.php')) {
-            require_once APP_PATH . '/views/pages/404.php';
-        } else {
-            echo "404 - Controlador no encontrado: $controllerClass";
-        }
-    }
-} else {
-    // Controlador no existe - 404
+// Ejecutar método
+if (!method_exists($controller, $method)) {
     http_response_code(404);
-    if (file_exists(APP_PATH . '/views/pages/404.php')) {
-        require_once APP_PATH . '/views/pages/404.php';
-    } else {
-        echo '404 - Página no encontrada';
-    }
+    echo "404 - Método no encontrado";
+    exit;
 }
+
+// Llamar al método con los parámetros
+call_user_func_array([$controller, $method], $params);

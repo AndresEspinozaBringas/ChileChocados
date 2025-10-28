@@ -289,3 +289,10 @@ function asset($path) {
     $path = ltrim($path, '/');
     return BASE_URL . '/assets/' . $path;
 }
+
+/**
+ * Función helper para escapar HTML (alias de sanitize)
+ */
+function e($data) {
+    return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+}

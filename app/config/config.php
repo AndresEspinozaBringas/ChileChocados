@@ -48,14 +48,12 @@ ini_set('error_log', LOGS_PATH . '/php_errors.log');
 // Configuración de zona horaria
 date_default_timezone_set('America/Santiago');
 
-// Configuración de sesiones
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', isset($_SERVER['HTTPS']) ? 1 : 0);
-session_name(getenv('SESSION_NAME') ?: 'chilechocados_session');
-
-// Iniciar sesión si no está iniciada
+// Configuración de sesiones (ANTES de session_start)
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.use_only_cookies', 1);
+    ini_set('session.cookie_secure', isset($_SERVER['HTTPS']) ? 1 : 0);
+    session_name(getenv('SESSION_NAME') ?: 'chilechocados_session');
     session_start();
 }
 

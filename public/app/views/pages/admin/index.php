@@ -5,7 +5,7 @@ layout('nav');
 
 // Verificar que el usuario sea administrador
 if (!isAdmin()) {
-    redirect('admin/login');
+    redirect('login');
 }
 ?>
 

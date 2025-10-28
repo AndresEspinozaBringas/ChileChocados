@@ -65,7 +65,7 @@ class Auth
         Session::set('user_nombre', $user['nombre']);
         Session::set('user_apellido', $user['apellido'] ?? '');
         Session::set('user_rol', $user['rol']);
-        Session::set('user_avatar', $user['foto_perfil'] ?? null);
+        Session::set('user_avatar', $user['foto_perfil'] ?? '');
         Session::set('user_verified', $user['verificado']);
         Session::set('authenticated', true);
         
@@ -271,6 +271,7 @@ class Auth
     
     /**
      * Obtener ruta de redirección según rol
+     * MODIFICADO: Vendedores ahora van al home (/)
      * 
      * @return string
      */
@@ -283,110 +284,45 @@ class Auth
         $role = Session::get('user_rol');
         
         $redirects = [
-            'admin' => '/admin/dashboard',
-            'vendedor' => '/publicaciones/mis-publicaciones',
-            'comprador' => '/publicaciones'
+            'admin' => '/admin',
+            'vendedor' => '/', // CAMBIO: ahora redirige al home
+            'comprador' => '/'
         ];
         
         return $redirects[$role] ?? '/';
     }
     
     /**
-     * Generar token de verificación de email
+     * Guardar email de verificación pendiente
      * 
-     * @return string
+     * @param string $email Email a verificar
      */
-    public static function generateVerificationToken()
+    public static function setPendingVerification($email)
     {
-        return bin2hex(random_bytes(32));
+        $key = 'pending_verification_' . md5($email);
+        Session::set($key, time());
     }
     
     /**
-     * Generar token de recuperación de contraseña
+     * Verificar si hay verificación pendiente
      * 
-     * @return string
-     */
-    public static function generatePasswordResetToken()
-    {
-        return bin2hex(random_bytes(32));
-    }
-    
-    /**
-     * Verificar token de recuperación de contraseña
-     * 
-     * @param string $token Token a verificar
-     * @return array|null Usuario si el token es válido
-     */
-    public static function verifyPasswordResetToken($token)
-    {
-        $usuario = new Usuario();
-        
-        // Buscar usuario con el token
-        $user = $usuario->first('token_recuperacion', '=', $token);
-        
-        if (!$user) {
-            return null;
-        }
-        
-        // Verificar que el token no haya expirado (1 hora)
-        if (strtotime($user['token_expira']) < time()) {
-            return null;
-        }
-        
-        return $user;
-    }
-    
-    /**
-     * Actualizar contraseña del usuario
-     * 
-     * @param int $userId ID del usuario
-     * @param string $newPassword Nueva contraseña
+     * @param string $email Email
      * @return bool
      */
-    public static function updatePassword($userId, $newPassword)
+    public static function hasPendingVerification($email)
     {
-        $usuario = new Usuario();
-        return $usuario->updatePassword($userId, $newPassword);
+        $key = 'pending_verification_' . md5($email);
+        return Session::has($key);
     }
     
     /**
-     * Verificar intentos de login fallidos (rate limiting)
-     * 
-     * @param string $email Email
-     * @return bool True si puede intentar, False si está bloqueado
-     */
-    public static function canAttemptLogin($email)
-    {
-        Session::start();
-        
-        $key = 'login_attempts_' . md5($email);
-        $attempts = Session::get($key, []);
-        
-        // Limpiar intentos antiguos (más de 15 minutos)
-        $attempts = array_filter($attempts, function($timestamp) {
-            return $timestamp > (time() - 900); // 15 minutos
-        });
-        
-        // Máximo 5 intentos en 15 minutos
-        if (count($attempts) >= 5) {
-            return false;
-        }
-        
-        // Registrar intento
-        $attempts[] = time();
-        Session::set($key, $attempts);
-        
-        return true;
-    }
-    
-    /**
-     * Limpiar intentos de login después de login exitoso
+     * Limpiar verificación pendiente
      * 
      * @param string $email Email
      */
-    public static function clearLoginAttempts($email)
+    public static function clearPendingVerification($email)
     {
-        $key = 'login_attempts_' . md5($email);
+        $key = 'pending_verification_' . md5($email);
         Session::remove($key);
     }
     
