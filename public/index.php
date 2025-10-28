@@ -31,6 +31,21 @@ if (file_exists($authHelper)) {
     require_once $authHelper;
 }
 
+// Cargar Model base
+$modelBase = __DIR__ . '/../app/models/Model.php';
+if (file_exists($modelBase)) {
+    require_once $modelBase;
+}
+
+// Cargar modelos principales
+$models = ['Usuario', 'Publicacion', 'Categoria', 'Mensaje', 'Pago'];
+foreach ($models as $model) {
+    $modelFile = __DIR__ . '/../app/models/' . $model . '.php';
+    if (file_exists($modelFile)) {
+        require_once $modelFile;
+    }
+}
+
 // Iniciar sesión si la clase existe
 if (class_exists('App\Helpers\Session')) {
     \App\Helpers\Session::start();
