@@ -100,6 +100,50 @@ if (!empty($url[0]) && $url[0] === 'api') {
 }
 
 // ====================================
+// RUTAS DE MENSAJERÍA
+// ====================================
+
+// Ruta: /mensajes
+// Maneja el sistema de mensajería interna
+if (!empty($url[0]) && $url[0] === 'mensajes') {
+    $controllerName = 'MensajeController';
+    
+    // Subrutas de mensajería
+    if (isset($url[1])) {
+        switch ($url[1]) {
+            case 'enviar':
+                // POST /mensajes/enviar - Enviar un mensaje
+                $method = 'enviar';
+                $params = [];
+                break;
+                
+            case 'marcar-leido':
+                // POST /mensajes/marcar-leido - Marcar conversación como leída
+                $method = 'marcarLeido';
+                $params = [];
+                break;
+                
+            default:
+                // GET /mensajes - Vista principal
+                $method = 'index';
+                $params = [];
+        }
+    } else {
+        // GET /mensajes - Vista principal (default)
+        $method = 'index';
+        $params = [];
+    }
+}
+
+// Rutas soportadas:
+// - GET  /mensajes                          → Ver bandeja de mensajes
+// - GET  /mensajes?publicacion=1            → Iniciar conversación desde publicación
+// - GET  /mensajes?conversacion=5           → Ver conversación específica
+// - POST /mensajes/enviar                   → Enviar mensaje (AJAX)
+// - POST /mensajes/marcar-leido             → Marcar como leído (AJAX)
+
+
+// ====================================
 // MANEJO DE MÉTODOS POST ESPECÍFICOS
 // ====================================
 

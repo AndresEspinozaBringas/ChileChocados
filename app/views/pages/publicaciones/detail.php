@@ -93,8 +93,8 @@ layout('header');
       <!-- Botones de acción -->
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
         <a class="btn primary" href="<?php echo BASE_URL; ?>/mensajes?publicacion=<?php echo $publicacion->id; ?>">
-          <?php echo icon('message-circle', 18); ?>
-          Contactar vendedor
+            <?php echo icon('message-circle', 18); ?>
+            Contactar vendedor
         </a>
         <button id="fav-toggle" data-pid="<?php echo $publicacion->id; ?>" class="btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
           <?php echo icon('heart', 18); ?>
