@@ -86,6 +86,11 @@ $specialRoutes = [
     'perfil' => ['controller' => 'UsuarioController', 'method' => 'perfil'],
     'mis-publicaciones' => ['controller' => 'UsuarioController', 'method' => 'misPublicaciones'],
     'usuario' => ['controller' => 'UsuarioController', 'method' => 'verPerfil'],
+    
+    // ====================================
+    // RUTAS DE FAVORITOS
+    // ====================================
+    'favoritos' => ['controller' => 'FavoritoController', 'method' => 'index'],
 ];
 
 // Aplicar rutas especiales si coincide
@@ -291,7 +296,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
 // ====================================
 // RUTAS DE CONTACTO
 // ====================================
-if ($url[0] === 'contacto') {
+if (!empty($url[0]) && $url[0] === 'contacto') {
     $controllerName = 'ContactoController';
     
     if (empty($url[1])) {
@@ -308,7 +313,7 @@ if ($url[0] === 'contacto') {
 // ====================================
 // RUTAS DE FAVORITOS
 // ====================================
-if ($url[0] === 'favoritos') {
+if (!empty($url[0]) && $url[0] === 'favoritos') {
     $controllerName = 'FavoritoController';
     
     if (empty($url[1])) {

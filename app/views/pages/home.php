@@ -68,23 +68,29 @@ $publicaciones_destacadas = [
         </p>
         
         <!-- Buscador -->
-        <form class="search-bar" style="margin-top: 24px;" action="<?php echo BASE_URL; ?>/listado" method="GET">
-            <div class="row" style="gap: 8px;">
+        <form class="search-bar" style="margin-top: 32px; max-width: 900px; margin-left: auto; margin-right: auto;" action="<?php echo BASE_URL; ?>/listado" method="GET">
+            <div style="display: flex; gap: 12px; align-items: stretch;">
                 <input 
                     type="text" 
                     name="q"
                     placeholder="Buscar por marca, modelo o categoría..." 
-                    class="form-control" 
-                    style="flex: 1;"
+                    style="flex: 1; padding: 14px 20px; border: 1px solid var(--cc-border-default, #E5E5E5); border-radius: 8px; font-size: 15px; transition: all 0.2s ease;"
+                    onfocus="this.style.borderColor='var(--cc-primary, #E6332A)'; this.style.boxShadow='0 0 0 3px rgba(230, 51, 42, 0.1)'"
+                    onblur="this.style.borderColor='var(--cc-border-default, #E5E5E5)'; this.style.boxShadow='none'"
                 >
-                <select name="categoria" class="form-control" style="min-width: 180px;">
+                <select 
+                    name="categoria" 
+                    style="min-width: 200px; padding: 14px 16px; border: 1px solid var(--cc-border-default, #E5E5E5); border-radius: 8px; font-size: 15px; background: white; cursor: pointer; transition: all 0.2s ease;"
+                    onfocus="this.style.borderColor='var(--cc-primary, #E6332A)'; this.style.boxShadow='0 0 0 3px rgba(230, 51, 42, 0.1)'"
+                    onblur="this.style.borderColor='var(--cc-border-default, #E5E5E5)'; this.style.boxShadow='none'"
+                >
                     <option value="">Todas las categorías</option>
                     <?php foreach ($categorias as $cat): ?>
                         <option value="<?php echo $cat['id']; ?>"><?php echo $cat['nombre']; ?></option>
                     <?php endforeach; ?>
                 </select>
-                <button type="submit" class="btn primary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button type="submit" class="btn primary" style="padding: 14px 28px; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"/>
                         <path d="m21 21-4.35-4.35"/>
                     </svg>

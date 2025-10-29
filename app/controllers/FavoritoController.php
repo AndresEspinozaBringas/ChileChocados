@@ -4,13 +4,13 @@
  * Gestiona el sistema de favoritos de publicaciones
  */
 
+namespace App\Controllers;
+
 class FavoritoController
 {
-    private $db;
-    
     public function __construct()
     {
-        $this->db = Database::getInstance()->getConnection();
+        // TODO: Conectar con BD en futuras etapas
     }
     
     /**
@@ -20,43 +20,17 @@ class FavoritoController
     public function index()
     {
         // Verificar que el usuario esté autenticado
-        if (!isset($_SESSION['user_id'])) {
-            Session::flash('error', 'Debes iniciar sesión para ver tus favoritos');
-            header('Location: /login');
+        if (!isAuthenticated()) {
+            setFlash('error', 'Debes iniciar sesión para ver tus favoritos');
+            header('Location: ' . BASE_URL . '/login');
             exit;
         }
         
         $userId = $_SESSION['user_id'];
         
-        // Obtener publicaciones favoritas del usuario
-        $stmt = $this->db->prepare("
-            SELECT 
-                p.id,
-                p.titulo,
-                p.descripcion,
-                p.precio,
-                p.foto_principal,
-                p.fecha_publicacion,
-                p.visitas,
-                p.estado,
-                cp.nombre as categoria_nombre,
-                cp.slug as categoria_slug,
-                sc.nombre as subcategoria_nombre,
-                r.nombre as region_nombre,
-                c.nombre as comuna_nombre,
-                f.fecha_agregado as fecha_favorito
-            FROM favoritos f
-            INNER JOIN publicaciones p ON f.publicacion_id = p.id
-            INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
-            LEFT JOIN subcategorias sc ON p.subcategoria_id = sc.id
-            INNER JOIN regiones r ON p.region_id = r.id
-            INNER JOIN comunas c ON p.comuna_id = c.id
-            WHERE f.usuario_id = ? AND p.estado = 'aprobada'
-            ORDER BY f.fecha_agregado DESC
-        ");
-        
-        $stmt->execute([$userId]);
-        $favoritos = $stmt->fetchAll(PDO::FETCH_OBJ);
+        // TODO: Conectar con BD en futuras etapas
+        // Por ahora mostramos favoritos desde localStorage (se maneja en el frontend)
+        $favoritos = [];
         
         // Formatear datos para la vista
         foreach ($favoritos as $favorito) {

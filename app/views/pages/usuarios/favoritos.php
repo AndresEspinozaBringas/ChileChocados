@@ -10,83 +10,122 @@ $pageTitle = $data['title'] ?? 'Mis Favoritos - ChileChocados';
 $metaDescription = $data['meta_description'] ?? 'Gestiona tus publicaciones favoritas';
 $favoritos = $data['favoritos'] ?? [];
 $total = $data['total'] ?? 0;
+$currentPage = 'favoritos';
+
+// MOCKUP DATA - Datos de ejemplo mientras no hay BD
+if (empty($favoritos)) {
+    $favoritos = [
+        (object)[
+            'id' => 1,
+            'titulo' => 'Toyota Corolla 2018 - Daño Frontal',
+            'descripcion' => 'Vehículo con daño frontal moderado, motor en perfecto estado. Ideal para repuestos o reparación.',
+            'precio' => 4500000,
+            'precio_formateado' => '4.500.000',
+            'foto_principal' => 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=600&fit=crop',
+            'categoria_nombre' => 'Automóviles',
+            'subcategoria_nombre' => 'Sedán',
+            'comuna_nombre' => 'Santiago Centro',
+            'visitas' => 245,
+            'tiempo_favorito' => 'Hace 2 días'
+        ],
+        (object)[
+            'id' => 2,
+            'titulo' => 'Honda CBR 600RR 2020 - Daño Lateral',
+            'descripcion' => 'Motocicleta deportiva con daño en carenado lateral derecho. Motor y transmisión funcionando.',
+            'precio' => 3200000,
+            'precio_formateado' => '3.200.000',
+            'foto_principal' => 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800&h=600&fit=crop',
+            'categoria_nombre' => 'Motocicletas',
+            'subcategoria_nombre' => 'Deportiva',
+            'comuna_nombre' => 'Las Condes',
+            'visitas' => 189,
+            'tiempo_favorito' => 'Hace 5 días'
+        ],
+        (object)[
+            'id' => 3,
+            'titulo' => 'Chevrolet Spark 2019 - Choque Trasero',
+            'descripcion' => 'Auto compacto con daño en parachoques trasero. Mecánica en excelente estado.',
+            'precio' => 2800000,
+            'precio_formateado' => '2.800.000',
+            'foto_principal' => 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=600&fit=crop',
+            'categoria_nombre' => 'Automóviles',
+            'subcategoria_nombre' => 'Hatchback',
+            'comuna_nombre' => 'Maipú',
+            'visitas' => 312,
+            'tiempo_favorito' => 'Hace 1 semana'
+        ],
+        (object)[
+            'id' => 4,
+            'titulo' => 'Nissan X-Trail 2017 - Volcamiento',
+            'descripcion' => 'SUV con daño por volcamiento. Motor y caja de cambios operativos. Ideal para repuestos.',
+            'precio' => 5500000,
+            'precio_formateado' => '5.500.000',
+            'foto_principal' => 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop',
+            'categoria_nombre' => 'SUV',
+            'subcategoria_nombre' => 'Mediana',
+            'comuna_nombre' => 'Providencia',
+            'visitas' => 428,
+            'tiempo_favorito' => 'Hoy'
+        ]
+    ];
+    $total = count($favoritos);
+}
 
 // Cargar header
-require_once __DIR__ . '/../../../layouts/header.php';
+require_once __DIR__ . '/../../layouts/header.php';
 ?>
 
 <style>
-/* ============================================================================
- * ESTILOS ESPECÍFICOS PARA PÁGINA DE FAVORITOS
- * ============================================================================ */
+/* Estilos específicos para favoritos usando variables del sistema */
 .favoritos-header {
-    background: linear-gradient(135deg, var(--cc-primary) 0%, var(--cc-primary-dark) 100%);
-    color: var(--cc-white);
-    padding: 48px 0;
-    margin-bottom: 48px;
-}
-
-.favoritos-header-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 24px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
-.favoritos-header h1 {
-    font-size: 36px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+.favoritos-header svg {
+    color: var(--cc-primary, #E6332A);
 }
 
 .favoritos-count {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 8px 16px;
-    border-radius: var(--cc-radius-full);
-    font-size: 18px;
+    background: var(--cc-primary-pale, #FFF1F0);
+    color: var(--cc-primary, #E6332A);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
     font-weight: 600;
 }
 
-.favoritos-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px 80px;
-}
-
-/* Grid de publicaciones */
 .favoritos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-    margin-top: 32px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 60px;
 }
 
-/* Card de publicación */
 .favorito-card {
-    background: var(--cc-bg-surface);
-    border-radius: var(--cc-radius-xl);
+    background: var(--cc-white, #FFFFFF);
+    border: 1px solid var(--cc-border-default, #E5E5E5);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: var(--cc-shadow);
-    border: 1px solid var(--cc-border-light);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
 }
 
 .favorito-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--cc-shadow-md);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .favorito-image-wrapper {
     position: relative;
     width: 100%;
-    padding-top: 66.67%; /* Ratio 3:2 */
-    background: var(--cc-gray-200);
+    padding-top: 66.67%;
+    background: var(--cc-bg-muted, #F5F5F5);
     overflow: hidden;
 }
 
@@ -103,65 +142,73 @@ require_once __DIR__ . '/../../../layouts/header.php';
     position: absolute;
     top: 12px;
     left: 12px;
-    background: var(--cc-white);
-    color: var(--cc-primary);
-    padding: 6px 12px;
-    border-radius: var(--cc-radius-lg);
-    font-size: 12px;
+    background: var(--cc-white, #FFFFFF);
+    color: var(--cc-primary, #E6332A);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 4px;
-    box-shadow: var(--cc-shadow-sm);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .favorito-remove {
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 36px;
-    height: 36px;
-    background: var(--cc-white);
-    color: var(--cc-danger);
+    width: 32px;
+    height: 32px;
+    background: var(--cc-white, #FFFFFF);
+    color: var(--cc-danger, #EF4444);
     border: none;
-    border-radius: var(--cc-radius-full);
+    border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--cc-shadow);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     transition: all 0.2s ease;
-    opacity: 0;
-}
-
-.favorito-card:hover .favorito-remove {
     opacity: 1;
 }
 
 .favorito-remove:hover {
-    background: var(--cc-danger);
-    color: var(--cc-white);
+    background: var(--cc-danger, #EF4444);
+    color: var(--cc-white, #FFFFFF);
     transform: scale(1.1);
 }
 
+@media (min-width: 769px) {
+    .favorito-remove {
+        opacity: 0;
+    }
+    
+    .favorito-card:hover .favorito-remove {
+        opacity: 1;
+    }
+}
+
 .favorito-content {
-    padding: 20px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
 }
 
 .favorito-categoria {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    color: var(--cc-primary);
+    color: var(--cc-primary, #E6332A);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .favorito-titulo {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
-    color: var(--cc-text-primary);
-    margin-bottom: 12px;
+    color: var(--cc-text-primary, #1A1A1A);
+    margin-bottom: 8px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -170,9 +217,9 @@ require_once __DIR__ . '/../../../layouts/header.php';
 }
 
 .favorito-descripcion {
-    font-size: 14px;
-    color: var(--cc-text-secondary);
-    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--cc-text-secondary, #666);
+    margin-bottom: 12px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -180,14 +227,39 @@ require_once __DIR__ . '/../../../layouts/header.php';
     line-height: 1.5;
 }
 
+.favorito-precio {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--cc-primary, #E6332A);
+    margin-bottom: 12px;
+}
+
 .favorito-meta {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding-top: 16px;
-    border-top: 1px solid var(--cc-border-light);
-    font-size: 13px;
-    color: var(--cc-text-tertiary);
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--cc-border-light, #E8E8E8);
+    font-size: 12px;
+    color: var(--cc-text-secondary, #666);
+}
+
+.favorito-meta svg {
+    flex-shrink: 0;
+}
+
+.favorito-ubicacion {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+}
+
+.favorito-ubicacion span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .favorito-meta-item {
@@ -196,124 +268,71 @@ require_once __DIR__ . '/../../../layouts/header.php';
     gap: 4px;
 }
 
-.favorito-ubicacion {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.favorito-precio {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--cc-primary);
-    margin-bottom: 16px;
-}
-
 .favorito-footer {
-    padding: 16px 20px;
-    background: var(--cc-bg-muted);
+    padding: 12px 16px;
+    background: var(--cc-bg-muted, #F5F5F5);
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    align-items: stretch;
 }
 
 .btn-ver-detalle {
     flex: 1;
-    padding: 10px 16px;
-    background: var(--cc-primary);
-    color: var(--cc-white);
+    padding: 10px;
+    background: var(--cc-primary, #E6332A);
+    color: var(--cc-white, #FFFFFF);
     border: none;
-    border-radius: var(--cc-radius-lg);
+    border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-ver-detalle:hover {
-    background: var(--cc-primary-dark);
-    transform: translateY(-1px);
+    background: var(--cc-primary-dark, #B82920);
 }
 
-/* Empty state */
 .favoritos-empty {
     text-align: center;
-    padding: 80px 24px;
+    padding: 60px 24px;
     max-width: 500px;
     margin: 0 auto;
 }
 
 .favoritos-empty-icon {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 24px;
-    background: var(--cc-gray-100);
-    border-radius: var(--cc-radius-full);
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    background: var(--cc-bg-muted, #F5F5F5);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--cc-gray-400);
+    color: var(--cc-text-tertiary, #999);
 }
 
 .favoritos-empty h2 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
-    color: var(--cc-text-primary);
-    margin-bottom: 12px;
+    color: var(--cc-text-primary, #1A1A1A);
+    margin-bottom: 10px;
 }
 
 .favoritos-empty p {
-    font-size: 16px;
-    color: var(--cc-text-secondary);
+    font-size: 15px;
+    color: var(--cc-text-secondary, #666);
     line-height: 1.6;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
-.btn-explorar {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: var(--cc-primary);
-    color: var(--cc-white);
-    text-decoration: none;
-    border-radius: var(--cc-radius-lg);
-    font-size: 16px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.btn-explorar:hover {
-    background: var(--cc-primary-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--cc-shadow-md);
-}
-
-/* Responsive */
-@media (max-width: 968px) {
+@media (max-width: 768px) {
     .favoritos-header h1 {
-        font-size: 28px;
-    }
-    
-    .favoritos-header-content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .favoritos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-    }
-}
-
-@media (max-width: 640px) {
-    .favoritos-header {
-        padding: 32px 0;
-        margin-bottom: 32px;
+        font-size: 24px;
     }
     
     .favoritos-grid {
@@ -327,39 +346,30 @@ require_once __DIR__ . '/../../../layouts/header.php';
 }
 </style>
 
-<!-- Header -->
-<section class="favoritos-header">
-    <div class="favoritos-header-content">
-        <h1>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-            Mis Favoritos
-            <?php if ($total > 0): ?>
-                <span class="favoritos-count"><?php echo $total; ?></span>
-            <?php endif; ?>
-        </h1>
+<main class="container" style="margin-top: 24px; margin-bottom: 60px;">
+    
+    <!-- Header -->
+    <div class="favoritos-header">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <h1 class="h2" style="margin: 0;">Mis Favoritos</h1>
+        <?php if ($total > 0): ?>
+            <span class="favoritos-count"><?php echo $total; ?></span>
+        <?php endif; ?>
     </div>
-</section>
-
-<!-- Main Content -->
-<main class="favoritos-container">
     
     <?php if (empty($favoritos)): ?>
         <!-- Empty State -->
         <div class="favoritos-empty">
             <div class="favoritos-empty-icon">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
             </div>
             <h2>No tienes favoritos aún</h2>
             <p>Comienza a guardar las publicaciones que te interesen para encontrarlas fácilmente más tarde.</p>
-            <a href="/publicaciones" class="btn-explorar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
-                </svg>
+            <a href="<?php echo BASE_URL; ?>/publicaciones" class="btn primary">
                 Explorar Publicaciones
             </a>
         </div>
@@ -444,7 +454,7 @@ require_once __DIR__ . '/../../../layouts/header.php';
                     
                     <!-- Footer -->
                     <div class="favorito-footer">
-                        <a href="/detalle/<?php echo $favorito->id; ?>" class="btn-ver-detalle">
+                        <a href="<?php echo BASE_URL; ?>/detalle/<?php echo $favorito->id; ?>" class="btn-ver-detalle">
                             Ver Detalle
                         </a>
                     </div>
@@ -540,5 +550,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php
 // Cargar footer
-require_once __DIR__ . '/../../../layouts/footer.php';
+require_once __DIR__ . '/../../layouts/footer.php';
 ?>

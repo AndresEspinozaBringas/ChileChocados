@@ -13,98 +13,12 @@
                 </a>
             </li>
             
-            <!-- Explorar (con dropdown) -->
-            <li class="nav-item has-dropdown">
-                <button class="nav-link dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+            <!-- Explorar -->
+            <li class="nav-item">
+                <a href="<?php echo BASE_URL; ?>/categorias" class="nav-link <?php echo ($currentPage === 'categorias') ? 'active' : ''; ?>">
                     <?php echo icon('grid', 18); ?>
                     <span>Explorar</span>
-                    <?php echo icon('chevron-down', 16, 'chevron-icon'); ?>
-                </button>
-                
-                <div class="nav-dropdown">
-                    <div class="nav-dropdown-content">
-                        <div class="nav-dropdown-section">
-                            <h4 class="nav-dropdown-title">Por Categoría</h4>
-                            <ul class="nav-dropdown-list">
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/autos" class="nav-dropdown-link">
-                                        <?php echo icon('car', 20); ?>
-                                        <div>
-                                            <div class="link-title">Autos</div>
-                                            <div class="link-meta">Sedan • SUV • Hatchback</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/camionetas" class="nav-dropdown-link">
-                                        <?php echo icon('truck', 20); ?>
-                                        <div>
-                                            <div class="link-title">Camionetas</div>
-                                            <div class="link-meta">Pickup • Van • 4x4</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/motos" class="nav-dropdown-link">
-                                        <?php echo icon('bike', 20); ?>
-                                        <div>
-                                            <div class="link-title">Motos</div>
-                                            <div class="link-meta">Scooter • Deportiva • Touring</div>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/camiones" class="nav-dropdown-link">
-                                        <?php echo icon('truck', 20); ?>
-                                        <div>
-                                            <div class="link-title">Camiones</div>
-                                            <div class="link-meta">Liviano • Mediano • Pesado</div>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <div class="nav-dropdown-divider"></div>
-                        
-                        <div class="nav-dropdown-section">
-                            <h4 class="nav-dropdown-title">Más Categorías</h4>
-                            <ul class="nav-dropdown-list">
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/bus" class="nav-dropdown-link">
-                                        <?php echo icon('bus', 20); ?>
-                                        <span>Bus</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/nauticos" class="nav-dropdown-link">
-                                        <?php echo icon('boat', 20); ?>
-                                        <span>Náuticos</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/aereos" class="nav-dropdown-link">
-                                        <?php echo icon('plane', 20); ?>
-                                        <span>Aéreos</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="<?php echo BASE_URL; ?>/categoria/maquinaria" class="nav-dropdown-link">
-                                        <?php echo icon('settings', 20); ?>
-                                        <span>Maquinaria</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <div class="nav-dropdown-footer">
-                            <a href="<?php echo BASE_URL; ?>/categorias" class="nav-dropdown-btn">
-                                Ver todas las categorías
-                                <?php echo icon('arrow-right', 16); ?>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                </a>
             </li>
             
             <!-- Cómo funciona -->
@@ -122,6 +36,16 @@
                     <span>Destacados</span>
                 </a>
             </li>
+            
+            <?php if (isset($_SESSION['user_id'])): ?>
+            <!-- Favoritos (solo usuarios autenticados) -->
+            <li class="nav-item">
+                <a href="<?php echo BASE_URL; ?>/favoritos" class="nav-link <?php echo ($currentPage === 'favoritos') ? 'active' : ''; ?>">
+                    <?php echo icon('heart', 18); ?>
+                    <span>Favoritos</span>
+                </a>
+            </li>
+            <?php endif; ?>
             
             <!-- Ayuda (con dropdown) -->
             <li class="nav-item has-dropdown">

@@ -35,33 +35,30 @@ class PublicacionController
     {
         // Obtener parámetros de filtros desde URL
         $filtros = [
-            'categoria_id' => $_GET['categoria'] ?? null,
-            'subcategoria_id' => $_GET['subcategoria'] ?? null,
-            'region_id' => $_GET['region'] ?? null,
-            'comuna_id' => $_GET['comuna'] ?? null,
+            'categoria' => $_GET['categoria'] ?? null,
+            'subcategoria' => $_GET['subcategoria'] ?? null,
+            'region' => $_GET['region'] ?? null,
+            'comuna' => $_GET['comuna'] ?? null,
             'precio_min' => $_GET['precio_min'] ?? null,
             'precio_max' => $_GET['precio_max'] ?? null,
-            'tipo_venta' => $_GET['tipo'] ?? null,  // 'completo' o 'desarme'
-            'buscar' => $_GET['q'] ?? null,
+            'estado' => $_GET['estado'] ?? null,
+            'q' => $_GET['q'] ?? null,
             'orden' => $_GET['orden'] ?? 'recientes',
             'page' => $_GET['page'] ?? 1
         ];
 
-        // Obtener publicaciones con filtros aplicados
-        $resultado = $this->publicacionModel->listarConFiltros($filtros);
-
-        // Obtener datos para los selectores de filtros
-        $categorias = $this->categoriaModel->getActivas();
-
+        // TODO: Conectar con BD en futuras etapas
+        // Por ahora la vista maneja los datos de prueba
         $data = [
             'title' => 'Listado de Vehículos Siniestrados - ChileChocados',
             'meta_description' => 'Encuentra vehículos siniestrados y en desarme en todo Chile',
-            'publicaciones' => $resultado['publicaciones'] ?? [],
-            'total' => $resultado['total'] ?? 0,
+            'publicaciones' => [],  // La vista agregará datos de prueba si está vacío
+            'total' => 0,
             'pagina_actual' => (int) $filtros['page'],
-            'total_paginas' => $resultado['total_paginas'] ?? 1,
+            'total_paginas' => 1,
             'filtros_aplicados' => $filtros,
-            'categorias' => $categorias
+            'categorias' => [],
+            'regiones' => []
         ];
 
         // Cargar vista
