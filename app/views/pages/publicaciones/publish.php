@@ -145,23 +145,27 @@ require_once APP_PATH . '/views/layouts/header.php';
     <div class="card">
       <div class="h3">Paso 1: Tipificación</div>
       <div class="kit">
-        <label class="tag">
-          <input type="radio" name="tipificacion" value="chocado" required> Chocado / Siniestrado
+        <label class="tag" id="label-chocado">
+          <input type="radio" name="tipificacion" value="chocado" id="tip-chocado" required> Chocado
         </label>
-        <label class="tag">
-          <input type="radio" name="tipificacion" value="mecanico"> Problemas mecánicos
+        <label class="tag" id="label-siniestrado">
+          <input type="radio" name="tipificacion" value="siniestrado" id="tip-siniestrado"> Siniestrado
         </label>
       </div>
+      <p class="meta" style="margin-top: 8px; font-size: 13px;">
+        <strong>Chocado:</strong> Venta directa con precio definido · 
+        <strong>Siniestrado:</strong> Precio a convenir
+      </p>
     </div>
 
     <div class="card" id="step2">
       <div class="h3">Paso 2: Tipo de venta</div>
       <div class="kit">
-        <label class="tag">
-          <input type="radio" name="tipo_venta" value="completo" required> Vehículo completo (con precio)
+        <label class="tag" id="label-completo">
+          <input type="radio" name="tipo_venta" value="completo" id="venta-completo" required> Venta Directa (con precio)
         </label>
-        <label class="tag">
-          <input type="radio" name="tipo_venta" value="desarme"> En desarme (precio: "A convenir")
+        <label class="tag" id="label-desarme">
+          <input type="radio" name="tipo_venta" value="desarme" id="venta-desarme"> Precio a convenir
         </label>
       </div>
     </div>
@@ -288,6 +292,51 @@ require_once APP_PATH . '/views/layouts/header.php';
 </main>
 
 <script>
+// ============================================================================
+// LÓGICA DE TIPIFICACIÓN Y TIPO DE VENTA
+// ============================================================================
+
+// Controlar la relación entre Tipificación y Tipo de Venta
+document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    const ventaCompleto = document.getElementById('venta-completo');
+    const ventaDesarme = document.getElementById('venta-desarme');
+    const labelCompleto = document.getElementById('label-completo');
+    const labelDesarme = document.getElementById('label-desarme');
+    
+    if (this.value === 'chocado') {
+      // CHOCADO: Solo "Venta Directa (con precio)"
+      ventaCompleto.checked = true;
+      ventaCompleto.disabled = false;
+      ventaDesarme.disabled = true;
+      ventaDesarme.checked = false;
+      
+      labelCompleto.style.opacity = '1';
+      labelCompleto.style.cursor = 'pointer';
+      labelDesarme.style.opacity = '0.4';
+      labelDesarme.style.cursor = 'not-allowed';
+      
+      // Mostrar campo precio
+      document.getElementById('precio-field').style.display = 'block';
+      
+    } else if (this.value === 'siniestrado') {
+      // SINIESTRADO: Solo "Precio a convenir"
+      ventaDesarme.checked = true;
+      ventaDesarme.disabled = false;
+      ventaCompleto.disabled = true;
+      ventaCompleto.checked = false;
+      
+      labelDesarme.style.opacity = '1';
+      labelDesarme.style.cursor = 'pointer';
+      labelCompleto.style.opacity = '0.4';
+      labelCompleto.style.cursor = 'not-allowed';
+      
+      // Ocultar campo precio
+      document.getElementById('precio-field').style.display = 'none';
+    }
+  });
+});
+
 // Ocultar/mostrar campo precio según tipo de venta
 document.querySelectorAll('input[name="tipo_venta"]').forEach(radio => {
   radio.addEventListener('change', function() {
