@@ -109,7 +109,7 @@
             
             <!-- Cómo funciona -->
             <li class="nav-item">
-                <a href="<?php echo BASE_URL; ?>/como-funciona" class="nav-link <?php echo ($currentPage === 'como-funciona') ? 'active' : ''; ?>">
+                <a href="<?php echo BASE_URL; ?>/vender" class="nav-link <?php echo ($currentPage === 'vender') ? 'active' : ''; ?>">
                     <?php echo icon('info', 18); ?>
                     <span>Cómo funciona</span>
                 </a>
@@ -273,7 +273,7 @@
             </li>
             
             <li>
-                <a href="<?php echo BASE_URL; ?>/como-funciona" class="mobile-menu-link">
+                <a href="<?php echo BASE_URL; ?>/vender" class="mobile-menu-link">
                     <?php echo icon('info', 22); ?>
                     <span>Cómo funciona</span>
                 </a>

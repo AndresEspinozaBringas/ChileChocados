@@ -84,6 +84,7 @@ $specialRoutes = [
     // RUTAS DE PERFIL DE USUARIO
     // ====================================
     'perfil' => ['controller' => 'UsuarioController', 'method' => 'perfil'],
+    'mis-publicaciones' => ['controller' => 'UsuarioController', 'method' => 'misPublicaciones'],
     'usuario' => ['controller' => 'UsuarioController', 'method' => 'verPerfil'],
 ];
 

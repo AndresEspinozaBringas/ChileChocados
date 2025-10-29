@@ -435,4 +435,46 @@ class UsuarioController
             'estadisticas' => $stats
         ]);
     }
+
+    /**
+     * Mostrar mis publicaciones
+     * Ruta: GET /mis-publicaciones
+     */
+    public function misPublicaciones()
+    {
+        // Verificar autenticación
+        if (!isAuthenticated()) {
+            setFlash('error', 'Debes iniciar sesión para ver tus publicaciones');
+            redirect('login');
+        }
+
+        $userId = $_SESSION['user_id'];
+
+        // TODO: Conectar con BD en futuras etapas
+        // Todas las publicaciones del usuario (activas, pendientes, vendidas)
+        $publicaciones = [
+            [
+                'id' => 1,
+                'titulo' => 'Ford Territory 2022 - Chocado Frontal',
+                'precio' => 8500000,
+                'foto_principal' => 'ford-territory.jpg',
+                'estado' => 'aprobada',
+                'visitas' => 245,
+                'fecha_publicacion' => '2024-10-20'
+            ],
+            [
+                'id' => 2,
+                'titulo' => 'Kia Cerato 2020 - Choque Lateral',
+                'precio' => 6200000,
+                'foto_principal' => 'kia-cerato.jpg',
+                'estado' => 'aprobada',
+                'visitas' => 189,
+                'fecha_publicacion' => '2024-10-18'
+            ]
+        ];
+
+        // Cargar vista
+        require_once __DIR__ . '/../views/pages/usuarios/mis-publicaciones.php';
+    }
+
 }

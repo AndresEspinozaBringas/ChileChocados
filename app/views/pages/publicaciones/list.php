@@ -32,7 +32,7 @@ $filtros = $data['filtros_aplicados'];
     </div>
     
     <!-- Botón publicar -->
-    <a href="<?php echo BASE_URL; ?>/publicaciones/crear" class="btn primary">
+    <a href="<?php echo BASE_URL; ?>/publicar" class="btn primary">
       + Publicar Vehículo
     </a>
   </div>
