@@ -303,6 +303,8 @@ document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
     const ventaDesarme = document.getElementById('venta-desarme');
     const labelCompleto = document.getElementById('label-completo');
     const labelDesarme = document.getElementById('label-desarme');
+    const precioField = document.getElementById('precio-field');
+    const precioInput = document.querySelector('input[name="precio"]');
     
     if (this.value === 'chocado') {
       // CHOCADO: Solo "Venta Directa (con precio)"
@@ -316,8 +318,10 @@ document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
       labelDesarme.style.opacity = '0.4';
       labelDesarme.style.cursor = 'not-allowed';
       
-      // Mostrar campo precio
-      document.getElementById('precio-field').style.display = 'block';
+      // Mostrar y habilitar campo precio
+      precioField.style.display = 'block';
+      precioInput.disabled = false;
+      precioInput.required = true;
       
     } else if (this.value === 'siniestrado') {
       // SINIESTRADO: Solo "Precio a convenir"
@@ -331,8 +335,11 @@ document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
       labelCompleto.style.opacity = '0.4';
       labelCompleto.style.cursor = 'not-allowed';
       
-      // Ocultar campo precio
-      document.getElementById('precio-field').style.display = 'none';
+      // Ocultar, deshabilitar y limpiar campo precio
+      precioField.style.display = 'none';
+      precioInput.disabled = true;
+      precioInput.required = false;
+      precioInput.value = ''; // Limpiar el valor
     }
   });
 });
@@ -341,10 +348,19 @@ document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
 document.querySelectorAll('input[name="tipo_venta"]').forEach(radio => {
   radio.addEventListener('change', function() {
     const precioField = document.getElementById('precio-field');
+    const precioInput = document.querySelector('input[name="precio"]');
+    
     if (this.value === 'desarme') {
+      // Precio a convenir: ocultar, deshabilitar y limpiar
       precioField.style.display = 'none';
+      precioInput.disabled = true;
+      precioInput.required = false;
+      precioInput.value = '';
     } else {
+      // Venta directa: mostrar y habilitar
       precioField.style.display = 'block';
+      precioInput.disabled = false;
+      precioInput.required = true;
     }
   });
 });
