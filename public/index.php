@@ -289,6 +289,52 @@ if (!empty($url[0]) && $url[0] === 'admin') {
 }
 
 // ====================================
+// RUTAS DE CONTACTO
+// ====================================
+if ($url[0] === 'contacto') {
+    $controllerName = 'ContactoController';
+    
+    if (empty($url[1])) {
+        // GET /contacto - Ver formulario
+        $method = 'index';
+        $params = [];
+    } elseif ($url[1] === 'enviar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        // POST /contacto/enviar - Enviar mensaje
+        $method = 'enviar';
+        $params = [];
+    }
+}
+
+// ====================================
+// RUTAS DE FAVORITOS
+// ====================================
+if ($url[0] === 'favoritos') {
+    $controllerName = 'FavoritoController';
+    
+    if (empty($url[1])) {
+        // GET /favoritos - Ver lista de favoritos
+        $method = 'index';
+        $params = [];
+    } elseif ($url[1] === 'agregar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        // POST /favoritos/agregar - Agregar a favoritos (AJAX)
+        $method = 'agregar';
+        $params = [];
+    } elseif ($url[1] === 'eliminar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        // POST /favoritos/eliminar - Eliminar de favoritos (AJAX)
+        $method = 'eliminar';
+        $params = [];
+    } elseif ($url[1] === 'verificar' && !empty($url[2])) {
+        // GET /favoritos/verificar/{id} - Verificar si está en favoritos (AJAX)
+        $method = 'verificar';
+        $params = [$url[2]];
+    } elseif ($url[1] === 'total') {
+        // GET /favoritos/total - Obtener total de favoritos (AJAX)
+        $method = 'total';
+        $params = [];
+    }
+}
+
+// ====================================
 // CARGA ESTÁNDAR DE CONTROLADOR
 // ====================================
 

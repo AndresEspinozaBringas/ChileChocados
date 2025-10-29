@@ -8,7 +8,11 @@ $pageTitle = $publicacion->titulo ?? 'Detalle de Publicación';
 layout('header');
 ?>
 
+
+
 <main class="container">
+
+
 
 <?php layout('icons'); ?>
 
@@ -96,10 +100,130 @@ layout('header');
             <?php echo icon('message-circle', 18); ?>
             Contactar vendedor
         </a>
-        <button id="fav-toggle" data-pid="<?php echo $publicacion->id; ?>" class="btn" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-          <?php echo icon('heart', 18); ?>
-          Favorito
-        </button>
+<!-- Botón Favorito (agregar después del título) -->
+<button 
+    id="btnFavorito" 
+    class="btn" 
+    onclick="toggleFavorito(<?php echo $publicacion->id; ?>)"
+    data-publicacion-id="<?php echo $publicacion->id; ?>"
+>
+    <svg id="iconoFavorito" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+    <span id="textoFavorito">Guardar favoritos</span>
+</button>
+
+<style>
+.btn-favorito {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--cc-white);
+    border: 2px solid var(--cc-border-default);
+    border-radius: var(--cc-radius-lg);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-favorito:hover {
+    border-color: var(--cc-primary);
+    color: var(--cc-primary);
+}
+
+.btn-favorito.activo {
+    background: var(--cc-primary-pale);
+    border-color: var(--cc-primary);
+    color: var(--cc-primary);
+}
+
+.btn-favorito.activo svg {
+    fill: var(--cc-primary);
+}
+</style>
+
+<script>
+// Sistema de favoritos con localStorage (mock - sin BD)
+document.addEventListener('DOMContentLoaded', function() {
+    const publicacionId = <?php echo $publicacion->id; ?>;
+    verificarEstadoFavorito(publicacionId);
+});
+
+function verificarEstadoFavorito(publicacionId) {
+    const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+    const enFavoritos = favoritos.includes(publicacionId);
+    actualizarBotonFavorito(enFavoritos);
+}
+
+function toggleFavorito(publicacionId) {
+    const btn = document.getElementById('btnFavorito');
+    const esActivo = btn.classList.contains('activo');
+    
+    // Obtener favoritos del localStorage
+    let favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+    
+    if (esActivo) {
+        // Eliminar de favoritos
+        favoritos = favoritos.filter(id => id !== publicacionId);
+        localStorage.setItem('favoritos', JSON.stringify(favoritos));
+        actualizarBotonFavorito(false);
+        
+        // Mostrar notificación
+        mostrarNotificacion('Eliminado de favoritos', 'info');
+    } else {
+        // Agregar a favoritos
+        if (!favoritos.includes(publicacionId)) {
+            favoritos.push(publicacionId);
+            localStorage.setItem('favoritos', JSON.stringify(favoritos));
+        }
+        actualizarBotonFavorito(true);
+        
+        // Mostrar notificación
+        mostrarNotificacion('Agregado a favoritos ❤️', 'success');
+    }
+}
+
+function actualizarBotonFavorito(esActivo) {
+    const btn = document.getElementById('btnFavorito');
+    const icono = document.getElementById('iconoFavorito');
+    const texto = document.getElementById('textoFavorito');
+    
+    if (esActivo) {
+        btn.classList.add('activo');
+        icono.setAttribute('fill', 'currentColor');
+        texto.textContent = 'Guardado';
+    } else {
+        btn.classList.remove('activo');
+        icono.setAttribute('fill', 'none');
+        texto.textContent = 'Guardar';
+    }
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: ${tipo === 'success' ? '#d4edda' : '#d1ecf1'};
+        color: ${tipo === 'success' ? '#155724' : '#0c5460'};
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    `;
+    notif.textContent = mensaje;
+    document.body.appendChild(notif);
+    
+    setTimeout(() => {
+        notif.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notif.remove(), 300);
+    }, 2000);
+}
+</script>
       </div>
       
       <button class="btn" style="margin-top: 8px; width: 100%;" onclick="compartir()">
