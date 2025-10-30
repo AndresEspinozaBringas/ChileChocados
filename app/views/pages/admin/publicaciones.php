@@ -10,7 +10,6 @@
 
 // La verificación de admin se hace en el controlador
 layout('header');
-layout('nav');
 ?>
 
 <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/admin.css">
@@ -20,85 +19,97 @@ layout('nav');
   <!-- Encabezado -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
     <div>
-      <h1 class="h1">Panel de Moderación</h1>
+      <h1 class="h1" style="display: flex; align-items: center; gap: 12px;">
+        <?php echo icon('file-text', 32); ?>
+        Panel de Moderación
+      </h1>
       <p class="meta">Gestiona y modera todas las publicaciones del sistema</p>
     </div>
     <div style="display: flex; gap: 12px;">
       <a href="<?php echo BASE_URL; ?>/admin" class="btn outline">
-        ← Volver al Dashboard
+        <?php echo icon('arrow-left', 18); ?> Volver
       </a>
+      <button onclick="exportarDatos()" class="btn outline">
+        <?php echo icon('download', 18); ?> Exportar CSV
+      </button>
       <button onclick="location.reload()" class="btn primary">
-        🔄 Actualizar
+        <?php echo icon('refresh-cw', 18); ?> Actualizar
       </button>
     </div>
   </div>
 
-  <!-- Contador de estados -->
-  <div class="grid cols-4" style="gap: 16px; margin-bottom: 24px;">
-    <div class="card" style="text-align: center; padding: 20px;">
-      <div class="h2" style="color: #007AFF; margin-bottom: 4px;">
-        <?php echo $conteo['total'] ?? 0; ?>
-      </div>
-      <div class="meta">Total Publicaciones</div>
-    </div>
-
-    <div class="card" style="text-align: center; padding: 20px;">
-      <div class="h2" style="color: #FF9500; margin-bottom: 4px;">
-        <?php echo $conteo['pendientes'] ?? 0; ?>
-      </div>
-      <div class="meta">Pendientes Aprobación</div>
-    </div>
-
-    <div class="card" style="text-align: center; padding: 20px;">
-      <div class="h2" style="color: #34C759; margin-bottom: 4px;">
-        <?php echo $conteo['aprobadas'] ?? 0; ?>
-      </div>
-      <div class="meta">Aprobadas</div>
-    </div>
-
-    <div class="card" style="text-align: center; padding: 20px;">
-      <div class="h2" style="color: #FF3B30; margin-bottom: 4px;">
-        <?php echo $conteo['rechazadas'] ?? 0; ?>
-      </div>
-      <div class="meta">Rechazadas</div>
+  <!-- Tabs de Estado -->
+  <div class="tabs-container" style="margin-bottom: 24px;">
+    <div class="tabs">
+      <a href="<?php echo BASE_URL; ?>/admin/publicaciones" 
+         class="tab <?php echo empty($filtros['estado']) ? 'tab-active' : ''; ?>">
+        <?php echo icon('list', 18); ?>
+        <span>Todas</span>
+        <span class="tab-badge"><?php echo $conteo['total'] ?? 0; ?></span>
+      </a>
+      
+      <a href="<?php echo BASE_URL; ?>/admin/publicaciones?estado=pendiente" 
+         class="tab <?php echo ($filtros['estado'] ?? '') === 'pendiente' ? 'tab-active' : ''; ?>">
+        <?php echo icon('clock', 18); ?>
+        <span>Pendientes</span>
+        <?php if (($conteo['pendientes'] ?? 0) > 0): ?>
+          <span class="tab-badge tab-badge-warning"><?php echo $conteo['pendientes']; ?></span>
+        <?php endif; ?>
+      </a>
+      
+      <a href="<?php echo BASE_URL; ?>/admin/publicaciones?estado=aprobada" 
+         class="tab <?php echo ($filtros['estado'] ?? '') === 'aprobada' ? 'tab-active' : ''; ?>">
+        <?php echo icon('check-circle', 18); ?>
+        <span>Aprobadas</span>
+        <span class="tab-badge tab-badge-success"><?php echo $conteo['aprobadas'] ?? 0; ?></span>
+      </a>
+      
+      <a href="<?php echo BASE_URL; ?>/admin/publicaciones?estado=rechazada" 
+         class="tab <?php echo ($filtros['estado'] ?? '') === 'rechazada' ? 'tab-active' : ''; ?>">
+        <?php echo icon('x-circle', 18); ?>
+        <span>Rechazadas</span>
+        <span class="tab-badge tab-badge-danger"><?php echo $conteo['rechazadas'] ?? 0; ?></span>
+      </a>
     </div>
   </div>
 
-  <!-- Filtros -->
-  <div class="card" style="margin-bottom: 24px; padding: 24px;">
-    <h3 class="h3" style="margin-bottom: 16px;">Filtros</h3>
-    <form method="GET" action="<?php echo BASE_URL; ?>/admin/publicaciones" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-      
-      <!-- Estado -->
-      <div>
-        <label class="label">Estado</label>
-        <select name="estado" class="input">
-          <option value="">Todas</option>
-          <option value="pendiente" <?php echo ($filtros['estado'] ?? '') === 'pendiente' ? 'selected' : ''; ?>>Pendientes</option>
-          <option value="aprobada" <?php echo ($filtros['estado'] ?? '') === 'aprobada' ? 'selected' : ''; ?>>Aprobadas</option>
-          <option value="rechazada" <?php echo ($filtros['estado'] ?? '') === 'rechazada' ? 'selected' : ''; ?>>Rechazadas</option>
-        </select>
-      </div>
+  <!-- Filtros Adicionales (Colapsables) -->
+  <div class="card" style="margin-bottom: 24px; padding: 16px 24px;">
+    <button type="button" onclick="toggleFilters()" class="filter-toggle" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: none; border: none; cursor: pointer; padding: 8px 0;">
+      <span style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+        <?php echo icon('filter', 18); ?>
+        Filtros Avanzados
+      </span>
+      <?php echo icon('chevron-down', 18); ?>
+    </button>
+    
+    <div id="advanced-filters" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cc-border-default, #D4D4D4);">
+      <form method="GET" action="<?php echo BASE_URL; ?>/admin/publicaciones" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        
+        <!-- Mantener estado actual -->
+        <?php if (!empty($filtros['estado'])): ?>
+          <input type="hidden" name="estado" value="<?php echo htmlspecialchars($filtros['estado']); ?>">
+        <?php endif; ?>
+        
+        <!-- Categoría -->
+        <div>
+          <label class="label">Categoría</label>
+          <select name="categoria" class="input">
+            <option value="">Todas las categorías</option>
+            <?php foreach ($categorias ?? [] as $cat): ?>
+              <option value="<?php echo $cat->id; ?>" <?php echo ($filtros['categoria_id'] ?? '') == $cat->id ? 'selected' : ''; ?>>
+                <?php echo htmlspecialchars($cat->nombre); ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
 
-      <!-- Categoría -->
-      <div>
-        <label class="label">Categoría</label>
-        <select name="categoria" class="input">
-          <option value="">Todas las categorías</option>
-          <?php foreach ($categorias ?? [] as $cat): ?>
-            <option value="<?php echo $cat->id; ?>" <?php echo ($filtros['categoria_id'] ?? '') == $cat->id ? 'selected' : ''; ?>>
-              <?php echo htmlspecialchars($cat->nombre); ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <!-- Búsqueda -->
-      <div>
-        <label class="label">Buscar</label>
-        <input 
-          type="text" 
-          name="q" 
+        <!-- Búsqueda -->
+        <div>
+          <label class="label">Buscar</label>
+          <input 
+            type="text" 
+            name="q" 
           class="input" 
           placeholder="Título, marca, modelo..." 
           value="<?php echo htmlspecialchars($filtros['busqueda'] ?? ''); ?>"
@@ -183,15 +194,16 @@ layout('nav');
 
                 <!-- Categoría -->
                 <td>
-                  <span class="badge">
-                    <?php echo htmlspecialchars($pub->categoria_nombre ?? 'Sin categoría'); ?>
-                  </span>
-                  <?php if ($pub->subcategoria_nombre): ?>
-                    <br>
-                    <span class="badge" style="margin-top: 4px; font-size: 11px;">
-                      <?php echo htmlspecialchars($pub->subcategoria_nombre); ?>
+                  <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
+                    <span class="badge">
+                      <?php echo htmlspecialchars($pub->categoria_nombre ?? 'Sin categoría'); ?>
                     </span>
-                  <?php endif; ?>
+                    <?php if ($pub->subcategoria_nombre): ?>
+                      <span class="badge" style="font-size: 11px; background: #E5E5E5;">
+                        <?php echo htmlspecialchars($pub->subcategoria_nombre); ?>
+                      </span>
+                    <?php endif; ?>
+                  </div>
                 </td>
 
                 <!-- Estado -->
@@ -229,42 +241,45 @@ layout('nav');
                       <!-- Aprobar -->
                       <button 
                         onclick="aprobarPublicacion(<?php echo $pub->id; ?>)" 
-                        class="btn primary"
-                        style="padding: 6px 10px; font-size: 12px; background: #34C759; white-space: nowrap;"
+                        class="btn btn-primary"
+                        style="padding: 6px 12px; font-size: 12px; background: var(--cc-success, #10B981); border-color: var(--cc-success, #10B981); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"
                         title="Aprobar publicación"
                       >
-                        ✓ Aprobar
+                        <?php echo icon('check', 14); ?>
+                        <span>Aprobar</span>
                       </button>
 
                       <!-- Rechazar -->
                       <button 
                         onclick="mostrarModalRechazo(<?php echo $pub->id; ?>)" 
                         class="btn"
-                        style="padding: 6px 10px; font-size: 12px; background: #FF3B30; color: white; white-space: nowrap;"
+                        style="padding: 6px 12px; font-size: 12px; background: var(--cc-danger, #EF4444); border-color: var(--cc-danger, #EF4444); color: white; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"
                         title="Rechazar publicación"
                       >
-                        ✕ Rechazar
+                        <?php echo icon('x', 14); ?>
+                        <span>Rechazar</span>
                       </button>
                     <?php endif; ?>
 
                     <!-- Ver detalle -->
                     <button 
                       onclick="verDetallePublicacion(<?php echo $pub->id; ?>)" 
-                      class="btn outline"
-                      style="padding: 6px 10px; font-size: 12px; white-space: nowrap;"
+                      class="btn btn-outline"
+                      style="padding: 6px 12px; font-size: 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"
                       title="Ver detalle"
                     >
-                      👁️ Ver
+                      <?php echo icon('eye', 14); ?>
+                      <span>Ver</span>
                     </button>
 
                     <!-- Eliminar -->
                     <button 
                       onclick="eliminarPublicacion(<?php echo $pub->id; ?>)" 
-                      class="btn outline"
-                      style="padding: 6px 10px; font-size: 12px; color: #FF3B30; border-color: #FF3B30; white-space: nowrap;"
+                      class="btn btn-outline"
+                      style="padding: 6px 12px; font-size: 12px; color: var(--cc-danger, #EF4444); border-color: var(--cc-danger, #EF4444); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"
                       title="Eliminar permanentemente"
                     >
-                      🗑️
+                      <?php echo icon('trash-2', 14); ?>
                     </button>
                   </div>
                 </td>
@@ -314,15 +329,15 @@ layout('nav');
 </main>
 
 <!-- Modal: Ver detalle de publicación -->
-<div id="modalDetalle" class="modal" style="display: none;">
-  <div class="modal-content" style="max-width: 1200px !important; width: 95% !important; max-height: 90vh; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #E5E5E5;">
+<div id="modalDetalle" class="admin-modal" style="display: none;">
+  <div class="admin-modal-content admin-modal-large">
+    <div class="admin-modal-header">
       <h2 class="h2" style="margin: 0;">Detalle de Publicación</h2>
       <button onclick="cerrarModal('modalDetalle')" class="btn outline" style="padding: 8px 16px;">
         ✕ Cerrar
       </button>
     </div>
-    <div id="contenidoDetalle">
+    <div id="contenidoDetalle" class="admin-modal-body">
       <div style="text-align: center; padding: 48px;">
         <p class="meta">Cargando...</p>
       </div>
@@ -331,36 +346,40 @@ layout('nav');
 </div>
 
 <!-- Modal: Rechazar publicación -->
-<div id="modalRechazo" class="modal" style="display: none;">
-  <div class="modal-content" style="max-width: 500px;">
-    <h2 class="h2" style="margin-bottom: 16px;">Rechazar Publicación</h2>
-    <p class="meta" style="margin-bottom: 24px;">
-      Indica el motivo del rechazo. Esta información será enviada al usuario.
-    </p>
-    
-    <form id="formRechazo" onsubmit="event.preventDefault(); rechazarPublicacion();">
-      <input type="hidden" id="publicacion_id_rechazo" value="">
+<div id="modalRechazo" class="admin-modal" style="display: none;">
+  <div class="admin-modal-content admin-modal-small">
+    <div class="admin-modal-header">
+      <h2 class="h2" style="margin: 0;">Rechazar Publicación</h2>
+    </div>
+    <div class="admin-modal-body">
+      <p class="meta" style="margin-bottom: 24px;">
+        Indica el motivo del rechazo. Esta información será enviada al usuario.
+      </p>
       
-      <div style="margin-bottom: 16px;">
-        <label class="label">Motivo del rechazo *</label>
-        <textarea 
-          id="motivo_rechazo" 
-          class="input" 
-          rows="5" 
-          placeholder="Ej: Las imágenes no son claras, falta información sobre el estado del vehículo..."
-          required
-        ></textarea>
-      </div>
+      <form id="formRechazo" onsubmit="event.preventDefault(); rechazarPublicacion();">
+        <input type="hidden" id="publicacion_id_rechazo" value="">
+        
+        <div style="margin-bottom: 16px;">
+          <label class="label">Motivo del rechazo *</label>
+          <textarea 
+            id="motivo_rechazo" 
+            class="input" 
+            rows="5" 
+            placeholder="Ej: Las imágenes no son claras, falta información sobre el estado del vehículo..."
+            required
+          ></textarea>
+        </div>
 
-      <div style="display: flex; gap: 12px; justify-content: flex-end;">
-        <button type="button" onclick="cerrarModal('modalRechazo')" class="btn outline">
-          Cancelar
-        </button>
-        <button type="submit" class="btn primary" style="background: #FF3B30;">
-          Confirmar Rechazo
-        </button>
-      </div>
-    </form>
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" onclick="cerrarModal('modalRechazo')" class="btn outline">
+            Cancelar
+          </button>
+          <button type="submit" class="btn primary" style="background: #FF3B30;">
+            Confirmar Rechazo
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -371,7 +390,7 @@ function verDetallePublicacion(id) {
   document.getElementById('modalDetalle').style.display = 'flex';
   document.getElementById('contenidoDetalle').innerHTML = '<div style="text-align: center; padding: 48px;"><p class="meta">Cargando...</p></div>';
 
-  fetch(`<?php echo BASE_URL; ?>/admin?action=ver&id=${id}&ajax=1`)
+  fetch(`<?php echo BASE_URL; ?>/admin/publicaciones/${id}?ajax=1`)
     .then(response => response.json())
     .then(data => {
       if (data.error) {
@@ -385,121 +404,137 @@ function verDetallePublicacion(id) {
 
       const pub = data.publicacion;
       const fotos = data.fotos || [];
-      const historial = data.historial || [];
+      
+      // Debug: ver estructura de datos
+      console.log('Publicación:', pub);
+      console.log('Fotos:', fotos);
 
       // Generar HTML de las fotos
       let fotosHtml = '';
       if (fotos && fotos.length > 0) {
-        fotosHtml = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px;">';
+        fotosHtml = '<div class="foto-grid">';
         fotos.forEach((foto, index) => {
+          console.log(`Foto ${index}:`, foto);
+          
+          // La ruta en BD es relativa desde /uploads/publicaciones/, ej: "2025/10/archivo.jpg"
+          let rutaRelativa = foto.ruta || foto.ruta_archivo || '';
+          
+          // Construir URL completa
+          let rutaCompleta = '<?php echo BASE_URL; ?>/uploads/publicaciones/' + rutaRelativa;
+          
+          console.log(`Ruta construida: ${rutaCompleta}`);
+          
           fotosHtml += `
-            <div style="position: relative; border-radius: 8px; overflow: hidden; background: #f5f5f5; aspect-ratio: 4/3;">
+            <div class="foto-item" onclick="window.open('${rutaCompleta}', '_blank')" title="Click para ver en tamaño completo" style="cursor: pointer;">
               <img 
-                src="<?php echo BASE_URL; ?>/uploads/${foto.ruta_archivo}" 
+                src="${rutaCompleta}" 
                 alt="Foto ${index + 1}"
-                style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;"
-                onclick="window.open('<?php echo BASE_URL; ?>/uploads/${foto.ruta_archivo}', '_blank')"
+                onerror="console.error('Error cargando imagen:', this.src); this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;background:#F3F4F6;color:#9CA3AF;font-size:10px;flex-direction:column;padding:8px;text-align:center;\\'>❌<br>Error<br><small style=\\'word-break:break-all;\\'>${rutaRelativa}</small></div>';"
               >
-              ${foto.es_principal ? '<span style="position: absolute; top: 8px; left: 8px; background: #007AFF; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Principal</span>' : ''}
+              ${foto.es_principal == 1 ? '<span class="foto-principal-badge">★ Principal</span>' : ''}
             </div>
           `;
         });
         fotosHtml += '</div>';
       } else {
-        fotosHtml = '<p class="meta" style="margin-top: 16px;">No hay fotos disponibles</p>';
+        fotosHtml = '<div style="text-align: center; padding: 40px; background: #F9FAFB; border-radius: 12px; border: 2px dashed #E5E7EB;"><p class="meta" style="color: #9CA3AF;">📷 No hay fotos disponibles para esta publicación</p></div>';
       }
 
       let html = `
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
           <!-- Columna izquierda: Información -->
           <div>
-            <h3 class="h3" style="margin-bottom: 16px; color: #007AFF;">📝 Información de la Publicación</h3>
-            <div style="background: #F9F9F9; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
-              <table style="width: 100%; border-collapse: collapse;">
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Título:</td>
-                  <td style="padding: 8px 0;">${pub.titulo}</td>
+            <div class="modal-section">
+              <div class="modal-section-title">📝 Información de la Publicación</div>
+              <table class="info-table">
+                <tr>
+                  <td>Título:</td>
+                  <td><strong>${pub.titulo}</strong></td>
                 </tr>
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Marca:</td>
-                  <td style="padding: 8px 0;">${pub.marca || 'N/A'}</td>
+                <tr>
+                  <td>Marca:</td>
+                  <td>${pub.marca || 'N/A'}</td>
                 </tr>
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Modelo:</td>
-                  <td style="padding: 8px 0;">${pub.modelo || 'N/A'}</td>
+                <tr>
+                  <td>Modelo:</td>
+                  <td>${pub.modelo || 'N/A'}</td>
                 </tr>
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Año:</td>
-                  <td style="padding: 8px 0;">${pub.anio || 'N/A'}</td>
+                <tr>
+                  <td>Año:</td>
+                  <td>${pub.anio || 'N/A'}</td>
                 </tr>
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Precio:</td>
-                  <td style="padding: 8px 0; font-size: 18px; font-weight: 600; color: #007AFF;">
-                    ${pub.precio ? '$' + Number(pub.precio).toLocaleString('es-CL') : 'N/A'}
+                <tr>
+                  <td>Precio:</td>
+                  <td style="font-size: 20px; font-weight: 700; color: var(--cc-primary, #E6332A);">
+                    ${pub.precio ? '$' + Number(pub.precio).toLocaleString('es-CL') : 'A convenir'}
                   </td>
                 </tr>
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Categoría:</td>
-                  <td style="padding: 8px 0;">${pub.categoria_nombre}</td>
-                </tr>
-                ${pub.subcategoria_nombre ? `
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Subcategoría:</td>
-                  <td style="padding: 8px 0;">${pub.subcategoria_nombre}</td>
-                </tr>` : ''}
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Ubicación:</td>
-                  <td style="padding: 8px 0;">
-                    ${pub.region_nombre}${pub.comuna_nombre ? ', ' + pub.comuna_nombre : ''}
+                <tr>
+                  <td>Categoría:</td>
+                  <td>
+                    <span class="badge" style="background: var(--cc-primary-pale, #FFF1F0); color: var(--cc-primary, #E6332A);">
+                      ${pub.categoria_nombre}
+                    </span>
+                    ${pub.subcategoria_nombre ? `<br><span class="badge" style="margin-top: 4px;">${pub.subcategoria_nombre}</span>` : ''}
                   </td>
+                </tr>
+                <tr>
+                  <td>Ubicación:</td>
+                  <td>📍 ${pub.region_nombre}${pub.comuna_nombre ? ', ' + pub.comuna_nombre : ''}</td>
                 </tr>
               </table>
             </div>
 
-            <h4 class="h4" style="margin: 24px 0 12px; color: #007AFF;">📄 Descripción</h4>
-            <div style="background: #F9F9F9; padding: 16px; border-radius: 8px; white-space: pre-wrap; line-height: 1.6;">
-              ${pub.descripcion || '<span class="meta">Sin descripción</span>'}
+            <div class="modal-section">
+              <div class="modal-section-title">📄 Descripción</div>
+              <div style="white-space: pre-wrap; line-height: 1.6; color: #374151;">
+                ${pub.descripcion || '<span class="meta" style="color: #9CA3AF;">Sin descripción</span>'}
+              </div>
             </div>
 
             ${pub.motivo_rechazo ? `
-              <div style="margin-top: 24px; padding: 16px; background: #FFF3F3; border-left: 4px solid #FF3B30; border-radius: 4px;">
-                <h4 class="h4" style="color: #FF3B30; margin-bottom: 8px;">❌ Motivo de Rechazo</h4>
-                <p style="white-space: pre-wrap;">${pub.motivo_rechazo}</p>
+              <div style="padding: 20px; background: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 12px; border: 1px solid #FEE2E2;">
+                <div style="font-size: 16px; font-weight: 700; color: #DC2626; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                  ❌ Motivo de Rechazo
+                </div>
+                <p style="white-space: pre-wrap; color: #991B1B; line-height: 1.6;">${pub.motivo_rechazo}</p>
               </div>
             ` : ''}
           </div>
 
           <!-- Columna derecha: Usuario y fotos -->
           <div>
-            <h3 class="h3" style="margin-bottom: 16px; color: #007AFF;">👤 Información del Usuario</h3>
-            <div style="background: #F9F9F9; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-              <table style="width: 100%; border-collapse: collapse;">
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Nombre:</td>
-                  <td style="padding: 8px 0;">${pub.usuario_nombre} ${pub.usuario_apellido}</td>
+            <div class="modal-section">
+              <div class="modal-section-title">👤 Información del Usuario</div>
+              <table class="info-table">
+                <tr>
+                  <td>Nombre:</td>
+                  <td><strong>${pub.usuario_nombre} ${pub.usuario_apellido}</strong></td>
                 </tr>
-                <tr style="border-bottom: 1px solid #E5E5E5;">
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Email:</td>
-                  <td style="padding: 8px 0;">
-                    <a href="mailto:${pub.usuario_email}" style="color: #007AFF; text-decoration: none;">
-                      ${pub.usuario_email}
+                <tr>
+                  <td>Email:</td>
+                  <td>
+                    <a href="mailto:${pub.usuario_email}" style="color: var(--cc-primary, #E6332A); text-decoration: none; font-weight: 600;">
+                      📧 ${pub.usuario_email}
                     </a>
                   </td>
                 </tr>
                 ${pub.usuario_telefono ? `
                 <tr>
-                  <td style="padding: 8px 0; font-weight: 600; color: #666;">Teléfono:</td>
-                  <td style="padding: 8px 0;">
-                    <a href="tel:${pub.usuario_telefono}" style="color: #007AFF; text-decoration: none;">
-                      ${pub.usuario_telefono}
+                  <td>Teléfono:</td>
+                  <td>
+                    <a href="tel:${pub.usuario_telefono}" style="color: var(--cc-primary, #E6332A); text-decoration: none; font-weight: 600;">
+                      📱 ${pub.usuario_telefono}
                     </a>
                   </td>
                 </tr>` : ''}
               </table>
             </div>
 
-            <h3 class="h3" style="margin-bottom: 12px; color: #007AFF;">📷 Fotos (${fotos.length})</h3>
-            ${fotosHtml}
+            <div class="modal-section">
+              <div class="modal-section-title">📷 Fotos del Vehículo (${fotos.length})</div>
+              ${fotosHtml}
+            </div>
           </div>
         </div>
 
@@ -631,40 +666,90 @@ window.onclick = function(event) {
 
 <!-- Estilos para modales -->
 <style>
-.modal {
+/* Modal overlay */
+.admin-modal {
   display: none;
   position: fixed;
-  z-index: 9999;
+  z-index: 10000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.75);
   align-items: center;
   justify-content: center;
   padding: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-/* Estilos específicos para modal de detalle - sobrescriben admin.css */
-#modalDetalle .modal-content {
-  background-color: white;
-  padding: 24px;
-  border-radius: 12px;
-  max-width: 1200px !important;
-  width: 95% !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
-  animation: modalFadeIn 0.3s ease-out;
+/* Modal content container */
+.admin-modal-content {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: adminModalFadeIn 0.3s ease-out;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
-@keyframes modalFadeIn {
+.admin-modal-large {
+  max-width: 1200px;
+  width: 95%;
+}
+
+.admin-modal-small {
+  max-width: 500px;
+  width: 95%;
+}
+
+/* Modal header */
+.admin-modal-header {
+  padding: 24px 32px;
+  border-bottom: 2px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Modal body */
+.admin-modal-body {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+@keyframes adminModalFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: translateY(-20px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
+}
+
+/* Scrollbar personalizado para el modal */
+.admin-modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-track {
+  background: #F3F4F6;
+  border-radius: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb {
+  background: #9CA3AF;
+  border-radius: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #6B7280;
 }
 
 .badge {
@@ -676,6 +761,400 @@ window.onclick = function(event) {
   background: #E5E5E5;
   color: #666;
 }
+
+/* Mejoras para las imágenes en el modal */
+.foto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.foto-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f5f5f5;
+  aspect-ratio: 4/3;
+  border: 2px solid #E5E5E5;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.foto-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  border-color: var(--cc-primary, #E6332A);
+}
+
+.foto-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.foto-principal-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--cc-primary, #E6332A);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Tabla de información mejorada */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-table tr {
+  border-bottom: 1px solid #E5E5E5;
+}
+
+.info-table tr:last-child {
+  border-bottom: none;
+}
+
+.info-table td {
+  padding: 12px 0;
+  vertical-align: top;
+}
+
+.info-table td:first-child {
+  font-weight: 600;
+  color: #666;
+  width: 140px;
+}
+
+.info-table td:last-child {
+  color: #1A1A1A;
+}
+
+/* Secciones del modal */
+.modal-section {
+  background: #F9FAFB;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #E5E7EB;
+}
+
+.modal-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cc-primary, #E6332A);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .modal-content {
+    padding: 20px;
+    width: 100%;
+    max-height: 95vh;
+  }
+  
+  .foto-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+}
+  
+  /* ============================================================================
+   * TABS DE ESTADO
+   * ============================================================================ */
+  .tabs-container {
+    background: var(--cc-bg-surface, white);
+    border-radius: var(--cc-radius-lg, 12px);
+    border: 2px solid var(--cc-border-default, #D4D4D4);
+    padding: 8px;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: var(--cc-radius-md, 8px);
+    font-size: var(--cc-text-sm, 14px);
+    font-weight: var(--cc-font-semibold, 600);
+    color: var(--cc-text-secondary, #4A4A4A);
+    text-decoration: none;
+    transition: var(--cc-transition, all 0.2s ease);
+    white-space: nowrap;
+    border: 2px solid transparent;
+  }
+  
+  .tab:hover {
+    background: var(--cc-bg-muted, #F5F5F5);
+    color: var(--cc-text-primary, #1A1A1A);
+  }
+  
+  .tab-active {
+    background: var(--cc-primary, #E6332A);
+    color: var(--cc-white, white);
+    border-color: var(--cc-primary, #E6332A);
+  }
+  
+  .tab-active:hover {
+    background: var(--cc-primary-dark, #B82920);
+    border-color: var(--cc-primary-dark, #B82920);
+  }
+  
+  .tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    background: var(--cc-gray-200, #E8E8E8);
+    color: var(--cc-text-primary, #1A1A1A);
+    font-size: var(--cc-text-xs, 12px);
+    font-weight: var(--cc-font-bold, 700);
+    border-radius: 12px;
+    line-height: 1;
+  }
+  
+  .tab-active .tab-badge {
+    background: rgba(255, 255, 255, 0.3);
+    color: var(--cc-white, white);
+  }
+  
+  .tab-badge-warning {
+    background: var(--cc-warning, #F59E0B);
+    color: var(--cc-white, white);
+  }
+  
+  .tab-badge-success {
+    background: var(--cc-success, #10B981);
+    color: var(--cc-white, white);
+  }
+  
+  .tab-badge-danger {
+    background: var(--cc-danger, #EF4444);
+    color: var(--cc-white, white);
+  }
+  
+  .tab-active .tab-badge-warning,
+  .tab-active .tab-badge-success,
+  .tab-active .tab-badge-danger {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Responsive tabs */
+  @media (max-width: 768px) {
+    .tabs {
+      overflow-x: scroll;
+    }
+    
+    .tab span:not(.tab-badge) {
+      display: none;
+    }
+    
+    .tab {
+      padding: 12px 16px;
+    }
+  }
+  
+  /* Filter toggle animation */
+  .filter-toggle svg {
+    transition: transform 0.3s ease;
+  }
+  
+  .filter-toggle.active svg {
+    transform: rotate(180deg);
+  }
 </style>
+
+<!-- Cargar sistema de feedback -->
+<script src="<?php echo BASE_URL; ?>/assets/js/admin-feedback.js"></script>
+
+<script>
+// Toggle filtros avanzados
+function toggleFilters() {
+  const filters = document.getElementById('advanced-filters');
+  const toggle = document.querySelector('.filter-toggle');
+  
+  if (filters.style.display === 'none' || filters.style.display === '') {
+    filters.style.display = 'block';
+    toggle.classList.add('active');
+  } else {
+    filters.style.display = 'none';
+    toggle.classList.remove('active');
+  }
+}
+
+// Exportar datos a CSV
+function exportarDatos() {
+  // Obtener parámetros actuales de la URL
+  const params = new URLSearchParams(window.location.search);
+  const exportUrl = `<?php echo BASE_URL; ?>/admin/export/publicaciones?${params.toString()}`;
+  
+  Toast.info('Generando archivo CSV...');
+  
+  // Descargar archivo
+  window.location.href = exportUrl;
+  
+  setTimeout(() => {
+    Toast.success('Archivo descargado exitosamente');
+  }, 1000);
+}
+
+// Aprobar publicación con feedback
+async function aprobarPublicacion(id) {
+  const confirmed = await Confirm.approve('esta publicación');
+  if (!confirmed) return;
+  
+  const button = event.target.closest('button');
+  ButtonLoader.start(button, 'Aprobando...');
+  
+  try {
+    const formData = new FormData();
+    formData.append('csrf_token', '<?php echo generateCsrfToken(); ?>');
+    
+    const response = await fetch(`<?php echo BASE_URL; ?>/admin/publicaciones/${id}/aprobar`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (response.ok) {
+      ButtonLoader.success(button, '¡Aprobada!');
+      Toast.success('Publicación aprobada exitosamente');
+      
+      // Animar y remover fila después de 1 segundo
+      setTimeout(() => {
+        const row = button.closest('tr');
+        if (row) {
+          Animate.fadeOut(row, () => {
+            // Recargar si no quedan más filas
+            const tbody = row.closest('tbody');
+            if (tbody && tbody.querySelectorAll('tr').length === 0) {
+              location.reload();
+            }
+          });
+        }
+      }, 1000);
+    } else {
+      ButtonLoader.stop(button);
+      Toast.error('Error al aprobar la publicación');
+      Animate.shake(button);
+    }
+  } catch (error) {
+    ButtonLoader.stop(button);
+    Toast.error('Error de conexión con el servidor');
+    Animate.shake(button);
+  }
+}
+
+// Rechazar publicación con feedback
+async function mostrarModalRechazo(id) {
+  document.getElementById('publicacion_id_rechazo').value = id;
+  document.getElementById('motivo_rechazo').value = '';
+  document.getElementById('modalRechazo').style.display = 'flex';
+}
+
+async function rechazarPublicacion() {
+  const id = document.getElementById('publicacion_id_rechazo').value;
+  const motivo = document.getElementById('motivo_rechazo').value;
+  
+  if (!motivo.trim()) {
+    Toast.warning('Debes proporcionar un motivo de rechazo');
+    Animate.shake(document.getElementById('motivo_rechazo'));
+    return;
+  }
+  
+  const button = document.querySelector('#formRechazo button[type="submit"]');
+  ButtonLoader.start(button, 'Rechazando...');
+  
+  try {
+    const formData = new FormData();
+    formData.append('csrf_token', '<?php echo generateCsrfToken(); ?>');
+    formData.append('motivo_rechazo', motivo);
+    
+    const response = await fetch(`<?php echo BASE_URL; ?>/admin/publicaciones/${id}/rechazar`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (response.ok) {
+      ButtonLoader.success(button, '¡Rechazada!');
+      Toast.success('Publicación rechazada');
+      cerrarModal('modalRechazo');
+      
+      // Animar y remover fila
+      setTimeout(() => {
+        const row = document.querySelector(`#pub-${id}`);
+        if (row) {
+          Animate.fadeOut(row, () => {
+            const tbody = row.closest('tbody');
+            if (tbody && tbody.querySelectorAll('tr').length === 0) {
+              location.reload();
+            }
+          });
+        }
+      }, 500);
+    } else {
+      ButtonLoader.stop(button);
+      Toast.error('Error al rechazar la publicación');
+    }
+  } catch (error) {
+    ButtonLoader.stop(button);
+    Toast.error('Error de conexión con el servidor');
+  }
+}
+
+// Eliminar publicación con confirmación
+async function eliminarPublicacion(id) {
+  const confirmed = await Confirm.delete('esta publicación');
+  if (!confirmed) return;
+  
+  const button = event.target.closest('button');
+  ButtonLoader.start(button, 'Eliminando...');
+  
+  try {
+    const response = await fetch(`<?php echo BASE_URL; ?>/admin/publicaciones/${id}`, {
+      method: 'DELETE'
+    });
+    
+    if (response.ok) {
+      Toast.success('Publicación eliminada permanentemente');
+      
+      const row = button.closest('tr');
+      if (row) {
+        Animate.fadeOut(row, () => {
+          const tbody = row.closest('tbody');
+          if (tbody && tbody.querySelectorAll('tr').length === 0) {
+            location.reload();
+          }
+        });
+      }
+    } else {
+      ButtonLoader.stop(button);
+      Toast.error('Error al eliminar la publicación');
+      Animate.shake(button);
+    }
+  } catch (error) {
+    ButtonLoader.stop(button);
+    Toast.error('Error de conexión con el servidor');
+    Animate.shake(button);
+  }
+}
+</script>
 
 <?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

@@ -58,9 +58,102 @@ class AdminController
             return;
         }
         
-        // Mostrar dashboard principal
+        // Obtener estadísticas reales de la base de datos
+        
+        // Estadísticas de publicaciones
+        $stmt = $this->db->query("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN estado = 'aprobada' THEN 1 ELSE 0 END) as aprobadas,
+                SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
+                SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas
+            FROM publicaciones
+        ");
+        $statsPublicaciones = $stmt->fetch(\PDO::FETCH_OBJ);
+        
+        // Estadísticas de usuarios
+        $stmt = $this->db->query("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN estado = 'activo' THEN 1 ELSE 0 END) as activos,
+                SUM(CASE WHEN DATE(fecha_registro) >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) as nuevos_semana
+            FROM usuarios
+        ");
+        $statsUsuarios = $stmt->fetch(\PDO::FETCH_OBJ);
+        
+        // Estadísticas de mensajes sin leer (aproximado)
+        $stmt = $this->db->query("
+            SELECT COUNT(*) as total
+            FROM mensajes
+            WHERE leido = 0
+        ");
+        $statsMensajes = $stmt->fetch(\PDO::FETCH_OBJ);
+        
+        // Publicaciones destacadas
+        $stmt = $this->db->query("
+            SELECT COUNT(*) as total
+            FROM publicaciones
+            WHERE es_destacada = 1 
+            AND fecha_destacada_fin >= NOW()
+        ");
+        $statsDestacadas = $stmt->fetch(\PDO::FETCH_OBJ);
+        
+        // Actividad de los últimos 7 días
+        $stmt = $this->db->query("
+            SELECT 
+                DATE(fecha_creacion) as fecha,
+                COUNT(*) as total
+            FROM publicaciones
+            WHERE fecha_creacion >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            GROUP BY DATE(fecha_creacion)
+            ORDER BY fecha ASC
+        ");
+        $actividadSemanal = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        
+        // Publicaciones por categoría (top 5)
+        $stmt = $this->db->query("
+            SELECT 
+                cp.nombre as categoria,
+                COUNT(p.id) as total
+            FROM publicaciones p
+            INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+            WHERE p.estado = 'aprobada'
+            GROUP BY cp.id, cp.nombre
+            ORDER BY total DESC
+            LIMIT 5
+        ");
+        $publicacionesPorCategoria = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        
+        // Distribución de estados (para gráfico de dona)
+        $distribucionEstados = [
+            'aprobadas' => $statsPublicaciones->aprobadas ?? 0,
+            'pendientes' => $statsPublicaciones->pendientes ?? 0,
+            'rechazadas' => $statsPublicaciones->rechazadas ?? 0
+        ];
+        
+        // Preparar datos para la vista
         $pageTitle = 'Panel de Administración';
-        $currentPage = 'admin';
+        $currentPage = 'admin-dashboard';
+        $adminNombre = $_SESSION['user_nombre'] ?? 'Admin';
+        
+        $metricas = [
+            'publicaciones_activas' => $statsPublicaciones->aprobadas ?? 0,
+            'publicaciones_pendientes' => $statsPublicaciones->pendientes ?? 0,
+            'publicaciones_rechazadas' => $statsPublicaciones->rechazadas ?? 0,
+            'usuarios_total' => $statsUsuarios->total ?? 0,
+            'usuarios_activos' => $statsUsuarios->activos ?? 0,
+            'usuarios_nuevos_semana' => $statsUsuarios->nuevos_semana ?? 0,
+            'mensajes_sin_leer' => $statsMensajes->total ?? 0,
+            'destacadas_activas' => $statsDestacadas->total ?? 0
+        ];
+        
+        // Preparar datos para gráficos
+        $chartData = [
+            'actividad_semanal' => $actividadSemanal,
+            'por_categoria' => $publicacionesPorCategoria,
+            'distribucion_estados' => $distribucionEstados
+        ];
+        
         require_once APP_PATH . '/views/pages/admin/index.php';
     }
     
@@ -200,11 +293,34 @@ class AdminController
         $publicaciones = $stmt->fetchAll(PDO::FETCH_OBJ);
 
         // Obtener total de registros para paginación
-        $sql_count = str_replace("SELECT p.*", "SELECT COUNT(*) as total", $sql);
-        $sql_count = preg_replace('/ORDER BY.*$/s', '', $sql_count);
-        $sql_count = preg_replace('/LIMIT.*$/s', '', $sql_count);
+        $sql_count = "SELECT COUNT(DISTINCT p.id) as total
+                FROM publicaciones p
+                INNER JOIN usuarios u ON p.usuario_id = u.id
+                LEFT JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+                LEFT JOIN subcategorias sc ON p.subcategoria_id = sc.id
+                LEFT JOIN regiones r ON p.region_id = r.id
+                LEFT JOIN comunas c ON p.comuna_id = c.id
+                WHERE 1=1";
         
-        $params_count = array_slice($params, 0, -2); // Remover LIMIT y OFFSET
+        $params_count = [];
+        
+        // Aplicar los mismos filtros
+        if ($estado && $estado !== 'todas') {
+            $sql_count .= " AND p.estado = ?";
+            $params_count[] = $estado;
+        }
+        
+        if ($categoria_id) {
+            $sql_count .= " AND p.categoria_padre_id = ?";
+            $params_count[] = $categoria_id;
+        }
+        
+        if ($busqueda) {
+            $sql_count .= " AND (p.titulo LIKE ? OR p.marca LIKE ? OR p.modelo LIKE ? OR u.nombre LIKE ? OR u.email LIKE ?)";
+            $search_term = "%$busqueda%";
+            $params_count = array_merge($params_count, [$search_term, $search_term, $search_term, $search_term, $search_term]);
+        }
+        
         $stmt_count = $this->db->prepare($sql_count);
         $stmt_count->execute($params_count);
         $total = $stmt_count->fetch(PDO::FETCH_OBJ)->total;
@@ -216,8 +332,34 @@ class AdminController
         // Calcular paginación
         $total_pages = ceil($total / $per_page);
 
+        // Obtener conteos por estado
+        $stmt_conteo = $this->db->query("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
+                SUM(CASE WHEN estado = 'aprobada' THEN 1 ELSE 0 END) as aprobadas,
+                SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas
+            FROM publicaciones
+        ");
+        $conteo = $stmt_conteo->fetch(PDO::FETCH_ASSOC);
+
+        // Preparar datos para la vista
+        $filtros = [
+            'estado' => $estado,
+            'categoria' => $categoria_id,
+            'busqueda' => $busqueda,
+            'fecha_desde' => $_GET['fecha_desde'] ?? '',
+            'fecha_hasta' => $_GET['fecha_hasta'] ?? ''
+        ];
+
+        $pagination = [
+            'current_page' => $page,
+            'total_pages' => $total_pages,
+            'total' => $total
+        ];
+
         // Vista
-        $pageTitle = 'Gestión de Publicaciones';
+        $pageTitle = 'Gestión de Publicaciones - Admin';
         $currentPage = 'admin-publicaciones';
         require_once APP_PATH . '/views/pages/admin/publicaciones.php';
     }
@@ -225,6 +367,7 @@ class AdminController
     /**
      * Ver detalle completo de una publicación
      * Ruta: GET /admin/publicaciones/{id}
+     * Soporta AJAX: GET /admin/publicaciones/{id}?ajax=1
      */
     public function verPublicacion($id)
     {
@@ -255,6 +398,13 @@ class AdminController
         $publicacion = $stmt->fetch(PDO::FETCH_OBJ);
 
         if (!$publicacion) {
+            // Si es AJAX, devolver JSON
+            if (isset($_GET['ajax'])) {
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Publicación no encontrada']);
+                exit;
+            }
+            
             Session::flash('error', 'Publicación no encontrada');
             header('Location: /admin/publicaciones');
             exit;
@@ -269,6 +419,18 @@ class AdminController
         $stmt->execute([$id]);
         $fotos = $stmt->fetchAll(PDO::FETCH_OBJ);
 
+        // Si es petición AJAX, devolver JSON
+        if (isset($_GET['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'publicacion' => $publicacion,
+                'fotos' => $fotos
+            ]);
+            exit;
+        }
+
+        // Si no es AJAX, cargar vista normal
         $data = [
             'title' => 'Revisar Publicación - Admin',
             'publicacion' => $publicacion,

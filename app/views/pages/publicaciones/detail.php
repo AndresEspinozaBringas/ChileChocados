@@ -47,9 +47,9 @@ layout('header');
         <?php if (!empty($imagenes)): ?>
           <?php foreach ($imagenes as $index => $imagen): ?>
             <div class="thumbnail-item" 
-                 data-image="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($imagen->ruta_archivo); ?>"
+                 data-image="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($imagen->ruta ?? $imagen->ruta_archivo ?? ''); ?>"
                  style="aspect-ratio: 1; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;">
-              <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($imagen->ruta_archivo); ?>" 
+              <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo e($imagen->ruta ?? $imagen->ruta_archivo ?? ''); ?>" 
                    alt="Imagen <?php echo $index + 1; ?>"
                    style="width: 100%; height: 100%; object-fit: cover;">
             </div>

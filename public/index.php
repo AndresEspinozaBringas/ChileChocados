@@ -109,6 +109,22 @@ if (!empty($url[0]) && $url[0] === 'api') {
         $method = 'getComunas';
         $params = [];
     }
+    
+    // API Admin - Notificaciones
+    if (!empty($url[1]) && $url[1] === 'admin') {
+        require_once APP_PATH . '/controllers/ApiController.php';
+        $apiController = new App\Controllers\ApiController();
+        
+        if (!empty($url[2]) && $url[2] === 'notifications') {
+            $apiController->getAdminNotifications();
+            exit;
+        }
+        
+        if (!empty($url[2]) && $url[2] === 'stats') {
+            $apiController->getAdminStats();
+            exit;
+        }
+    }
 }
 
 // ====================================
@@ -262,6 +278,74 @@ if (!empty($url[0]) && $url[0] === 'admin') {
         exit;
     }
     
+    // /admin/export - Exportación de datos
+    if ($url[1] === 'export') {
+        require_once APP_PATH . '/controllers/ExportController.php';
+        $exportController = new App\Controllers\ExportController();
+        
+        if (!empty($url[2]) && $url[2] === 'publicaciones') {
+            $exportController->exportarPublicaciones();
+            exit;
+        }
+        
+        if (!empty($url[2]) && $url[2] === 'usuarios') {
+            $exportController->exportarUsuarios();
+            exit;
+        }
+    }
+    
+    // /admin/usuarios - Gestión de usuarios
+    if ($url[1] === 'usuarios') {
+        require_once APP_PATH . '/controllers/UsuarioController.php';
+        $usuarioController = new App\Controllers\UsuarioController();
+        
+        // /admin/usuarios - Lista de usuarios
+        if (count($url) === 2) {
+            $usuarioController->adminListar();
+            exit;
+        }
+        
+        // /admin/usuarios/{id} - Ver detalle de usuario
+        if (count($url) === 3 && is_numeric($url[2])) {
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $usuarioController->adminDetalle($url[2]);
+                exit;
+            }
+        }
+        
+        // /admin/usuarios/{id}/actualizar - Actualizar usuario
+        if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'actualizar') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $usuarioController->adminActualizar($url[2]);
+                exit;
+            }
+        }
+        
+        // /admin/usuarios/{id}/cambiar-estado - Cambiar estado de usuario
+        if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'cambiar-estado') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $usuarioController->adminCambiarEstado($url[2]);
+                exit;
+            }
+        }
+        
+        // /admin/usuarios/{id}/eliminar - Eliminar usuario
+        if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'eliminar') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $usuarioController->adminEliminar($url[2]);
+                exit;
+            }
+        }
+        
+        // /admin/usuarios/{id}/historial - Ver historial de usuario
+        if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'historial') {
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $usuarioController->adminHistorial($url[2]);
+                exit;
+            }
+        }
+    }
+    
     // /admin/publicaciones - Lista de publicaciones
     if ($url[1] === 'publicaciones' && count($url) === 2) {
         $controller->publicaciones();
@@ -338,6 +422,62 @@ if (!empty($url[0]) && $url[0] === 'favoritos') {
         $params = [];
     }
 }
+
+// ====================================
+// RUTAS ADMIN - GESTIÓN DE USUARIOS
+// ====================================
+
+if (!empty($url[0]) && $url[0] === 'admin' && !empty($url[1]) && $url[1] === 'usuarios') {
+    require_once APP_PATH . '/controllers/AdminController.php';
+    $controller = new App\Controllers\AdminController();
+    
+    // /admin/usuarios - Listado de usuarios
+    if (count($url) === 2) {
+        $controller->usuarios();
+        exit;
+    }
+    
+    // /admin/usuarios/{id} - Ver detalle de usuario
+    if (count($url) === 3 && is_numeric($url[2])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $controller->verUsuario($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/usuarios/{id}/actualizar - Actualizar datos de usuario
+    if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'actualizar') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->actualizarUsuario($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/usuarios/{id}/cambiar-estado - Cambiar estado (activar/suspender)
+    if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'cambiar-estado') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->cambiarEstadoUsuario($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/usuarios/{id}/eliminar - Eliminar usuario (soft delete)
+    if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'eliminar') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->eliminarUsuario($url[2]);
+            exit;
+        }
+    }
+    
+    // /admin/usuarios/{id}/historial - Ver historial completo
+    if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'historial') {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $controller->historialUsuario($url[2]);
+            exit;
+        }
+    }
+}
+
 
 // ====================================
 // CARGA ESTÁNDAR DE CONTROLADOR

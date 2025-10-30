@@ -184,11 +184,12 @@ class PublicacionController
         $imagenes = [];
         if ($id == 1) {
             // Imágenes para Ford Territory (4 imágenes en total)
+            // Nota: Las rutas son relativas desde /uploads/publicaciones/
             $imagenes = [
-                (object) ['ruta_archivo' => 'ford-territory.jpg'],  // Imagen principal
-                (object) ['ruta_archivo' => 'ford-territory-1.jpg'],
-                (object) ['ruta_archivo' => 'ford-territory-2.jpg'],
-                (object) ['ruta_archivo' => 'ford-territory-3.jpg']
+                (object) ['ruta' => 'ford-territory.jpg'],  // Imagen principal
+                (object) ['ruta' => 'ford-territory-1.jpg'],
+                (object) ['ruta' => 'ford-territory-2.jpg'],
+                (object) ['ruta' => 'ford-territory-3.jpg']
             ];
         }
 
@@ -652,8 +653,8 @@ class PublicacionController
             if (move_uploaded_file($archivo['tmp_name'], $ruta_completa)) {
                 file_put_contents($logFile, "  - ✓ Archivo movido exitosamente\n", FILE_APPEND);
 
-                // Guardar en BD
-                $ruta_relativa = 'publicaciones/' . date('Y') . '/' . date('m') . '/' . $nombre_archivo;
+                // Guardar en BD - ruta relativa desde /uploads/publicaciones/
+                $ruta_relativa = date('Y') . '/' . date('m') . '/' . $nombre_archivo;
 
                 // Determinar si es la foto principal (índice comienza en 1)
                 $es_principal = ($i + 1) === $foto_principal_index ? 1 : 0;

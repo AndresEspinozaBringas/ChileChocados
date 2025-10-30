@@ -17,8 +17,19 @@ class HomeController {
     
     /**
      * Página principal
+     * MEJORA UX: Redirige automáticamente a admin si es admin y no viene de una acción específica
      */
     public function index() {
+        // Si es admin y accede directamente al home (sin parámetro de vista pública)
+        // redirigir al panel admin
+        if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin') {
+            // Permitir ver el home si viene con parámetro ?view=public
+            if (!isset($_GET['view']) || $_GET['view'] !== 'public') {
+                header('Location: /admin');
+                exit;
+            }
+        }
+        
         $pageTitle = 'ChileChocados – Marketplace de bienes siniestrados';
         
         try {

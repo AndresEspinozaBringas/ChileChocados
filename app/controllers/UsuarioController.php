@@ -12,13 +12,19 @@
 
 namespace App\Controllers;
 
+use PDO;
+use App\Helpers\Auth;
+use App\Helpers\Session;
+
 class UsuarioController
 {
     private $usuarioModel;
     private $publicacionModel;
+    private $db;
 
     public function __construct()
     {
+        $this->db = getDB();
         // TODO: Inicializar modelos cuando estén conectados a BD
         // $this->usuarioModel = new \App\Models\Usuario();
         // $this->publicacionModel = new \App\Models\Publicacion();
@@ -475,6 +481,603 @@ class UsuarioController
 
         // Cargar vista
         require_once __DIR__ . '/../views/pages/usuarios/mis-publicaciones.php';
+    }
+
+     public function usuarios()
+    {
+        $this->requireAdmin();
+
+        // Obtener filtros
+        $rol = $_GET['rol'] ?? '';
+        $estado = $_GET['estado'] ?? '';
+        $busqueda = $_GET['q'] ?? '';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $per_page = 20;
+        $offset = ($page - 1) * $per_page;
+
+        // Construir query base
+        $sql = "SELECT u.*,
+                       COUNT(DISTINCT p.id) as total_publicaciones,
+                       COUNT(DISTINCT CASE WHEN p.estado = 'aprobada' THEN p.id END) as publicaciones_aprobadas,
+                       COUNT(DISTINCT m.id) as total_mensajes
+                FROM usuarios u
+                LEFT JOIN publicaciones p ON u.id = p.usuario_id
+                LEFT JOIN mensajes m ON u.id = m.remitente_id OR u.id = m.destinatario_id
+                WHERE 1=1";
+
+        $params = [];
+
+        // Filtro por rol
+        if ($rol && $rol !== 'todos') {
+            $sql .= " AND u.rol = ?";
+            $params[] = $rol;
+        }
+
+        // Filtro por estado
+        if ($estado && $estado !== 'todos') {
+            $sql .= " AND u.estado = ?";
+            $params[] = $estado;
+        }
+
+        // Búsqueda
+        if ($busqueda) {
+            $sql .= " AND (u.nombre LIKE ? OR u.apellido LIKE ? OR u.email LIKE ? OR u.rut LIKE ?)";
+            $search = "%{$busqueda}%";
+            $params[] = $search;
+            $params[] = $search;
+            $params[] = $search;
+            $params[] = $search;
+        }
+
+        $sql .= " GROUP BY u.id ORDER BY u.fecha_registro DESC LIMIT ? OFFSET ?";
+        $params[] = $per_page;
+        $params[] = $offset;
+
+        // Ejecutar query
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $usuarios = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        // Contar total para paginación
+        $sqlCount = "SELECT COUNT(DISTINCT u.id) as total
+                     FROM usuarios u
+                     WHERE 1=1";
+        $paramsCount = [];
+
+        if ($rol && $rol !== 'todos') {
+            $sqlCount .= " AND u.rol = ?";
+            $paramsCount[] = $rol;
+        }
+
+        if ($estado && $estado !== 'todos') {
+            $sqlCount .= " AND u.estado = ?";
+            $paramsCount[] = $estado;
+        }
+
+        if ($busqueda) {
+            $sqlCount .= " AND (u.nombre LIKE ? OR u.apellido LIKE ? OR u.email LIKE ? OR u.rut LIKE ?)";
+            $paramsCount[] = "%{$busqueda}%";
+            $paramsCount[] = "%{$busqueda}%";
+            $paramsCount[] = "%{$busqueda}%";
+            $paramsCount[] = "%{$busqueda}%";
+        }
+
+        $stmt = $this->db->prepare($sqlCount);
+        $stmt->execute($paramsCount);
+        $totalUsuarios = $stmt->fetch(PDO::FETCH_OBJ)->total;
+        $totalPages = ceil($totalUsuarios / $per_page);
+
+        // Obtener estadísticas generales
+        $stats = $this->db->query("
+            SELECT 
+                COUNT(*) as total,
+                SUM(CASE WHEN rol = 'admin' THEN 1 ELSE 0 END) as admins,
+                SUM(CASE WHEN rol = 'vendedor' THEN 1 ELSE 0 END) as vendedores,
+                SUM(CASE WHEN rol = 'comprador' THEN 1 ELSE 0 END) as compradores,
+                SUM(CASE WHEN estado = 'activo' THEN 1 ELSE 0 END) as activos,
+                SUM(CASE WHEN estado = 'suspendido' THEN 1 ELSE 0 END) as suspendidos,
+                SUM(CASE WHEN estado = 'eliminado' THEN 1 ELSE 0 END) as eliminados
+            FROM usuarios
+        ")->fetch(PDO::FETCH_OBJ);
+
+        // Preparar datos para la vista
+        $pageTitle = 'Gestión de Usuarios - Admin';
+        $currentPage = 'admin-usuarios';
+        $filtros = [
+            'rol' => $rol,
+            'estado' => $estado,
+            'busqueda' => $busqueda
+        ];
+        $pagination = [
+            'current_page' => $page,
+            'total_pages' => $totalPages,
+            'total_items' => $totalUsuarios,
+            'per_page' => $per_page
+        ];
+        $csrf_token = generateCsrfToken();
+
+        require_once APP_PATH . '/views/pages/admin/usuarios.php';
+    }
+
+    /**
+     * Ver detalle completo de un usuario
+     * Ruta: GET /admin/usuarios/{id}
+     */
+    public function verUsuario($id)
+    {
+        $this->requireAdmin();
+
+        // Obtener usuario
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if (!$usuario) {
+            Session::flash('error', 'Usuario no encontrado');
+            header('Location: ' . BASE_URL . '/admin/usuarios');
+            exit;
+        }
+
+        // Obtener publicaciones del usuario
+        $stmt = $this->db->prepare("
+            SELECT p.*, 
+                   cp.nombre as categoria_nombre,
+                   r.nombre as region_nombre
+            FROM publicaciones p
+            LEFT JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+            LEFT JOIN regiones r ON p.region_id = r.id
+            WHERE p.usuario_id = ?
+            ORDER BY p.fecha_creacion DESC
+            LIMIT 10
+        ");
+        $stmt->execute([$id]);
+        $publicaciones = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        // Obtener historial de auditoría
+        $stmt = $this->db->prepare("
+            SELECT a.*, 
+                   u.nombre as admin_nombre,
+                   u.apellido as admin_apellido
+            FROM auditoria a
+            LEFT JOIN usuarios u ON a.usuario_id = u.id
+            WHERE a.tabla = 'usuarios' AND a.registro_id = ?
+            ORDER BY a.fecha DESC
+            LIMIT 20
+        ");
+        $stmt->execute([$id]);
+        $historial = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        // Obtener estadísticas del usuario
+        $stmt = $this->db->prepare("
+            SELECT 
+                COUNT(DISTINCT p.id) as total_publicaciones,
+                COUNT(DISTINCT CASE WHEN p.estado = 'aprobada' THEN p.id END) as publicaciones_aprobadas,
+                COUNT(DISTINCT CASE WHEN p.estado = 'pendiente' THEN p.id END) as publicaciones_pendientes,
+                COUNT(DISTINCT CASE WHEN p.estado = 'rechazada' THEN p.id END) as publicaciones_rechazadas,
+                COUNT(DISTINCT m.id) as total_mensajes,
+                COUNT(DISTINCT f.id) as total_favoritos
+            FROM usuarios u
+            LEFT JOIN publicaciones p ON u.id = p.usuario_id
+            LEFT JOIN mensajes m ON u.id = m.remitente_id OR u.id = m.destinatario_id
+            LEFT JOIN favoritos f ON u.id = f.usuario_id
+            WHERE u.id = ?
+        ");
+        $stmt->execute([$id]);
+        $estadisticas = $stmt->fetch(PDO::FETCH_OBJ);
+
+        $pageTitle = "Usuario: {$usuario->nombre} {$usuario->apellido}";
+        $currentPage = 'admin-usuarios';
+        $csrf_token = generateCsrfToken();
+
+        require_once APP_PATH . '/views/pages/admin/usuario-detalle.php';
+    }
+
+    /**
+     * Actualizar datos de un usuario
+     * Ruta: POST /admin/usuarios/{id}/actualizar
+     */
+    public function actualizarUsuario($id)
+    {
+        $this->requireAdmin();
+
+        // Validar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            Session::flash('error', 'Token de seguridad inválido');
+            header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+            exit;
+        }
+
+        // Obtener datos actuales del usuario
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuarioAnterior = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if (!$usuarioAnterior) {
+            Session::flash('error', 'Usuario no encontrado');
+            header('Location: ' . BASE_URL . '/admin/usuarios');
+            exit;
+        }
+
+        // Validar y sanitizar datos
+        $nombre = sanitize($_POST['nombre'] ?? '');
+        $apellido = sanitize($_POST['apellido'] ?? '');
+        $email = sanitize($_POST['email'] ?? '');
+        $telefono = sanitize($_POST['telefono'] ?? '');
+        $rut = sanitize($_POST['rut'] ?? '');
+        $rol = sanitize($_POST['rol'] ?? '');
+
+        // Validaciones
+        $errores = [];
+
+        if (empty($nombre)) $errores[] = 'El nombre es obligatorio';
+        if (empty($apellido)) $errores[] = 'El apellido es obligatorio';
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errores[] = 'Email inválido';
+        }
+        if (!in_array($rol, ['admin', 'vendedor', 'comprador'])) {
+            $errores[] = 'Rol inválido';
+        }
+
+        // Verificar email único (si cambió)
+        if ($email !== $usuarioAnterior->email) {
+            $stmt = $this->db->prepare("SELECT id FROM usuarios WHERE email = ? AND id != ?");
+            $stmt->execute([$email, $id]);
+            if ($stmt->fetch()) {
+                $errores[] = 'El email ya está registrado';
+            }
+        }
+
+        if (!empty($errores)) {
+            Session::flash('error', implode('<br>', $errores));
+            header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+            exit;
+        }
+
+        // Actualizar usuario
+        $stmt = $this->db->prepare("
+            UPDATE usuarios 
+            SET nombre = ?,
+                apellido = ?,
+                email = ?,
+                telefono = ?,
+                rut = ?,
+                rol = ?,
+                fecha_actualizacion = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([
+            $nombre,
+            $apellido,
+            $email,
+            $telefono,
+            $rut,
+            $rol,
+            $id
+        ]);
+
+        // Registrar en auditoría
+        $stmt = $this->db->prepare("
+            INSERT INTO auditoria (usuario_id, tabla, registro_id, accion, datos_anteriores, datos_nuevos, ip)
+            VALUES (?, 'usuarios', ?, 'actualizar', ?, ?, ?)
+        ");
+        $stmt->execute([
+            Auth::id(),
+            $id,
+            json_encode([
+                'nombre' => $usuarioAnterior->nombre,
+                'apellido' => $usuarioAnterior->apellido,
+                'email' => $usuarioAnterior->email,
+                'telefono' => $usuarioAnterior->telefono,
+                'rut' => $usuarioAnterior->rut,
+                'rol' => $usuarioAnterior->rol
+            ]),
+            json_encode([
+                'nombre' => $nombre,
+                'apellido' => $apellido,
+                'email' => $email,
+                'telefono' => $telefono,
+                'rut' => $rut,
+                'rol' => $rol,
+                'actualizado_por' => Auth::id()
+            ]),
+            $_SERVER['REMOTE_ADDR'] ?? null
+        ]);
+
+        Session::flash('success', 'Usuario actualizado exitosamente');
+        header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+        exit;
+    }
+
+    /**
+     * Cambiar estado de un usuario (activar/suspender)
+     * Ruta: POST /admin/usuarios/{id}/cambiar-estado
+     */
+    public function cambiarEstadoUsuario($id)
+    {
+        $this->requireAdmin();
+
+        // Validar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            Session::flash('error', 'Token de seguridad inválido');
+            header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+            exit;
+        }
+
+        $nuevoEstado = sanitize($_POST['estado'] ?? '');
+        $motivo = sanitize($_POST['motivo'] ?? '');
+
+        if (!in_array($nuevoEstado, ['activo', 'suspendido'])) {
+            Session::flash('error', 'Estado inválido');
+            header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+            exit;
+        }
+
+        // Obtener usuario
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if (!$usuario) {
+            Session::flash('error', 'Usuario no encontrado');
+            header('Location: ' . BASE_URL . '/admin/usuarios');
+            exit;
+        }
+
+        // No permitir suspender el propio usuario admin
+        if ($id == Auth::id()) {
+            Session::flash('error', 'No puedes cambiar tu propio estado');
+            header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+            exit;
+        }
+
+        $estadoAnterior = $usuario->estado;
+
+        // Actualizar estado
+        $stmt = $this->db->prepare("
+            UPDATE usuarios 
+            SET estado = ?,
+                fecha_actualizacion = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$nuevoEstado, $id]);
+
+        // Registrar en auditoría
+        $stmt = $this->db->prepare("
+            INSERT INTO auditoria (usuario_id, tabla, registro_id, accion, datos_anteriores, datos_nuevos, ip)
+            VALUES (?, 'usuarios', ?, 'actualizar', ?, ?, ?)
+        ");
+        $stmt->execute([
+            Auth::id(),
+            $id,
+            json_encode(['estado' => $estadoAnterior]),
+            json_encode([
+                'estado' => $nuevoEstado,
+                'motivo' => $motivo,
+                'cambiado_por' => Auth::id()
+            ]),
+            $_SERVER['REMOTE_ADDR'] ?? null
+        ]);
+
+        // Enviar notificación al usuario
+        $this->enviarNotificacionCambioEstado($usuario, $nuevoEstado, $motivo);
+
+        $mensaje = $nuevoEstado === 'suspendido' 
+            ? 'Usuario suspendido exitosamente' 
+            : 'Usuario activado exitosamente';
+
+        Session::flash('success', $mensaje);
+        header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+        exit;
+    }
+
+    /**
+     * Eliminar un usuario (soft delete)
+     * Ruta: POST /admin/usuarios/{id}/eliminar
+     */
+    public function eliminarUsuario($id)
+    {
+        $this->requireAdmin();
+
+        // Validar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            Session::flash('error', 'Token de seguridad inválido');
+            header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+            exit;
+        }
+
+        // No permitir eliminar el propio usuario admin
+        if ($id == Auth::id()) {
+            Session::flash('error', 'No puedes eliminar tu propio usuario');
+            header('Location: ' . BASE_URL . '/admin/usuarios/' . $id);
+            exit;
+        }
+
+        // Obtener usuario
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if (!$usuario) {
+            Session::flash('error', 'Usuario no encontrado');
+            header('Location: ' . BASE_URL . '/admin/usuarios');
+            exit;
+        }
+
+        // Soft delete: cambiar estado a 'eliminado'
+        $stmt = $this->db->prepare("
+            UPDATE usuarios 
+            SET estado = 'eliminado',
+                fecha_actualizacion = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$id]);
+
+        // Registrar en auditoría
+        $stmt = $this->db->prepare("
+            INSERT INTO auditoria (usuario_id, tabla, registro_id, accion, datos_anteriores, ip)
+            VALUES (?, 'usuarios', ?, 'eliminar', ?, ?)
+        ");
+        $stmt->execute([
+            Auth::id(),
+            $id,
+            json_encode([
+                'usuario' => "{$usuario->nombre} {$usuario->apellido}",
+                'email' => $usuario->email,
+                'eliminado_por' => Auth::id()
+            ]),
+            $_SERVER['REMOTE_ADDR'] ?? null
+        ]);
+
+        Session::flash('success', 'Usuario eliminado exitosamente');
+        header('Location: ' . BASE_URL . '/admin/usuarios');
+        exit;
+    }
+
+    /**
+     * Ver historial de actividad de un usuario
+     * Ruta: GET /admin/usuarios/{id}/historial
+     */
+    public function historialUsuario($id)
+    {
+        $this->requireAdmin();
+
+        // Obtener usuario
+        $stmt = $this->db->prepare("SELECT nombre, apellido, email FROM usuarios WHERE id = ?");
+        $stmt->execute([$id]);
+        $usuario = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if (!$usuario) {
+            Session::flash('error', 'Usuario no encontrado');
+            header('Location: ' . BASE_URL . '/admin/usuarios');
+            exit;
+        }
+
+        // Obtener historial completo
+        $stmt = $this->db->prepare("
+            SELECT a.*, 
+                   u.nombre as admin_nombre,
+                   u.apellido as admin_apellido
+            FROM auditoria a
+            LEFT JOIN usuarios u ON a.usuario_id = u.id
+            WHERE (a.tabla = 'usuarios' AND a.registro_id = ?)
+               OR (a.tabla = 'publicaciones' AND a.registro_id IN (
+                   SELECT id FROM publicaciones WHERE usuario_id = ?
+               ))
+            ORDER BY a.fecha DESC
+            LIMIT 100
+        ");
+        $stmt->execute([$id, $id]);
+        $historial = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        $pageTitle = "Historial de Actividad - {$usuario->nombre} {$usuario->apellido}";
+        $currentPage = 'admin-usuarios';
+        $usuario_id = $id;
+
+        require_once APP_PATH . '/views/pages/admin/usuario-historial.php';
+    }
+
+    /**
+     * Enviar notificación de cambio de estado
+     */
+    private function enviarNotificacionCambioEstado($usuario, $nuevoEstado, $motivo)
+    {
+        if ($nuevoEstado === 'suspendido') {
+            $asunto = 'Tu cuenta ha sido suspendida - ChileChocados';
+            $mensaje = "
+                Hola {$usuario->nombre},
+                
+                Tu cuenta en ChileChocados ha sido suspendida por el siguiente motivo:
+                
+                {$motivo}
+                
+                Si consideras que esto es un error o deseas apelar esta decisión,
+                por favor contacta a nuestro equipo de soporte.
+                
+                --
+                Equipo ChileChocados
+            ";
+        } else {
+            $asunto = 'Tu cuenta ha sido reactivada - ChileChocados';
+            $mensaje = "
+                Hola {$usuario->nombre},
+                
+                Nos complace informarte que tu cuenta en ChileChocados 
+                ha sido reactivada y ya puedes volver a utilizar todos los servicios.
+                
+                ¡Bienvenido de vuelta!
+                
+                --
+                Equipo ChileChocados
+            ";
+        }
+
+        error_log("EMAIL CAMBIO ESTADO: Para {$usuario->email} - Estado: {$nuevoEstado}");
+        
+        // Aquí iría la lógica real de envío de email
+        // sendEmail($usuario->email, $asunto, $mensaje);
+    }
+
+    // ====================================
+    // ALIAS DE MÉTODOS PARA RUTAS ADMIN
+    // ====================================
+
+    /**
+     * Alias para usuarios() - Listado de usuarios (admin)
+     */
+    public function adminListar()
+    {
+        return $this->usuarios();
+    }
+
+    /**
+     * Alias para verUsuario() - Ver detalle de usuario (admin)
+     */
+    public function adminDetalle($id)
+    {
+        return $this->verUsuario($id);
+    }
+
+    /**
+     * Alias para actualizarUsuario() - Actualizar usuario (admin)
+     */
+    public function adminActualizar($id)
+    {
+        return $this->actualizarUsuario($id);
+    }
+
+    /**
+     * Alias para cambiarEstadoUsuario() - Cambiar estado (admin)
+     */
+    public function adminCambiarEstado($id)
+    {
+        return $this->cambiarEstadoUsuario($id);
+    }
+
+    /**
+     * Alias para eliminarUsuario() - Eliminar usuario (admin)
+     */
+    public function adminEliminar($id)
+    {
+        return $this->eliminarUsuario($id);
+    }
+
+    /**
+     * Alias para historialUsuario() - Ver historial (admin)
+     */
+    public function adminHistorial($id)
+    {
+        return $this->historialUsuario($id);
+    }
+
+    /**
+     * Verificar que el usuario tiene permisos de administrador
+     */
+    private function requireAdmin()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_rol'] !== 'admin') {
+            setFlash('error', 'Acceso denegado. Debes ser administrador.');
+            redirect('login');
+        }
     }
 
 }

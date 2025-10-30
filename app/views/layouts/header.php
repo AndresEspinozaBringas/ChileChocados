@@ -43,6 +43,128 @@
             <link rel="stylesheet" href="<?php echo BASE_URL . $css; ?>">
         <?php endforeach; ?>
     <?php endif; ?>
+    
+    <!-- Sistema de notificaciones en tiempo real (solo para admins) -->
+    <?php if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin'): ?>
+        <script src="<?php echo BASE_URL; ?>/assets/js/admin-notifications.js"></script>
+    <?php endif; ?>
+    
+    <!-- Estilos para badges de notificación y menú mejorado -->
+    <style>
+        .menu-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: #E6332A;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 10px;
+            margin-left: auto;
+            line-height: 1;
+        }
+        
+        .user-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        
+        .user-menu-item .menu-badge {
+            position: absolute;
+            right: 12px;
+        }
+        
+        .mobile-menu-link .menu-badge {
+            margin-left: auto;
+        }
+        
+        /* Badge de rol en el header del menú */
+        .user-menu-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            padding: 4px 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .user-menu-role-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        /* Títulos de sección en el menú */
+        .user-menu-section-title {
+            padding: 8px 16px 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            opacity: 0.7;
+        }
+        
+        /* Estilo especial para enlaces admin */
+        .user-menu-item.admin-link {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, transparent 100%);
+        }
+        
+        .user-menu-item.admin-link:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+        }
+        
+        /* Estilo para "Ver Sitio Público" */
+        .user-menu-item:has(svg[data-lucide="eye"]) {
+            color: #667eea;
+            font-weight: 500;
+        }
+        
+        /* Indicador de rol en el header (junto al logo) */
+        .header-role-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 12px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            animation: subtle-glow 3s ease-in-out infinite;
+        }
+        
+        .header-role-indicator svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        @keyframes subtle-glow {
+            0%, 100% { box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 2px 12px rgba(102, 126, 234, 0.5); }
+        }
+        
+        /* Responsive: ocultar en móvil */
+        @media (max-width: 768px) {
+            .header-role-indicator {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Skip to content link (accesibilidad) -->
@@ -63,6 +185,12 @@
                         <span class="logo-primary">Chile</span><span class="logo-accent">Chocados</span>
                     </span>
                 </a>
+                <?php if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin'): ?>
+                    <span class="header-role-indicator">
+                        <?php echo icon('shield', 14); ?>
+                        <span>Admin</span>
+                    </span>
+                <?php endif; ?>
             </div>
             
             <!-- Buscador (desktop) -->
@@ -133,34 +261,86 @@
                             <div class="user-menu-header">
                                 <div class="user-menu-name"><?php echo htmlspecialchars($_SESSION['user_nombre']); ?></div>
                                 <div class="user-menu-email"><?php echo htmlspecialchars($_SESSION['user_email']); ?></div>
+                                <?php if ($_SESSION['user_rol'] === 'admin'): ?>
+                                    <div class="user-menu-role-badge">
+                                        <?php echo icon('shield', 14); ?>
+                                        <span>Administrador</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="user-menu-divider"></div>
-                            <a href="<?php echo BASE_URL; ?>/perfil" class="user-menu-item">
-                                <?php echo icon('user', 18); ?>
-                                <span>Mi Perfil</span>
-                            </a>
-                            <a href="<?php echo BASE_URL; ?>/mis-publicaciones" class="user-menu-item">
-                                <?php echo icon('list', 18); ?>
-                                <span>Mis Publicaciones</span>
-                            </a>
-                            <a href="<?php echo BASE_URL; ?>/favoritos" class="user-menu-item">
-                                <?php echo icon('heart', 18); ?>
-                                <span>Favoritos</span>
-                            </a>
-                            <a href="<?php echo BASE_URL; ?>/configuracion" class="user-menu-item">
-                                <?php echo icon('settings', 18); ?>
-                                <span>Configuración</span>
-                            </a>
+                            
                             <?php if ($_SESSION['user_rol'] === 'admin'): ?>
+                                <!-- MENÚ PARA ADMINISTRADOR -->
+                                <?php $adminNotifications = getAdminNotifications(); ?>
                                 <div class="user-menu-divider"></div>
+                                <div class="user-menu-section-title">Panel de Administración</div>
                                 <a href="<?php echo BASE_URL; ?>/admin" class="user-menu-item admin-link">
-                                    <?php echo icon('shield', 18); ?>
-                                    <span>Panel Admin</span>
+                                    <?php echo icon('layout-dashboard', 18); ?>
+                                    <span>Dashboard</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/admin/publicaciones" class="user-menu-item admin-link">
+                                    <?php echo icon('file-text', 18); ?>
+                                    <span>Publicaciones</span>
+                                    <?php if ($adminNotifications['publicaciones_pendientes'] > 0): ?>
+                                        <span class="menu-badge"><?php echo $adminNotifications['publicaciones_pendientes']; ?></span>
+                                    <?php endif; ?>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/admin/usuarios" class="user-menu-item admin-link">
+                                    <?php echo icon('users', 18); ?>
+                                    <span>Usuarios</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/admin/mensajes" class="user-menu-item admin-link">
+                                    <?php echo icon('message-square', 18); ?>
+                                    <span>Mensajes</span>
+                                    <?php if ($adminNotifications['mensajes_sin_leer'] > 0): ?>
+                                        <span class="menu-badge"><?php echo $adminNotifications['mensajes_sin_leer']; ?></span>
+                                    <?php endif; ?>
+                                </a>
+                                
+                                <div class="user-menu-divider"></div>
+                                <div class="user-menu-section-title">Mi Cuenta</div>
+                                <a href="<?php echo BASE_URL; ?>/perfil" class="user-menu-item">
+                                    <?php echo icon('user', 18); ?>
+                                    <span>Mi Perfil</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/mis-publicaciones" class="user-menu-item">
+                                    <?php echo icon('list', 18); ?>
+                                    <span>Mis Publicaciones</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/configuracion" class="user-menu-item">
+                                    <?php echo icon('settings', 18); ?>
+                                    <span>Configuración</span>
+                                </a>
+                                
+                                <div class="user-menu-divider"></div>
+                                <a href="<?php echo BASE_URL; ?>/?view=public" class="user-menu-item">
+                                    <?php echo icon('eye', 18); ?>
+                                    <span>Ver Sitio Público</span>
+                                </a>
+                            <?php else: ?>
+                                <!-- MENÚ PARA VENDEDOR/USUARIO -->
+                                <div class="user-menu-divider"></div>
+                                <a href="<?php echo BASE_URL; ?>/perfil" class="user-menu-item">
+                                    <?php echo icon('user', 18); ?>
+                                    <span>Mi Perfil</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/mis-publicaciones" class="user-menu-item">
+                                    <?php echo icon('list', 18); ?>
+                                    <span>Mis Publicaciones</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/favoritos" class="user-menu-item">
+                                    <?php echo icon('heart', 18); ?>
+                                    <span>Favoritos</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/configuracion" class="user-menu-item">
+                                    <?php echo icon('settings', 18); ?>
+                                    <span>Configuración</span>
                                 </a>
                             <?php endif; ?>
+                            
                             <div class="user-menu-divider"></div>
                             <a href="<?php echo BASE_URL; ?>/logout" class="user-menu-item logout-link">
-                                <?php echo icon('logout', 18); ?>
+                                <?php echo icon('log-out', 18); ?>
                                 <span>Cerrar Sesión</span>
                             </a>
                         </div>

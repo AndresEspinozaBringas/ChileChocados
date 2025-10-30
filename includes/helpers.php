@@ -132,6 +132,87 @@ function formatDate($date, $format = 'd/m/Y') {
 }
 
 /**
+ * Formatear fecha en español (localización completa)
+ * Retorna fecha formateada en español chileno
+ * 
+ * @param string|int $date Fecha en formato string o timestamp
+ * @param string $format Formato: 'full' (completo), 'short' (corto), 'relative' (relativo)
+ * @return string Fecha formateada en español
+ */
+function formatDateSpanish($date, $format = 'full') {
+    if (empty($date)) return '';
+    
+    $timestamp = is_numeric($date) ? $date : strtotime($date);
+    
+    // Arrays de traducción
+    $dias = [
+        'Monday' => 'Lunes',
+        'Tuesday' => 'Martes',
+        'Wednesday' => 'Miércoles',
+        'Thursday' => 'Jueves',
+        'Friday' => 'Viernes',
+        'Saturday' => 'Sábado',
+        'Sunday' => 'Domingo'
+    ];
+    
+    $meses = [
+        'January' => 'enero',
+        'February' => 'febrero',
+        'March' => 'marzo',
+        'April' => 'abril',
+        'May' => 'mayo',
+        'June' => 'junio',
+        'July' => 'julio',
+        'August' => 'agosto',
+        'September' => 'septiembre',
+        'October' => 'octubre',
+        'November' => 'noviembre',
+        'December' => 'diciembre'
+    ];
+    
+    switch ($format) {
+        case 'full':
+            // Formato: Jueves, 30 de octubre de 2025
+            $dia = $dias[date('l', $timestamp)];
+            $numero = date('j', $timestamp);
+            $mes = $meses[date('F', $timestamp)];
+            $anio = date('Y', $timestamp);
+            return "{$dia}, {$numero} de {$mes} de {$anio}";
+            
+        case 'short':
+            // Formato: 30 de octubre de 2025
+            $numero = date('j', $timestamp);
+            $mes = $meses[date('F', $timestamp)];
+            $anio = date('Y', $timestamp);
+            return "{$numero} de {$mes} de {$anio}";
+            
+        case 'relative':
+            // Formato relativo: Hace 2 horas, Ayer, etc.
+            $diff = time() - $timestamp;
+            
+            if ($diff < 60) {
+                return 'Hace un momento';
+            } elseif ($diff < 3600) {
+                $minutos = floor($diff / 60);
+                return "Hace {$minutos} " . ($minutos == 1 ? 'minuto' : 'minutos');
+            } elseif ($diff < 86400) {
+                $horas = floor($diff / 3600);
+                return "Hace {$horas} " . ($horas == 1 ? 'hora' : 'horas');
+            } elseif ($diff < 172800) {
+                return 'Ayer';
+            } elseif ($diff < 604800) {
+                $dias = floor($diff / 86400);
+                return "Hace {$dias} días";
+            } else {
+                return formatDateSpanish($date, 'short');
+            }
+            
+        default:
+            return date('d/m/Y', $timestamp);
+    }
+}
+
+/**
  * Subir archivo
  */
 function uploadFile($file, $destination = 'uploads/') {
@@ -295,4 +376,41 @@ function asset($path) {
  */
 function e($data) {
     return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Obtener contadores de notificaciones para el admin
+ * Retorna array con contadores de publicaciones pendientes y mensajes sin leer
+ */
+function getAdminNotifications() {
+    // Solo para admins
+    if (!isset($_SESSION['user_rol']) || $_SESSION['user_rol'] !== 'admin') {
+        return [
+            'publicaciones_pendientes' => 0,
+            'mensajes_sin_leer' => 0
+        ];
+    }
+    
+    try {
+        $db = getDB();
+        
+        // Contar publicaciones pendientes
+        $stmt = $db->query("SELECT COUNT(*) as total FROM publicaciones WHERE estado = 'pendiente'");
+        $pendientes = $stmt->fetch(PDO::FETCH_OBJ);
+        
+        // Contar mensajes sin leer
+        $stmt = $db->query("SELECT COUNT(*) as total FROM mensajes WHERE leido = 0");
+        $mensajes = $stmt->fetch(PDO::FETCH_OBJ);
+        
+        return [
+            'publicaciones_pendientes' => $pendientes->total ?? 0,
+            'mensajes_sin_leer' => $mensajes->total ?? 0
+        ];
+    } catch (Exception $e) {
+        error_log("Error obteniendo notificaciones admin: " . $e->getMessage());
+        return [
+            'publicaciones_pendientes' => 0,
+            'mensajes_sin_leer' => 0
+        ];
+    }
 }
