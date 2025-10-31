@@ -108,6 +108,7 @@ require_once __DIR__ . '/../../layouts/header.php';
         <div class="filters-bar">
             <select class="filter-select" id="filter-estado">
                 <option value="">Todos los estados</option>
+                <option value="borrador">Borrador</option>
                 <option value="pendiente">Pendiente</option>
                 <option value="aprobada">Aprobada</option>
                 <option value="rechazada">Rechazada</option>
@@ -167,13 +168,15 @@ require_once __DIR__ . '/../../layouts/header.php';
                                     </a>
                                 </h3>
                                 <span class="badge" style="background: <?php 
-                                    echo $pub['estado'] === 'aprobada' ? '#d4edda' : 
-                                        ($pub['estado'] === 'pendiente' ? '#fff3cd' : 
-                                        ($pub['estado'] === 'rechazada' ? '#f8d7da' : '#e2e3e5')); 
+                                    echo $pub['estado'] === 'aprobada' ? '#D1FAE5' : 
+                                        ($pub['estado'] === 'pendiente' ? '#FEF3C7' : 
+                                        ($pub['estado'] === 'rechazada' ? '#FEE2E2' : 
+                                        ($pub['estado'] === 'borrador' ? '#FFF1F0' : '#e2e3e5'))); 
                                 ?>; color: <?php 
-                                    echo $pub['estado'] === 'aprobada' ? '#155724' : 
-                                        ($pub['estado'] === 'pendiente' ? '#856404' : 
-                                        ($pub['estado'] === 'rechazada' ? '#721c24' : '#383d41')); 
+                                    echo $pub['estado'] === 'aprobada' ? '#059669' : 
+                                        ($pub['estado'] === 'pendiente' ? '#D97706' : 
+                                        ($pub['estado'] === 'rechazada' ? '#DC2626' : 
+                                        ($pub['estado'] === 'borrador' ? '#E6332A' : '#383d41'))); 
                                 ?>;">
                                     <?php echo strtoupper($pub['estado']); ?>
                                 </span>
@@ -185,20 +188,32 @@ require_once __DIR__ . '/../../layouts/header.php';
                             
                             <div class="publicacion-meta">
                                 <span>
-                                    👁️ <?php echo number_format($pub['visitas']); ?> visitas
+                                    <?php echo icon('eye', 14); ?> <?php echo number_format($pub['visitas'] ?? 0); ?> visitas
                                 </span>
                                 <span>
-                                    📅 <?php echo date('d/m/Y', strtotime($pub['fecha_publicacion'])); ?>
+                                    <?php echo icon('calendar', 14); ?> 
+                                    <?php 
+                                    if (!empty($pub['fecha_publicacion'])) {
+                                        echo date('d/m/Y', strtotime($pub['fecha_publicacion']));
+                                    } elseif (!empty($pub['fecha_creacion'])) {
+                                        echo date('d/m/Y', strtotime($pub['fecha_creacion']));
+                                    } else {
+                                        echo 'Sin fecha';
+                                    }
+                                    ?>
                                 </span>
                             </div>
                         </div>
                         <div class="publicacion-actions">
                             <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub['id']; ?>" class="btn" style="white-space: nowrap;">
-                                👁️ Ver
+                                <?php echo icon('eye', 16); ?> Ver
                             </a>
                             <a href="<?php echo BASE_URL; ?>/publicaciones/<?php echo $pub['id']; ?>/editar" class="btn" style="white-space: nowrap;">
-                                ✏️ Editar
+                                <?php echo icon('edit', 16); ?> Editar
                             </a>
+                            <button onclick="eliminarPublicacion(<?php echo $pub['id']; ?>, '<?php echo htmlspecialchars($pub['titulo']); ?>')" class="btn" style="white-space: nowrap; background: #fee2e2; color: #dc2626; border-color: #fecaca;">
+                                <?php echo icon('trash-2', 16); ?> Eliminar
+                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -244,6 +259,27 @@ function limpiarFiltros() {
 // Event listeners
 filterEstado?.addEventListener('change', aplicarFiltros);
 filterBuscar?.addEventListener('input', aplicarFiltros);
+
+// Función para eliminar publicación
+function eliminarPublicacion(id, titulo) {
+    if (confirm(`¿Estás seguro de que deseas eliminar la publicación "${titulo}"?\n\nEsta acción no se puede deshacer.`)) {
+        // Crear formulario dinámico
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<?php echo BASE_URL; ?>/publicaciones/' + id + '/eliminar';
+        
+        // Agregar token CSRF
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = '<?php echo generateCsrfToken(); ?>';
+        form.appendChild(csrfInput);
+        
+        // Agregar al body y enviar
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 
 <?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

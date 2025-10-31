@@ -60,7 +60,7 @@ class AdminController
         
         // Obtener estadísticas reales de la base de datos
         
-        // Estadísticas de publicaciones
+        // Estadísticas de publicaciones (excluyendo borradores)
         $stmt = $this->db->query("
             SELECT 
                 COUNT(*) as total,
@@ -68,6 +68,7 @@ class AdminController
                 SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
                 SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas
             FROM publicaciones
+            WHERE estado != 'borrador'
         ");
         $statsPublicaciones = $stmt->fetch(\PDO::FETCH_OBJ);
         
@@ -98,13 +99,14 @@ class AdminController
         ");
         $statsDestacadas = $stmt->fetch(\PDO::FETCH_OBJ);
         
-        // Actividad de los últimos 7 días
+        // Actividad de los últimos 7 días (excluyendo borradores)
         $stmt = $this->db->query("
             SELECT 
                 DATE(fecha_creacion) as fecha,
                 COUNT(*) as total
             FROM publicaciones
             WHERE fecha_creacion >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            AND estado != 'borrador'
             GROUP BY DATE(fecha_creacion)
             ORDER BY fecha ASC
         ");
@@ -252,7 +254,7 @@ class AdminController
                 LEFT JOIN subcategorias sc ON p.subcategoria_id = sc.id
                 LEFT JOIN regiones r ON p.region_id = r.id
                 LEFT JOIN comunas c ON p.comuna_id = c.id
-                WHERE 1=1";
+                WHERE p.estado != 'borrador'";
 
         $params = [];
 
@@ -300,7 +302,7 @@ class AdminController
                 LEFT JOIN subcategorias sc ON p.subcategoria_id = sc.id
                 LEFT JOIN regiones r ON p.region_id = r.id
                 LEFT JOIN comunas c ON p.comuna_id = c.id
-                WHERE 1=1";
+                WHERE p.estado != 'borrador'";
         
         $params_count = [];
         
@@ -332,7 +334,7 @@ class AdminController
         // Calcular paginación
         $total_pages = ceil($total / $per_page);
 
-        // Obtener conteos por estado
+        // Obtener conteos por estado (excluyendo borradores)
         $stmt_conteo = $this->db->query("
             SELECT 
                 COUNT(*) as total,
@@ -340,6 +342,7 @@ class AdminController
                 SUM(CASE WHEN estado = 'aprobada' THEN 1 ELSE 0 END) as aprobadas,
                 SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas
             FROM publicaciones
+            WHERE estado != 'borrador'
         ");
         $conteo = $stmt_conteo->fetch(PDO::FETCH_ASSOC);
 
@@ -472,14 +475,32 @@ class AdminController
             exit;
         }
 
-        // Actualizar estado a aprobada
-        $stmt = $this->db->prepare("
-            UPDATE publicaciones 
-            SET estado = 'aprobada',
-                fecha_publicacion = NOW(),
-                motivo_rechazo = NULL
-            WHERE id = ?
-        ");
+        // Actualizar estado a aprobada y activar destacado si corresponde
+        $updateSql = "UPDATE publicaciones 
+                      SET estado = 'aprobada',
+                          fecha_publicacion = NOW(),
+                          motivo_rechazo = NULL";
+        
+        // Si es destacada, activar las fechas de destacado AHORA
+        if ($publicacion->es_destacada == 1) {
+            $updateSql .= ", fecha_destacada_inicio = NOW()";
+            
+            // Calcular fecha_destacada_fin basado en si ya existe o usar 15 días por defecto
+            if (!empty($publicacion->fecha_destacada_fin) && !empty($publicacion->fecha_destacada_inicio)) {
+                // Mantener la duración original
+                $diff_seconds = strtotime($publicacion->fecha_destacada_fin) - strtotime($publicacion->fecha_destacada_inicio);
+                $dias = ceil($diff_seconds / (24 * 3600));
+            } else {
+                // Por defecto 15 días
+                $dias = 15;
+            }
+            
+            $updateSql .= ", fecha_destacada_fin = DATE_ADD(NOW(), INTERVAL $dias DAY)";
+        }
+        
+        $updateSql .= " WHERE id = ?";
+        
+        $stmt = $this->db->prepare($updateSql);
         $stmt->execute([$id]);
 
         // Registrar en auditoría

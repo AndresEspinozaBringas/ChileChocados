@@ -456,28 +456,28 @@ class UsuarioController
 
         $userId = $_SESSION['user_id'];
 
-        // TODO: Conectar con BD en futuras etapas
-        // Todas las publicaciones del usuario (activas, pendientes, vendidas)
-        $publicaciones = [
-            [
-                'id' => 1,
-                'titulo' => 'Ford Territory 2022 - Chocado Frontal',
-                'precio' => 8500000,
-                'foto_principal' => 'ford-territory.jpg',
-                'estado' => 'aprobada',
-                'visitas' => 245,
-                'fecha_publicacion' => '2024-10-20'
-            ],
-            [
-                'id' => 2,
-                'titulo' => 'Kia Cerato 2020 - Choque Lateral',
-                'precio' => 6200000,
-                'foto_principal' => 'kia-cerato.jpg',
-                'estado' => 'aprobada',
-                'visitas' => 189,
-                'fecha_publicacion' => '2024-10-18'
-            ]
-        ];
+        // Obtener publicaciones del usuario desde la BD (incluyendo borradores)
+        $stmt = $this->db->prepare("
+            SELECT p.*,
+                   COALESCE(
+                       (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id AND es_principal = 1 LIMIT 1),
+                       (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id ORDER BY orden LIMIT 1),
+                       p.foto_principal
+                   ) as foto_principal
+            FROM publicaciones p
+            WHERE p.usuario_id = ?
+            ORDER BY 
+                CASE 
+                    WHEN p.estado = 'borrador' THEN 1
+                    WHEN p.estado = 'pendiente' THEN 2
+                    WHEN p.estado = 'aprobada' THEN 3
+                    WHEN p.estado = 'rechazada' THEN 4
+                    ELSE 5
+                END,
+                p.fecha_creacion DESC
+        ");
+        $stmt->execute([$userId]);
+        $publicaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Cargar vista
         require_once __DIR__ . '/../views/pages/usuarios/mis-publicaciones.php';

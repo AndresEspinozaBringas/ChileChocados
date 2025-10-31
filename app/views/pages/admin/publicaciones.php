@@ -1038,17 +1038,17 @@ async function aprobarPublicacion(id) {
       ButtonLoader.success(button, '¡Aprobada!');
       Toast.success('Publicación aprobada exitosamente');
       
-      // Animar y remover fila después de 1 segundo
+      // Animar y remover fila, luego recargar para actualizar contadores
       setTimeout(() => {
         const row = button.closest('tr');
         if (row) {
           Animate.fadeOut(row, () => {
-            // Recargar si no quedan más filas
-            const tbody = row.closest('tbody');
-            if (tbody && tbody.querySelectorAll('tr').length === 0) {
-              location.reload();
-            }
+            // Recargar la página para actualizar contadores y tabla
+            location.reload();
           });
+        } else {
+          // Si no hay fila, recargar directamente
+          location.reload();
         }
       }, 1000);
     } else {
@@ -1098,16 +1098,17 @@ async function rechazarPublicacion() {
       Toast.success('Publicación rechazada');
       cerrarModal('modalRechazo');
       
-      // Animar y remover fila
+      // Animar y remover fila, luego recargar para actualizar contadores
       setTimeout(() => {
         const row = document.querySelector(`#pub-${id}`);
         if (row) {
           Animate.fadeOut(row, () => {
-            const tbody = row.closest('tbody');
-            if (tbody && tbody.querySelectorAll('tr').length === 0) {
-              location.reload();
-            }
+            // Recargar la página para actualizar contadores y tabla
+            location.reload();
           });
+        } else {
+          // Si no hay fila, recargar directamente
+          location.reload();
         }
       }, 500);
     } else {

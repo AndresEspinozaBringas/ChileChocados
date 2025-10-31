@@ -33,9 +33,20 @@ class HomeController {
         $pageTitle = 'ChileChocados – Marketplace de bienes siniestrados';
         
         try {
-            // Obtener publicaciones destacadas de la BD
             $publicacionModel = new Publicacion();
+            
+            // Obtener publicaciones destacadas activas
             $publicacionesDestacadas = $publicacionModel->getDestacadas(8);
+            
+            // Obtener publicaciones recientes aprobadas (excluyendo las destacadas si las hay)
+            $sql = "SELECT p.*, cp.nombre as categoria_nombre, r.nombre as region_nombre
+                    FROM publicaciones p
+                    INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+                    INNER JOIN regiones r ON p.region_id = r.id
+                    WHERE p.estado = 'aprobada'
+                    ORDER BY p.fecha_publicacion DESC
+                    LIMIT 12";
+            $publicacionesRecientes = $publicacionModel->query($sql);
             
             // Obtener categorías con conteo de publicaciones de la BD
             $categoriaModel = new Categoria();
@@ -45,6 +56,7 @@ class HomeController {
             // En caso de error, usar arrays vacíos y log del error
             error_log("Error en HomeController::index() - " . $e->getMessage());
             $publicacionesDestacadas = [];
+            $publicacionesRecientes = [];
             $categorias = [];
         }
         

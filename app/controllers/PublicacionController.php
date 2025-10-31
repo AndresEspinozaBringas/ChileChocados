@@ -29,36 +29,46 @@ class PublicacionController
 
     /**
      * Muestra el listado de publicaciones con filtros
-     * Ruta: GET /publicaciones
+     * Ruta: GET /publicaciones o /listado
      */
     public function index()
     {
         // Obtener parámetros de filtros desde URL
         $filtros = [
-            'categoria' => $_GET['categoria'] ?? null,
-            'subcategoria' => $_GET['subcategoria'] ?? null,
-            'region' => $_GET['region'] ?? null,
-            'comuna' => $_GET['comuna'] ?? null,
+            'categoria_id' => $_GET['categoria'] ?? null,
+            'subcategoria_id' => $_GET['subcategoria'] ?? null,
+            'region_id' => $_GET['region'] ?? null,
+            'comuna_id' => $_GET['comuna'] ?? null,
             'precio_min' => $_GET['precio_min'] ?? null,
             'precio_max' => $_GET['precio_max'] ?? null,
-            'estado' => $_GET['estado'] ?? null,
-            'q' => $_GET['q'] ?? null,
+            'tipo_venta' => $_GET['tipo_venta'] ?? null,
+            'buscar' => $_GET['q'] ?? null,
             'orden' => $_GET['orden'] ?? 'recientes',
-            'page' => $_GET['page'] ?? 1
+            'page' => (int) ($_GET['page'] ?? 1)
         ];
 
-        // TODO: Conectar con BD en futuras etapas
-        // Por ahora la vista maneja los datos de prueba
+        // Obtener publicaciones con filtros desde la BD
+        $resultado = $this->publicacionModel->listarConFiltros($filtros);
+        
+        // Obtener categorías para el filtro
+        $categoriaModel = new \App\Models\Categoria();
+        $categorias = $categoriaModel->getConSubcategorias();
+        
+        // Obtener regiones para el filtro
+        $sql = "SELECT * FROM regiones ORDER BY nombre ASC";
+        $regiones = $this->publicacionModel->query($sql);
+        
+        // Preparar datos para la vista
         $data = [
             'title' => 'Listado de Vehículos Siniestrados - ChileChocados',
             'meta_description' => 'Encuentra vehículos siniestrados y en desarme en todo Chile',
-            'publicaciones' => [],  // La vista agregará datos de prueba si está vacío
-            'total' => 0,
-            'pagina_actual' => (int) $filtros['page'],
-            'total_paginas' => 1,
+            'publicaciones' => $resultado['publicaciones'] ?? [],
+            'total' => $resultado['total'] ?? 0,
+            'pagina_actual' => $filtros['page'],
+            'total_paginas' => $resultado['total_paginas'] ?? 1,
             'filtros_aplicados' => $filtros,
-            'categorias' => [],
-            'regiones' => []
+            'categorias' => $categorias,
+            'regiones' => $regiones
         ];
 
         // Cargar vista
@@ -71,135 +81,44 @@ class PublicacionController
      */
     public function show($id)
     {
-        // TODO: Conectar con base de datos en futuras etapas
-        // Por ahora usamos datos estáticos para mostrar la página
-
-        // Datos estáticos de publicaciones
-        $publicaciones_estaticas = [
-            1 => [
-                'id' => 1,
-                'titulo' => 'Ford Territory 2022 - Chocado Frontal',
-                'descripcion' => 'Ford Territory 2022 en excelente estado mecánico. Choque frontal leve, motor y transmisión funcionando perfectamente. Ideal para reparar o desarme. Documentación al día, sin multas. Vehículo ubicado en Santiago Centro.',
-                'precio' => 8500000,
-                'categoria_nombre' => 'SUV',
-                'marca' => 'Ford',
-                'modelo' => 'Territory',
-                'anio' => 2022,
-                'kilometraje' => 35000,
-                'tipo_combustible' => 'Gasolina',
-                'transmision' => 'Automática',
-                'estado_vehiculo' => 'Chocado',
-                'tipo_venta' => 'completo',
-                'region_nombre' => 'Región Metropolitana',
-                'comuna_nombre' => 'Santiago',
-                'foto_principal' => 'ford-territory.jpg',
-                'usuario_nombre' => 'Juan Pérez',
-                'usuario_telefono' => '+56 9 1234 5678',
-                'usuario_email' => 'juan.perez@example.com',
-                'fecha_publicacion' => '2024-10-20',
-                'vistas' => 245
-            ],
-            2 => [
-                'id' => 2,
-                'titulo' => 'Kia Cerato 2020 - Choque Lateral',
-                'descripcion' => 'Kia Cerato 2020, choque lateral derecho. Motor en perfecto estado, transmisión automática funcionando. Ideal para reparación. Papeles al día.',
-                'precio' => 6200000,
-                'categoria_nombre' => 'Sedán',
-                'marca' => 'Kia',
-                'modelo' => 'Cerato',
-                'anio' => 2020,
-                'kilometraje' => 48000,
-                'tipo_combustible' => 'Gasolina',
-                'transmision' => 'Automática',
-                'estado_vehiculo' => 'Chocado',
-                'tipo_venta' => 'completo',
-                'region_nombre' => 'Región de Valparaíso',
-                'comuna_nombre' => 'Valparaíso',
-                'foto_principal' => 'kia-cerato.jpg',
-                'usuario_nombre' => 'María González',
-                'usuario_telefono' => '+56 9 8765 4321',
-                'usuario_email' => 'maria.gonzalez@example.com',
-                'fecha_publicacion' => '2024-10-18',
-                'vistas' => 189
-            ],
-            3 => [
-                'id' => 3,
-                'titulo' => 'Kia Rio 5 2019 - Choque Trasero',
-                'descripcion' => 'Kia Rio 5 2019, choque trasero. Mecánica en excelente estado. Ideal para reparar y usar. Sin deudas.',
-                'precio' => 4800000,
-                'categoria_nombre' => 'Hatchback',
-                'marca' => 'Kia',
-                'modelo' => 'Rio 5',
-                'anio' => 2019,
-                'kilometraje' => 62000,
-                'tipo_combustible' => 'Gasolina',
-                'transmision' => 'Manual',
-                'estado_vehiculo' => 'Chocado',
-                'tipo_venta' => 'completo',
-                'region_nombre' => 'Región del Biobío',
-                'comuna_nombre' => 'Concepción',
-                'foto_principal' => 'kia-rio-5.jpg',
-                'usuario_nombre' => 'Carlos Muñoz',
-                'usuario_telefono' => '+56 9 5555 6666',
-                'usuario_email' => 'carlos.munoz@example.com',
-                'fecha_publicacion' => '2024-10-15',
-                'vistas' => 156
-            ],
-            4 => [
-                'id' => 4,
-                'titulo' => 'Dodge Journey 2018 - En Desarme',
-                'descripcion' => 'Dodge Journey 2018 disponible para desarme. Todas las piezas disponibles. Motor, transmisión, puertas, vidrios, etc.',
-                'precio' => null,
-                'categoria_nombre' => 'SUV',
-                'marca' => 'Dodge',
-                'modelo' => 'Journey',
-                'anio' => 2018,
-                'kilometraje' => 95000,
-                'tipo_combustible' => 'Gasolina',
-                'transmision' => 'Automática',
-                'estado_vehiculo' => 'En Desarme',
-                'tipo_venta' => 'desarme',
-                'region_nombre' => 'Región de Coquimbo',
-                'comuna_nombre' => 'La Serena',
-                'foto_principal' => 'dodge.jpg',
-                'usuario_nombre' => 'Taller AutoPartes',
-                'usuario_telefono' => '+56 9 7777 8888',
-                'usuario_email' => 'contacto@autopartes.cl',
-                'fecha_publicacion' => '2024-10-12',
-                'vistas' => 98
-            ]
-        ];
-
-        // Verificar si existe la publicación
-        if (!isset($publicaciones_estaticas[$id])) {
-            http_response_code(404);
-            echo '404 - Publicación no encontrada';
+        // Obtener publicación con relaciones desde la BD
+        $publicacion = $this->publicacionModel->getConRelaciones($id);
+        
+        // Verificar que existe
+        if (!$publicacion) {
+            $_SESSION['error'] = 'Publicación no encontrada';
+            header('Location: ' . BASE_URL . '/listado');
             exit;
         }
-
-        // Convertir array a objeto para compatibilidad con la vista
-        $publicacion = (object) $publicaciones_estaticas[$id];
-
-        // Imágenes para la galería (incluye la principal + adicionales)
-        $imagenes = [];
-        if ($id == 1) {
-            // Imágenes para Ford Territory (4 imágenes en total)
-            // Nota: Las rutas son relativas desde /uploads/publicaciones/
-            $imagenes = [
-                (object) ['ruta' => 'ford-territory.jpg'],  // Imagen principal
-                (object) ['ruta' => 'ford-territory-1.jpg'],
-                (object) ['ruta' => 'ford-territory-2.jpg'],
-                (object) ['ruta' => 'ford-territory-3.jpg']
-            ];
+        
+        // Verificar que esté aprobada (excepto si es el dueño o admin)
+        $es_dueno = isset($_SESSION['user_id']) && $_SESSION['user_id'] == $publicacion->usuario_id;
+        $es_admin = isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin';
+        
+        if ($publicacion->estado !== 'aprobada' && !$es_dueno && !$es_admin) {
+            $_SESSION['error'] = 'Esta publicación no está disponible';
+            header('Location: ' . BASE_URL . '/listado');
+            exit;
         }
-
-        // Publicaciones similares (otras publicaciones)
-        $similares = [];
-        foreach ($publicaciones_estaticas as $pub_id => $pub) {
-            if ($pub_id != $id && count($similares) < 3) {
-                $similares[] = (object) $pub;
-            }
+        
+        // Incrementar visitas (solo si no es el dueño)
+        if (!$es_dueno) {
+            $this->publicacionModel->incrementarVisitas($id);
         }
+        
+        // Obtener imágenes de la publicación
+        $imagenes = $this->publicacionModel->getImagenes($id);
+        
+        // Obtener publicaciones similares
+        $publicaciones_similares = $this->publicacionModel->getSimilares($id, $publicacion->categoria_padre_id, 4);
+
+        // Preparar datos para la vista
+        $data = [
+            'title' => $publicacion->titulo . ' - ChileChocados',
+            'publicacion' => $publicacion,
+            'imagenes' => $imagenes,
+            'similares' => $publicaciones_similares
+        ];
 
         // Cargar vista
         require_once __DIR__ . '/../views/pages/publicaciones/detail.php';

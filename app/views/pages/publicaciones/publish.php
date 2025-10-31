@@ -1,7 +1,15 @@
 <?php
 use App\Helpers\Auth;
 
-$pageTitle = 'Publicar Vehículo';
+// Determinar si estamos en modo edición
+$modoEdicion = isset($modoEdicion) && $modoEdicion;
+$publicacion = $publicacion ?? null;
+$imagenes = $imagenes ?? [];
+
+// Título de la página
+if (!isset($pageTitle)) {
+  $pageTitle = $modoEdicion ? 'Editar Publicación' : 'Publicar Vehículo';
+}
 
 // Verificar que el usuario esté logueado
 if (!Auth::check()) {
@@ -130,26 +138,29 @@ require_once APP_PATH . '/views/layouts/header.php';
 
 <main class="container">
 
-  <div class="h1">Publicar vehículo</div>
+  <div class="h1"><?php echo $modoEdicion ? 'Editar publicación' : 'Publicar vehículo'; ?></div>
   
   <?php
-  // DEBUG: Mostrar la URL de acción
-  $action_url = BASE_URL . '/publicar/procesar';
-  error_log("Form action URL: " . $action_url);
+  // Determinar la URL de acción según el modo
+  if ($modoEdicion) {
+    $action_url = BASE_URL . '/publicaciones/' . $publicacionId . '/update';
+  } else {
+    $action_url = BASE_URL . '/publicar/procesar';
+  }
   ?>
-  <form method="POST" action="<?php echo $action_url; ?>" enctype="multipart/form-data">
-    <!-- DEBUG: Mostrar URL en comentario HTML -->
-    <!-- Action URL: <?php echo $action_url; ?> -->
+  <form id="form-publicar" method="POST" action="<?php echo $action_url; ?>" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
     
     <div class="card">
       <div class="h3">Paso 1: Tipificación</div>
       <div class="kit">
         <label class="tag" id="label-chocado">
-          <input type="radio" name="tipificacion" value="chocado" id="tip-chocado" required> Chocado
+          <input type="radio" name="tipificacion" value="chocado" id="tip-chocado" 
+            <?php echo ($modoEdicion && $publicacion->tipificacion === 'chocado') ? 'checked' : (!$modoEdicion ? 'required' : ''); ?>> Chocado
         </label>
         <label class="tag" id="label-siniestrado">
-          <input type="radio" name="tipificacion" value="siniestrado" id="tip-siniestrado"> Siniestrado
+          <input type="radio" name="tipificacion" value="siniestrado" id="tip-siniestrado"
+            <?php echo ($modoEdicion && $publicacion->tipificacion === 'siniestrado') ? 'checked' : ''; ?>> Siniestrado
         </label>
       </div>
       <p class="meta" style="margin-top: 8px; font-size: 13px;">
@@ -162,10 +173,12 @@ require_once APP_PATH . '/views/layouts/header.php';
       <div class="h3">Paso 2: Tipo de venta</div>
       <div class="kit">
         <label class="tag" id="label-completo">
-          <input type="radio" name="tipo_venta" value="completo" id="venta-completo" required> Venta Directa (con precio)
+          <input type="radio" name="tipo_venta" value="completo" id="venta-completo" 
+            <?php echo ($modoEdicion && $publicacion->tipo_venta === 'completo') ? 'checked' : (!$modoEdicion ? 'required' : ''); ?>> Venta Directa (con precio)
         </label>
         <label class="tag" id="label-desarme">
-          <input type="radio" name="tipo_venta" value="desarme" id="venta-desarme"> Precio a convenir
+          <input type="radio" name="tipo_venta" value="desarme" id="venta-desarme"
+            <?php echo ($modoEdicion && $publicacion->tipo_venta === 'desarme') ? 'checked' : ''; ?>> Precio a convenir
         </label>
       </div>
     </div>
@@ -175,26 +188,34 @@ require_once APP_PATH . '/views/layouts/header.php';
       <!-- Fila 1: Marca, Modelo, Año -->
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
         <label>Marca
-          <input type="text" name="marca" placeholder="Ej: Toyota" required>
+          <input type="text" name="marca" placeholder="Ej: Toyota" 
+            value="<?php echo $modoEdicion ? htmlspecialchars($publicacion->marca ?? '') : ''; ?>" 
+            <?php echo !$modoEdicion ? 'required' : ''; ?>>
         </label>
         
         <label>Modelo
-          <input type="text" name="modelo" placeholder="Ej: Corolla" required>
+          <input type="text" name="modelo" placeholder="Ej: Corolla" 
+            value="<?php echo $modoEdicion ? htmlspecialchars($publicacion->modelo ?? '') : ''; ?>" 
+            <?php echo !$modoEdicion ? 'required' : ''; ?>>
         </label>
         
         <label>Año
-          <input type="number" name="anio" placeholder="2020" min="1900" max="2025" required>
+          <input type="number" name="anio" placeholder="2020" min="1900" max="2025" 
+            value="<?php echo $modoEdicion ? ($publicacion->anio ?? '') : ''; ?>" 
+            <?php echo !$modoEdicion ? 'required' : ''; ?>>
         </label>
       </div>
       
       <!-- Fila 2: Categoría, Subcategoría -->
       <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
         <label>Categoría
-          <select name="categoria_padre_id" id="categoria_padre" required>
+          <select name="categoria_padre_id" id="categoria_padre" <?php echo !$modoEdicion ? 'required' : ''; ?>>
             <option value="">Seleccionar...</option>
             <?php if (!empty($categorias)): ?>
               <?php foreach ($categorias as $categoria): ?>
-                <option value="<?php echo $categoria->id; ?>" data-subcategorias='<?php echo json_encode($categoria->subcategorias ?? []); ?>'>
+                <option value="<?php echo $categoria->id; ?>" 
+                  data-subcategorias='<?php echo json_encode($categoria->subcategorias ?? []); ?>'
+                  <?php echo ($modoEdicion && $publicacion->categoria_padre_id == $categoria->id) ? 'selected' : ''; ?>>
                   <?php echo htmlspecialchars($categoria->nombre); ?>
                 </option>
               <?php endforeach; ?>
@@ -212,11 +233,12 @@ require_once APP_PATH . '/views/layouts/header.php';
       <!-- Fila 3: Región, Comuna -->
       <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
         <label>Región
-          <select name="region_id" id="region" required>
+          <select name="region_id" id="region" <?php echo !$modoEdicion ? 'required' : ''; ?>>
             <option value="">Seleccionar...</option>
             <?php if (!empty($regiones)): ?>
               <?php foreach ($regiones as $region): ?>
-                <option value="<?php echo $region->id; ?>">
+                <option value="<?php echo $region->id; ?>"
+                  <?php echo ($modoEdicion && $publicacion->region_id == $region->id) ? 'selected' : ''; ?>>
                   <?php echo htmlspecialchars($region->nombre); ?>
                 </option>
               <?php endforeach; ?>
@@ -225,7 +247,7 @@ require_once APP_PATH . '/views/layouts/header.php';
         </label>
         
         <label>Comuna
-          <select name="comuna_id" id="comuna" required>
+          <select name="comuna_id" id="comuna" <?php echo !$modoEdicion ? 'required' : ''; ?>>
             <option value="">Selecciona región...</option>
           </select>
         </label>
@@ -234,7 +256,8 @@ require_once APP_PATH . '/views/layouts/header.php';
       <!-- Fila 4: Precio -->
       <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px;">
         <label id="precio-field">Precio
-          <input type="text" name="precio" placeholder="Ej: $5.000.000">
+          <input type="text" name="precio" placeholder="Ej: $5.000.000"
+            value="<?php echo $modoEdicion ? number_format($publicacion->precio ?? 0, 0, ',', '.') : ''; ?>">
         </label>
         <div></div>
       </div>
@@ -242,13 +265,41 @@ require_once APP_PATH . '/views/layouts/header.php';
       <!-- Fila 4: Descripción (ancho completo) -->
       <div style="margin-bottom: 16px;">
         <label style="display: block;">Descripción detallada
-          <textarea name="descripcion" rows="6" placeholder="Describe los daños principales, estado actual del vehículo, piezas disponibles, historial, etc. Sé lo más detallado posible." required style="min-height: 120px; width: 100%; margin-top: 8px;"></textarea>
+          <textarea name="descripcion" rows="6" placeholder="Describe los daños principales, estado actual del vehículo, piezas disponibles, historial, etc. Sé lo más detallado posible." <?php echo !$modoEdicion ? 'required' : ''; ?> style="min-height: 120px; width: 100%; margin-top: 8px;"><?php echo $modoEdicion ? htmlspecialchars($publicacion->descripcion ?? '') : ''; ?></textarea>
         </label>
       </div>
     </div>
 
     <div class="card">
       <div class="h3">Paso 4: Fotos (1 a 6) · Selecciona la <strong>foto principal</strong></div>
+      
+      <?php if ($modoEdicion && !empty($imagenes)): ?>
+        <div style="margin-bottom: 20px; padding: 12px; background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 8px;">
+          <p style="margin: 0; font-size: 14px; color: #1e40af;">
+            <?php echo icon('info', 16); ?> <strong>Fotos actuales:</strong> <?php echo count($imagenes); ?> imagen(es). Puedes agregar más fotos o reemplazarlas.
+          </p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
+          <?php foreach ($imagenes as $img): ?>
+            <?php 
+            $rutaImagen = BASE_URL . '/uploads/publicaciones/' . htmlspecialchars($img->ruta);
+            ?>
+            <div style="position: relative; border: 2px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+              <img src="<?php echo $rutaImagen; ?>" 
+                   alt="Foto" 
+                   style="width: 100%; height: 150px; object-fit: cover;"
+                   onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:150px;background:#f3f4f6;color:#9ca3af;\'>Imagen no disponible</div>'">
+              <?php if ($img->es_principal): ?>
+                <div style="position: absolute; top: 8px; right: 8px; background: #10b981; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">
+                  PRINCIPAL
+                </div>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+      
       <div class="gallery">
         <?php for ($i = 1; $i <= 6; $i++): ?>
         <label>
@@ -265,27 +316,52 @@ require_once APP_PATH . '/views/layouts/header.php';
         </label>
         <?php endfor; ?>
       </div>
-      <p class="meta" style="margin-top: 16px; color: #666;">La primera foto será la principal por defecto</p>
+      <p class="meta" style="margin-top: 16px; color: #666;">
+        <?php if ($modoEdicion): ?>
+          Las nuevas fotos se agregarán a las existentes. La primera foto será la principal por defecto.
+        <?php else: ?>
+          La primera foto será la principal por defecto
+        <?php endif; ?>
+      </p>
     </div>
 
     <div class="card">
       <div class="h3">Paso 5: Promoción</div>
       <div class="kit">
+        <?php
+        // Determinar qué promoción está seleccionada
+        $promocionActual = 'normal';
+        if ($modoEdicion && isset($publicacion->es_destacada) && $publicacion->es_destacada == 1) {
+          // Calcular días de diferencia si hay fechas
+          if (!empty($publicacion->fecha_destacada_fin) && !empty($publicacion->fecha_destacada_inicio)) {
+            $diff_seconds = strtotime($publicacion->fecha_destacada_fin) - strtotime($publicacion->fecha_destacada_inicio);
+            $diff_days = $diff_seconds / (24 * 3600);
+            $promocionActual = ($diff_days <= 20) ? 'destacada15' : 'destacada30';
+          } else {
+            $promocionActual = 'destacada15'; // Por defecto si no hay fechas
+          }
+        }
+        ?>
         <label class="tag">
-          <input type="radio" name="promocion" value="normal" checked> Normal (gratis)
+          <input type="radio" name="promocion" value="normal" 
+            <?php echo ($promocionActual === 'normal') ? 'checked' : ''; ?>> Normal (gratis)
         </label>
         <label class="tag">
-          <input type="radio" name="promocion" value="destacada15"> Destacada (<?php echo formatPrice(PRECIO_DESTACADO_15_DIAS); ?> · 15 días)
+          <input type="radio" name="promocion" value="destacada15"
+            <?php echo ($promocionActual === 'destacada15') ? 'checked' : ''; ?>> Destacada (<?php echo formatPrice(PRECIO_DESTACADO_15_DIAS); ?> · 15 días)
         </label>
         <label class="tag">
-          <input type="radio" name="promocion" value="destacada30"> Destacada (<?php echo formatPrice(PRECIO_DESTACADO_30_DIAS); ?> · 30 días)
+          <input type="radio" name="promocion" value="destacada30"
+            <?php echo ($promocionActual === 'destacada30') ? 'checked' : ''; ?>> Destacada (<?php echo formatPrice(PRECIO_DESTACADO_30_DIAS); ?> · 30 días)
         </label>
       </div>
     </div>
 
     <div class="sticky-actions">
       <button type="button" class="btn" onclick="guardarBorrador()">Guardar borrador</button>
-      <button type="submit" class="btn primary">Enviar a revisión</button>
+      <button type="submit" class="btn primary">
+        <?php echo $modoEdicion ? 'Actualizar publicación' : 'Enviar a revisión'; ?>
+      </button>
     </div>
   </form>
 
@@ -483,17 +559,93 @@ document.querySelectorAll('input[type="file"][name="fotos[]"]').forEach((input, 
 });
 
 function guardarBorrador() {
+  const form = document.getElementById('form-publicar');
+  
+  // Verificar que el formulario existe
+  if (!form) {
+    alert('Error: No se encontró el formulario de publicación');
+    console.error('Formulario #form-publicar no encontrado');
+    return;
+  }
+  
+  // Remover validación HTML5 temporalmente
+  const requiredFields = form.querySelectorAll('[required]');
+  requiredFields.forEach(field => {
+    field.removeAttribute('required');
+    field.dataset.wasRequired = 'true';
+  });
+  
   // Agregar campo oculto para indicar que es borrador
-  const form = document.querySelector('form');
-  const input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'guardar_borrador';
-  input.value = '1';
-  form.appendChild(input);
+  let input = form.querySelector('input[name="guardar_borrador"]');
+  if (!input) {
+    input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'guardar_borrador';
+    input.value = '1';
+    form.appendChild(input);
+  }
+  
+  // Debug
+  console.log('Guardando borrador...');
+  console.log('Form action:', form.action);
+  console.log('Form method:', form.method);
   
   // Enviar formulario
   form.submit();
 }
+
+// ============================================================================
+// MODO EDICIÓN: Cargar subcategoría y comuna seleccionadas
+// ============================================================================
+<?php if ($modoEdicion): ?>
+document.addEventListener('DOMContentLoaded', function() {
+  // Cargar subcategoría seleccionada
+  const categoriaSelect = document.getElementById('categoria_padre');
+  const subcategoriaSelect = document.getElementById('subcategoria');
+  const subcategoriaId = <?php echo $publicacion->subcategoria_id ?? 'null'; ?>;
+  
+  if (categoriaSelect && categoriaSelect.value && subcategoriaId) {
+    const selectedOption = categoriaSelect.options[categoriaSelect.selectedIndex];
+    const subcategorias = JSON.parse(selectedOption.getAttribute('data-subcategorias') || '[]');
+    
+    subcategoriaSelect.innerHTML = '<option value="">Seleccionar subcategoría...</option>';
+    subcategorias.forEach(sub => {
+      const option = document.createElement('option');
+      option.value = sub.id;
+      option.textContent = sub.nombre;
+      if (sub.id == subcategoriaId) {
+        option.selected = true;
+      }
+      subcategoriaSelect.appendChild(option);
+    });
+  }
+  
+  // Cargar comuna seleccionada
+  const regionSelect = document.getElementById('region');
+  const comunaSelect = document.getElementById('comuna');
+  const comunaId = <?php echo $publicacion->comuna_id ?? 'null'; ?>;
+  
+  if (regionSelect && regionSelect.value && comunaId) {
+    fetch(`<?php echo BASE_URL; ?>/api/comunas?region_id=${regionSelect.value}`)
+      .then(response => response.json())
+      .then(data => {
+        comunaSelect.innerHTML = '<option value="">Seleccionar comuna...</option>';
+        if (data.comunas && data.comunas.length > 0) {
+          data.comunas.forEach(comuna => {
+            const option = document.createElement('option');
+            option.value = comuna.id;
+            option.textContent = comuna.nombre;
+            if (comuna.id == comunaId) {
+              option.selected = true;
+            }
+            comunaSelect.appendChild(option);
+          });
+        }
+      })
+      .catch(error => console.error('Error al cargar comunas:', error));
+  }
+});
+<?php endif; ?>
 </script>
 
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

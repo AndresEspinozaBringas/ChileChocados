@@ -13,8 +13,15 @@ require_once APP_PATH . '/views/layouts/header.php';
 
 $filtros = $data['filtros_aplicados'] ?? [];
 
-// DATOS DE PRUEBA - Mientras no hay BD
-if (empty($data['publicaciones'])) {
+// Los datos vienen del controlador desde la BD
+// $data['publicaciones'] - publicaciones filtradas
+// $data['categorias'] - categorías para filtros
+// $data['regiones'] - regiones para filtros
+// $data['total'] - total de publicaciones
+// $data['total_paginas'] - total de páginas
+
+// DATOS DE PRUEBA REMOVIDOS - Ahora usa BD
+if (false && empty($data['publicaciones'])) {
     $data['publicaciones'] = [
         [
             'id' => 1,
@@ -193,14 +200,16 @@ $data['regiones'] = $data['regiones'] ?? [
               Categoría
               <select name="categoria" id="categoria-select">
                 <option value="">Todas las categorías</option>
-                <?php foreach ($data['categorias'] as $cat): ?>
-                  <option 
-                    value="<?php echo $cat['id']; ?>"
-                    <?php echo ($filtros['categoria_id'] == $cat['id']) ? 'selected' : ''; ?>
-                  >
-                    <?php echo htmlspecialchars($cat['nombre']); ?>
-                  </option>
-                <?php endforeach; ?>
+                <?php if (!empty($data['categorias'])): ?>
+                  <?php foreach ($data['categorias'] as $cat): ?>
+                    <option 
+                      value="<?php echo $cat->id; ?>"
+                      <?php echo ($filtros['categoria_id'] == $cat->id) ? 'selected' : ''; ?>
+                    >
+                      <?php echo htmlspecialchars($cat->nombre); ?>
+                    </option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </select>
             </label>
           </div>
@@ -222,14 +231,16 @@ $data['regiones'] = $data['regiones'] ?? [
               Región
               <select name="region" id="region-select">
                 <option value="">Todas las regiones</option>
-                <?php foreach ($data['regiones'] as $region): ?>
-                  <option 
-                    value="<?php echo $region['id']; ?>"
-                    <?php echo ($filtros['region_id'] == $region['id']) ? 'selected' : ''; ?>
-                  >
-                    <?php echo htmlspecialchars($region['nombre']); ?>
-                  </option>
-                <?php endforeach; ?>
+                <?php if (!empty($data['regiones'])): ?>
+                  <?php foreach ($data['regiones'] as $region): ?>
+                    <option 
+                      value="<?php echo $region->id; ?>"
+                      <?php echo ($filtros['region_id'] == $region->id) ? 'selected' : ''; ?>
+                    >
+                      <?php echo htmlspecialchars($region->nombre); ?>
+                    </option>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </select>
             </label>
           </div>
@@ -346,26 +357,38 @@ $data['regiones'] = $data['regiones'] ?? [
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
           <?php foreach ($data['publicaciones'] as $pub): ?>
             <article class="card publicacion-card" style="padding: 0; overflow: hidden; transition: all 0.2s ease;">
-              <a href="<?php echo BASE_URL; ?>/detalle/<?php echo $pub['id']; ?>" style="text-decoration: none; color: inherit; display: block;">
+              <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>" style="text-decoration: none; color: inherit; display: block;">
                 
                 <!-- Imagen -->
                 <div style="position: relative; width: 100%; padding-top: 66.67%; background: var(--cc-bg-muted, #F5F5F5); overflow: hidden;">
-                  <img 
-                    src="<?php echo htmlspecialchars($pub['foto_principal']); ?>" 
-                    alt="<?php echo htmlspecialchars($pub['titulo']); ?>"
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
-                    loading="lazy"
-                  >
+                  <?php if (!empty($pub->foto_principal)): ?>
+                    <img 
+                      src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo htmlspecialchars($pub->foto_principal); ?>" 
+                      alt="<?php echo htmlspecialchars($pub->titulo); ?>"
+                      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"
+                      loading="lazy"
+                    >
+                  <?php else: ?>
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--cc-text-tertiary, #999);">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                      </svg>
+                    </div>
+                  <?php endif; ?>
                   
                   <!-- Badge de estado -->
-                  <span class="badge" style="position: absolute; top: 12px; left: 12px; background: <?php echo ($pub['tipo_publicacion'] == 'siniestrado') ? 'var(--cc-danger, #EF4444)' : 'var(--cc-warning, #F59E0B)'; ?>; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                    <?php echo ($pub['tipo_publicacion'] == 'siniestrado') ? 'SINIESTRADO' : 'EN DESARME'; ?>
+                  <?php if (!empty($pub->tipificacion)): ?>
+                  <span class="badge" style="position: absolute; top: 12px; left: 12px; background: var(--cc-danger, #EF4444); color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                    <?php echo strtoupper(htmlspecialchars($pub->tipificacion)); ?>
                   </span>
+                  <?php endif; ?>
                   
                   <!-- Botón favorito -->
                   <button 
                     class="btn-favorito" 
-                    onclick="event.preventDefault(); toggleFavorito(<?php echo $pub['id']; ?>)"
+                    onclick="event.preventDefault(); toggleFavorito(<?php echo $pub->id; ?>)"
                     style="position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: all 0.2s ease;"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cc-danger, #EF4444)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -378,15 +401,12 @@ $data['regiones'] = $data['regiones'] ?? [
                 <div style="padding: 16px;">
                   <!-- Categoría -->
                   <div style="font-size: 11px; font-weight: 600; color: var(--cc-primary, #E6332A); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">
-                    <?php echo htmlspecialchars($pub['categoria_nombre']); ?>
-                    <?php if (!empty($pub['subcategoria_nombre'])): ?>
-                      · <?php echo htmlspecialchars($pub['subcategoria_nombre']); ?>
-                    <?php endif; ?>
+                    <?php echo htmlspecialchars($pub->categoria_nombre ?? 'Sin categoría'); ?>
                   </div>
                   
                   <!-- Título -->
                   <h3 style="font-size: 16px; font-weight: 700; color: var(--cc-text-primary, #1A1A1A); margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                    <?php echo htmlspecialchars($pub['titulo']); ?>
+                    <?php echo htmlspecialchars($pub->titulo); ?>
                   </h3>
                   
                   <!-- Ubicación -->
@@ -395,20 +415,15 @@ $data['regiones'] = $data['regiones'] ?? [
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                       <circle cx="12" cy="10" r="3"/>
                     </svg>
-                    <span><?php echo htmlspecialchars($pub['comuna_nombre']); ?></span>
+                    <span><?php echo htmlspecialchars($pub->comuna_nombre ?? $pub->region_nombre ?? 'Chile'); ?></span>
                   </div>
                   
                   <!-- Precio -->
                   <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--cc-border-light, #E8E8E8);">
-                    <?php if ($pub['precio'] > 0): ?>
+                    <?php if ($pub->tipo_venta === 'completo' && !empty($pub->precio)): ?>
                       <span style="font-size: 20px; font-weight: 700; color: var(--cc-primary, #E6332A);">
-                        $<?php echo number_format($pub['precio'], 0, ',', '.'); ?>
+                        <?php echo formatPrice($pub->precio); ?>
                       </span>
-                      <?php if ($pub['precio_negociable']): ?>
-                        <span style="font-size: 11px; color: var(--cc-text-tertiary, #999); background: var(--cc-bg-muted, #F5F5F5); padding: 2px 8px; border-radius: 4px;">
-                          Negociable
-                        </span>
-                      <?php endif; ?>
                     <?php else: ?>
                       <span style="font-size: 14px; font-weight: 600; color: var(--cc-text-secondary, #666);">
                         A convenir

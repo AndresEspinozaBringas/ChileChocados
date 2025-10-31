@@ -81,19 +81,14 @@ class Categoria extends Model
     }
     
     /**
-     * Obtener todas las categorías con conteo de publicaciones
-     * 
-     * TODO: CORREGIR - Actualmente cuenta TODAS las publicaciones sin filtrar por estado
-     * Debería contar solo publicaciones con estado = 'aprobada'
-     * Cambiar: COUNT(p.id) por COUNT(CASE WHEN p.estado = 'aprobada' THEN 1 END)
-     * O agregar: AND p.estado = 'aprobada' en el LEFT JOIN
+     * Obtener todas las categorías con conteo de publicaciones aprobadas
      */
     public function getConConteoPublicaciones()
     {
         $sql = "SELECT 
                     cp.*,
-                    COUNT(p.id) as total_publicaciones,
-                    COUNT(CASE WHEN p.estado = 'aprobada' THEN 1 END) as publicaciones_activas
+                    COUNT(CASE WHEN p.estado = 'aprobada' THEN 1 END) as total_publicaciones,
+                    (SELECT COUNT(*) FROM subcategorias WHERE categoria_padre_id = cp.id AND activo = 1) as total_subcategorias
                 FROM {$this->table} cp
                 LEFT JOIN publicaciones p ON p.categoria_padre_id = cp.id
                 WHERE cp.activo = 1

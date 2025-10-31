@@ -8,53 +8,10 @@ $pageTitle = 'ChileChocados - Compra y Venta de Vehículos Siniestrados';
 require_once APP_PATH . '/views/layouts/header.php';
 require_once APP_PATH . '/views/layouts/nav.php';
 
-// Datos de ejemplo de categorías (esto luego vendrá de la BD)
-$categorias = [
-    ['id' => 1, 'nombre' => 'Autos', 'icon' => 'car', 'subcategorias' => '12 subcategorías', 'count' => 156],
-    ['id' => 2, 'nombre' => 'Camionetas', 'icon' => 'truck', 'subcategorias' => '8 subcategorías', 'count' => 89],
-    ['id' => 3, 'nombre' => 'SUV', 'icon' => 'car', 'subcategorias' => '6 subcategorías', 'count' => 67],
-    ['id' => 4, 'nombre' => 'Motos', 'icon' => 'bike', 'subcategorias' => '5 subcategorías', 'count' => 43],
-];
-
-// Publicaciones destacadas con imágenes reales
-$publicaciones_destacadas = [
-    [
-        'id' => 1,
-        'titulo' => 'Ford Territory',
-        'imagen' => 'ford-territory.jpg',
-        'categoria' => 'SUV',
-        'estado' => 'Chocado',
-        'precio' => 8500000,
-        'ubicacion' => 'Santiago, RM'
-    ],
-    [
-        'id' => 2,
-        'titulo' => 'Kia Cerato',
-        'imagen' => 'kia-cerato.jpg',
-        'categoria' => 'Sedán',
-        'estado' => 'Chocado',
-        'precio' => 6200000,
-        'ubicacion' => 'Valparaíso, V'
-    ],
-    [
-        'id' => 3,
-        'titulo' => 'Kia Rio 5',
-        'imagen' => 'kia-rio-5.jpg',
-        'categoria' => 'Hatchback',
-        'estado' => 'Chocado',
-        'precio' => 4800000,
-        'ubicacion' => 'Concepción, VIII'
-    ],
-    [
-        'id' => 4,
-        'titulo' => 'Dodge Journey',
-        'imagen' => 'dodge.jpg',
-        'categoria' => 'SUV',
-        'estado' => 'En Desarme',
-        'precio' => null,  // A convenir
-        'ubicacion' => 'La Serena, IV'
-    ],
-];
+// Las categorías y publicaciones vienen del controlador
+// $categorias - desde la BD
+// $publicacionesDestacadas - publicaciones destacadas activas desde la BD
+// $publicacionesRecientes - publicaciones recientes aprobadas desde la BD
 ?>
 
 <main class="container">
@@ -85,9 +42,11 @@ $publicaciones_destacadas = [
                     onblur="this.style.borderColor='var(--cc-border-default, #E5E5E5)'; this.style.boxShadow='none'"
                 >
                     <option value="">Todas las categorías</option>
-                    <?php foreach ($categorias as $cat): ?>
-                        <option value="<?php echo $cat['id']; ?>"><?php echo $cat['nombre']; ?></option>
-                    <?php endforeach; ?>
+                    <?php if (!empty($categorias)): ?>
+                        <?php foreach ($categorias as $cat): ?>
+                            <option value="<?php echo $cat->id; ?>"><?php echo htmlspecialchars($cat->nombre); ?></option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </select>
                 <button type="submit" class="btn primary" style="padding: 14px 28px; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -122,10 +81,11 @@ $publicaciones_destacadas = [
 </section>
 
 <!-- Publicaciones destacadas -->
+<?php if (!empty($publicacionesDestacadas)): ?>
 <section>
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div>
-            <div class="h2">Publicaciones destacadas</div>
+            <div class="h2">⭐ Publicaciones destacadas</div>
             <p class="meta">Los vehículos más destacados del momento</p>
         </div>
         <a class="btn" href="<?php echo BASE_URL; ?>/listado">
@@ -137,48 +97,156 @@ $publicaciones_destacadas = [
     </div>
     
     <div class="grid cols-4">
-        <?php foreach ($publicaciones_destacadas as $pub): ?>
-        <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub['id']; ?>">
-            <!-- Imagen del vehículo -->
-            <div class="pub-img" style="width: 100%; height: 200px; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; position: relative;">
-                <?php if ($pub['imagen']): ?>
-                    <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo $pub['imagen']; ?>" 
-                         alt="<?php echo $pub['titulo']; ?>"
-                         style="width: 100%; height: 100%; object-fit: cover;">
-                <?php else: ?>
-                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
-                        Sin imagen
-                    </div>
-                <?php endif; ?>
-                
-                <!-- Badge de estado -->
-                <span class="badge" style="position: absolute; top: 12px; left: 12px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                    <?php echo strtoupper($pub['estado']); ?>
-                </span>
-            </div>
-            
-            <!-- Información -->
-            <div style="padding: 16px 0;">
-                <div class="h3" style="margin-bottom: 8px;"><?php echo $pub['titulo']; ?></div>
-                
-                <div class="row meta" style="gap: 8px; margin-bottom: 8px;">
-                    <span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
-                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                            <circle cx="12" cy="10" r="3"/>
-                        </svg>
-                        <?php echo $pub['ubicacion']; ?>
+        <?php foreach ($publicacionesDestacadas as $pub): ?>
+            <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>">
+                <!-- Imagen del vehículo -->
+                <div class="pub-img" style="width: 100%; height: 200px; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; position: relative;">
+                    <?php if (!empty($pub->foto_principal)): ?>
+                        <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo htmlspecialchars($pub->foto_principal); ?>" 
+                             alt="<?php echo htmlspecialchars($pub->titulo); ?>"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    <?php else: ?>
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <!-- Badge de estado -->
+                    <?php if (!empty($pub->tipificacion)): ?>
+                    <span class="badge" style="position: absolute; top: 12px; left: 12px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                        <?php echo strtoupper($pub->tipificacion); ?>
                     </span>
-                    <span>•</span>
-                    <span><?php echo $pub['categoria']; ?></span>
+                    <?php endif; ?>
+                    
+                    <!-- Badge de destacado -->
+                    <?php if (!empty($pub->es_destacada)): ?>
+                    <span class="badge" style="position: absolute; top: 12px; right: 12px; background: #FFB800; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                        ⭐ DESTACADO
+                    </span>
+                    <?php endif; ?>
                 </div>
                 
-                <span class="h2" style="color: var(--primary);">
-                    <?php echo $pub['precio'] ? formatPrice($pub['precio']) : 'A convenir'; ?>
-                </span>
-            </div>
+                <!-- Información -->
+                <div style="padding: 16px 0;">
+                    <div class="h3" style="margin-bottom: 8px;"><?php echo htmlspecialchars($pub->titulo); ?></div>
+                    
+                    <div class="row meta" style="gap: 8px; margin-bottom: 8px;">
+                        <span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <?php echo htmlspecialchars($pub->region_nombre ?? 'Chile'); ?>
+                        </span>
+                        <?php if (!empty($pub->categoria_nombre)): ?>
+                        <span>•</span>
+                        <span><?php echo htmlspecialchars($pub->categoria_nombre); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <span class="h2" style="color: var(--primary);">
+                        <?php 
+                        if ($pub->tipo_venta === 'completo' && !empty($pub->precio)) {
+                            echo formatPrice($pub->precio);
+                        } else {
+                            echo 'A convenir';
+                        }
+                        ?>
+                    </span>
+                </div>
+            </a>
+            <?php endforeach; ?>
+    </div>
+</section>
+<?php endif; ?>
+
+<!-- Publicaciones recientes -->
+<section>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+            <div class="h2">Publicaciones recientes</div>
+            <p class="meta">Los últimos vehículos publicados</p>
+        </div>
+        <a class="btn" href="<?php echo BASE_URL; ?>/listado">
+            Ver todas
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
         </a>
-        <?php endforeach; ?>
+    </div>
+    
+    <div class="grid cols-4">
+        <?php if (!empty($publicacionesRecientes)): ?>
+            <?php foreach ($publicacionesRecientes as $pub): ?>
+            <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>">
+                <!-- Imagen del vehículo -->
+                <div class="pub-img" style="width: 100%; height: 200px; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; position: relative;">
+                    <?php if (!empty($pub->foto_principal)): ?>
+                        <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo htmlspecialchars($pub->foto_principal); ?>" 
+                             alt="<?php echo htmlspecialchars($pub->titulo); ?>"
+                             style="width: 100%; height: 100%; object-fit: cover;">
+                    <?php else: ?>
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <!-- Badge de estado -->
+                    <?php if (!empty($pub->tipificacion)): ?>
+                    <span class="badge" style="position: absolute; top: 12px; left: 12px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
+                        <?php echo strtoupper($pub->tipificacion); ?>
+                    </span>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Información -->
+                <div style="padding: 16px 0;">
+                    <div class="h3" style="margin-bottom: 8px;"><?php echo htmlspecialchars($pub->titulo); ?></div>
+                    
+                    <div class="row meta" style="gap: 8px; margin-bottom: 8px;">
+                        <span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <?php echo htmlspecialchars($pub->region_nombre ?? 'Chile'); ?>
+                        </span>
+                        <?php if (!empty($pub->categoria_nombre)): ?>
+                        <span>•</span>
+                        <span><?php echo htmlspecialchars($pub->categoria_nombre); ?></span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <span class="h2" style="color: var(--primary);">
+                        <?php 
+                        if ($pub->tipo_venta === 'completo' && !empty($pub->precio)) {
+                            echo formatPrice($pub->precio);
+                        } else {
+                            echo 'A convenir';
+                        }
+                        ?>
+                    </span>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div style="grid-column: 1 / -1; text-align: center; padding: 48px; color: var(--text-secondary);">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 16px; opacity: 0.3;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p>No hay publicaciones disponibles en este momento</p>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -186,25 +254,27 @@ $publicaciones_destacadas = [
 <section>
     <div class="h2">Categorías principales</div>
     <div class="grid cols-4">
-        <?php foreach ($categorias as $cat): ?>
-        <a class="card cat-card" href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $cat['id']; ?>">
-            <div class="left">
-                <span class="iconify">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                        <line x1="9" y1="3" x2="9" y2="21"/>
-                    </svg>
-                </span>
-                <div>
-                    <div class="h3"><?php echo $cat['nombre']; ?></div>
-                    <p class="meta"><?php echo $cat['subcategorias']; ?></p>
+        <?php if (!empty($categorias)): ?>
+            <?php foreach ($categorias as $cat): ?>
+            <a class="card cat-card" href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $cat->id; ?>">
+                <div class="left">
+                    <span class="iconify">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="3" x2="9" y2="21"/>
+                        </svg>
+                    </span>
+                    <div>
+                        <div class="h3"><?php echo htmlspecialchars($cat->nombre); ?></div>
+                        <p class="meta"><?php echo $cat->total_subcategorias ?? 0; ?> subcategorías</p>
+                    </div>
                 </div>
-            </div>
-            <span class="cat-count" style="background: var(--bg-secondary); padding: 4px 12px; border-radius: 12px; font-weight: 600;">
-                <?php echo $cat['count']; ?>
-            </span>
-        </a>
-        <?php endforeach; ?>
+                <span class="cat-count" style="background: var(--bg-secondary); padding: 4px 12px; border-radius: 12px; font-weight: 600;">
+                    <?php echo $cat->total_publicaciones ?? 0; ?>
+                </span>
+            </a>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </section>
 
