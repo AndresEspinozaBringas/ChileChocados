@@ -13,8 +13,9 @@ layout('header');
 ?>
 
 <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/admin.css">
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/admin-layout.css">
 
-<main class="container" style="padding: 24px 0;">
+<main class="container admin-container">
 
   <!-- Encabezado -->
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">

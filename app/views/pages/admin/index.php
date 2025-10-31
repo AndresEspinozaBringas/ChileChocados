@@ -13,8 +13,9 @@ layout('header');
 ?>
 
 <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/admin.css">
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/admin-layout.css">
 
-<main class="container" style="padding: 24px 0; max-width: 1400px;">
+<main class="container admin-container">
 
   <!-- Encabezado con bienvenida -->
   <div style="margin-bottom: 32px;">
