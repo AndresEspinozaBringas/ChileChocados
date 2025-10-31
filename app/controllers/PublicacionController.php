@@ -237,25 +237,15 @@ class PublicacionController
      */
     public function store()
     {
-        // DEBUG: Verificar que el método se está ejecutando
-        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "STORE METHOD CALLED\n", FILE_APPEND);
-        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', 'POST data: ' . print_r($_POST, true) . "\n", FILE_APPEND);
-        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', 'FILES data: ' . print_r($_FILES, true) . "\n", FILE_APPEND);
-
         // Verificar autenticación
         Auth::require();
 
         // Verificar token CSRF
         if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-            file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "CSRF TOKEN INVALID\n", FILE_APPEND);
-            file_put_contents(__DIR__ . '/../../public/logs/debug.txt', 'Session token: ' . ($_SESSION['csrf_token'] ?? 'NO SESSION TOKEN') . "\n", FILE_APPEND);
-            file_put_contents(__DIR__ . '/../../public/logs/debug.txt', 'POST token: ' . ($_POST['csrf_token'] ?? 'NO POST TOKEN') . "\n", FILE_APPEND);
             $_SESSION['error'] = 'Token de seguridad inválido. Por favor, intenta nuevamente.';
             header('Location: ' . BASE_URL . '/publicar');
             exit;
         }
-
-        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "CSRF TOKEN VALID - Continuando...\n", FILE_APPEND);
 
         // Determinar si es borrador
         $es_borrador = isset($_POST['guardar_borrador']);
@@ -265,7 +255,6 @@ class PublicacionController
             $errores = $this->validarDatosPublicacion($_POST);
 
             if (!empty($errores)) {
-                file_put_contents(__DIR__ . '/../../public/logs/debug.txt', 'ERRORES DE VALIDACIÓN: ' . print_r($errores, true) . "\n", FILE_APPEND);
                 $_SESSION['errores'] = $errores;
                 $_SESSION['old'] = $_POST;
                 header('Location: ' . BASE_URL . '/publicar');
@@ -279,7 +268,18 @@ class PublicacionController
             $titulo = 'Borrador sin título';
         }
 
+        // Determinar si es destacada (las fechas se activan cuando el admin aprueba)
+        $promocion = !empty($_POST['promocion']) ? sanitize($_POST['promocion']) : 'normal';
+        $es_destacada = in_array($promocion, ['destacada15', 'destacada30']) ? 1 : 0;
+        
+        // Guardar la duración deseada en días (se usará cuando el admin apruebe)
+        $dias_destacado = 0;
+        if ($es_destacada) {
+            $dias_destacado = $promocion === 'destacada15' ? 15 : 30;
+        }
+
         // Preparar datos para guardar
+        
         $datos = [
             'usuario_id' => $_SESSION['user_id'],
             'tipificacion' => !empty($_POST['tipificacion']) ? sanitize($_POST['tipificacion']) : null,
@@ -291,10 +291,13 @@ class PublicacionController
             'anio' => !empty($_POST['anio']) ? (int) $_POST['anio'] : null,
             'descripcion' => !empty($_POST['descripcion']) ? sanitize($_POST['descripcion']) : null,
             'tipo_venta' => !empty($_POST['tipo_venta']) ? sanitize($_POST['tipo_venta']) : 'completo',
-            'precio' => (!empty($_POST['tipo_venta']) && $_POST['tipo_venta'] === 'completo' && !empty($_POST['precio'])) ? (float) $_POST['precio'] : null,
+            'precio' => (!empty($_POST['tipo_venta']) && $_POST['tipo_venta'] === 'completo' && !empty($_POST['precio'])) ? (float) str_replace(['.', ','], ['', '.'], $_POST['precio']) : null,
             'region_id' => !empty($_POST['region_id']) ? (int) $_POST['region_id'] : null,
             'comuna_id' => !empty($_POST['comuna_id']) ? (int) $_POST['comuna_id'] : null,
             'estado' => $es_borrador ? 'borrador' : 'pendiente',
+            'es_destacada' => $es_destacada,
+            'fecha_destacada_inicio' => null, // Se activa cuando el admin aprueba
+            'fecha_destacada_fin' => $dias_destacado > 0 ? date('Y-m-d', strtotime("+$dias_destacado days")) : null, // Guardamos fecha futura como referencia
             'fecha_publicacion' => $es_borrador ? null : date('Y-m-d H:i:s')
         ];
 
@@ -302,13 +305,10 @@ class PublicacionController
         $publicacion_id = $this->publicacionModel->create($datos);
 
         if (!$publicacion_id) {
-            file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "ERROR: No se pudo crear la publicación\n", FILE_APPEND);
             $_SESSION['error'] = 'Error al crear la publicación. Intenta nuevamente.';
             header('Location: ' . BASE_URL . '/publicar');
             exit;
         }
-
-        file_put_contents(__DIR__ . '/../../public/logs/debug.txt', "✓ Publicación creada con ID: $publicacion_id\n", FILE_APPEND);
 
         // Procesar y guardar imágenes
         if (!empty($_FILES['fotos']['name'][0])) {
@@ -379,18 +379,21 @@ class PublicacionController
         // Obtener categorías y regiones
         $categorias = $this->categoriaModel->getConSubcategorias();
         $regiones = $this->getRegiones();
+        
+        // Obtener imágenes de la publicación
         $imagenes = $this->publicacionModel->getImagenes($id);
+        
+        // Debug
+        error_log("Editando publicación ID: $id");
+        error_log("Imágenes encontradas: " . count($imagenes));
+        error_log("Datos de imágenes: " . print_r($imagenes, true));
 
-        $data = [
-            'title' => 'Editar Publicación - ChileChocados',
-            'publicacion' => $publicacion,
-            'categorias' => $categorias,
-            'regiones' => $regiones,
-            'imagenes' => $imagenes,
-            'csrf_token' => generateCsrfToken()
-        ];
+        // Pasar datos a la vista (reutilizando publish.php)
+        $pageTitle = 'Editar Publicación - ChileChocados';
+        $modoEdicion = true;
+        $publicacionId = $id;
 
-        require_once __DIR__ . '/../views/pages/publicaciones/edit.php';
+        require_once __DIR__ . '/../views/pages/publicaciones/publish.php';
     }
 
     /**
@@ -418,8 +421,8 @@ class PublicacionController
             exit;
         }
 
-        // Validar datos
-        $errores = $this->validarDatosPublicacion($_POST);
+        // Validar datos (pasando true porque es edición)
+        $errores = $this->validarDatosPublicacion($_POST, true);
 
         if (!empty($errores)) {
             $_SESSION['errores'] = $errores;
@@ -428,31 +431,69 @@ class PublicacionController
             exit;
         }
 
+        // Determinar si es borrador
+        $es_borrador = isset($_POST['guardar_borrador']);
+        
+        // Determinar si es destacada y calcular fechas
+        $promocion = !empty($_POST['promocion']) ? sanitize($_POST['promocion']) : 'normal';
+        $es_destacada = in_array($promocion, ['destacada15', 'destacada30']) ? 1 : 0;
+        $fecha_destacada_inicio = null;
+        $fecha_destacada_fin = null;
+        
+        if ($es_destacada && !$es_borrador) {
+            $fecha_destacada_inicio = date('Y-m-d H:i:s');
+            $dias = $promocion === 'destacada15' ? 15 : 30;
+            $fecha_destacada_fin = date('Y-m-d H:i:s', strtotime("+$dias days"));
+        }
+
+        // Generar título automático
+        $titulo = trim(sanitize($_POST['marca'] ?? '') . ' ' . sanitize($_POST['modelo'] ?? '') . ' ' . ($_POST['anio'] ?? ''));
+        if (empty(trim($titulo))) {
+            $titulo = 'Sin título';
+        }
+
         // Preparar datos actualizados
         $datos = [
-            'categoria_padre_id' => sanitize($_POST['categoria_padre_id']),
+            'tipificacion' => !empty($_POST['tipificacion']) ? sanitize($_POST['tipificacion']) : null,
+            'categoria_padre_id' => !empty($_POST['categoria_padre_id']) ? sanitize($_POST['categoria_padre_id']) : null,
             'subcategoria_id' => !empty($_POST['subcategoria_id']) ? sanitize($_POST['subcategoria_id']) : null,
-            'titulo' => sanitize($_POST['titulo']),
-            'marca' => sanitize($_POST['marca']),
-            'modelo' => sanitize($_POST['modelo']),
-            'anio' => (int) $_POST['anio'],
-            'descripcion' => sanitize($_POST['descripcion']),
-            'tipo_venta' => sanitize($_POST['tipo_venta']),
-            'precio' => $_POST['tipo_venta'] === 'completo' ? (float) $_POST['precio'] : null,
-            'region_id' => (int) $_POST['region_id'],
+            'titulo' => $titulo,
+            'marca' => !empty($_POST['marca']) ? sanitize($_POST['marca']) : null,
+            'modelo' => !empty($_POST['modelo']) ? sanitize($_POST['modelo']) : null,
+            'anio' => !empty($_POST['anio']) ? (int) $_POST['anio'] : null,
+            'descripcion' => !empty($_POST['descripcion']) ? sanitize($_POST['descripcion']) : null,
+            'tipo_venta' => !empty($_POST['tipo_venta']) ? sanitize($_POST['tipo_venta']) : 'completo',
+            'precio' => (!empty($_POST['tipo_venta']) && $_POST['tipo_venta'] === 'completo' && !empty($_POST['precio'])) ? (float) str_replace(['.', ','], ['', '.'], $_POST['precio']) : null,
+            'region_id' => !empty($_POST['region_id']) ? (int) $_POST['region_id'] : null,
             'comuna_id' => !empty($_POST['comuna_id']) ? (int) $_POST['comuna_id'] : null,
-            'estado' => 'pendiente'  // Vuelve a revisión tras editar
+            'estado' => $es_borrador ? 'borrador' : 'pendiente',
+            'es_destacada' => $es_destacada,
+            'fecha_destacada_inicio' => $fecha_destacada_inicio,
+            'fecha_destacada_fin' => $fecha_destacada_fin,
+            'fecha_publicacion' => $es_borrador ? null : date('Y-m-d H:i:s')
         ];
 
         // Actualizar en BD
         $this->publicacionModel->update($id, $datos);
 
+        // Debug de archivos
+        error_log("UPDATE - FILES recibidos: " . print_r($_FILES, true));
+        
         // Procesar nuevas imágenes si existen
-        if (!empty($_FILES['imagenes']['name'][0])) {
-            $this->procesarImagenes($id, $_FILES['imagenes']);
+        if (!empty($_FILES['fotos']['name'][0])) {
+            error_log("UPDATE - Procesando imágenes...");
+            $foto_principal_index = isset($_POST['foto_principal']) ? (int) $_POST['foto_principal'] : 1;
+            $this->procesarImagenes($id, $_FILES['fotos'], $foto_principal_index);
+        } else {
+            error_log("UPDATE - No se recibieron imágenes nuevas");
         }
 
-        $_SESSION['success'] = 'Publicación actualizada exitosamente. Está pendiente de revisión.';
+        // Mensaje según el tipo de guardado
+        if ($es_borrador) {
+            $_SESSION['success'] = 'Borrador actualizado exitosamente.';
+        } else {
+            $_SESSION['success'] = 'Publicación actualizada exitosamente. Está pendiente de revisión.';
+        }
         header('Location: ' . BASE_URL . '/mis-publicaciones');
         exit;
     }
@@ -517,8 +558,10 @@ class PublicacionController
 
     /**
      * Valida los datos del formulario de publicación
+     * @param array $datos Datos a validar
+     * @param bool $esEdicion Si es true, no valida fotos obligatorias
      */
-    private function validarDatosPublicacion($datos)
+    private function validarDatosPublicacion($datos, $esEdicion = false)
     {
         $errores = [];
 
@@ -565,10 +608,18 @@ class PublicacionController
 
         // Validar precio si es venta completa
         if (!empty($datos['tipo_venta']) && $datos['tipo_venta'] === 'completo') {
-            if (empty($datos['precio']) || $datos['precio'] <= 0) {
-                $errores['precio'] = 'El precio debe ser mayor a 0';
-            } elseif ($datos['precio'] > 50000000) {
-                $errores['precio'] = 'El precio no puede exceder $50.000.000';
+            if (empty($datos['precio'])) {
+                $errores['precio'] = 'El precio es obligatorio para venta completa';
+            } else {
+                // Limpiar el precio de puntos y convertir a número
+                $precio_limpio = str_replace(['.', ','], ['', '.'], $datos['precio']);
+                $precio_numero = (float) $precio_limpio;
+                
+                if ($precio_numero <= 0) {
+                    $errores['precio'] = 'El precio debe ser mayor a 0';
+                } elseif ($precio_numero > 50000000) {
+                    $errores['precio'] = 'El precio no puede exceder $50.000.000';
+                }
             }
         }
 
@@ -579,8 +630,8 @@ class PublicacionController
             $errores['descripcion'] = 'La descripción no puede exceder 2000 caracteres';
         }
 
-        // Validar que haya al menos una foto
-        if (empty($_FILES['fotos']['name'][0])) {
+        // Validar que haya al menos una foto (solo en creación, no en edición)
+        if (!$esEdicion && empty($_FILES['fotos']['name'][0])) {
             $errores['fotos'] = 'Debes subir al menos una foto del vehículo';
         }
 
@@ -596,11 +647,18 @@ class PublicacionController
         file_put_contents($logFile, "\n=== PROCESANDO IMÁGENES ===\n", FILE_APPEND);
         file_put_contents($logFile, "Publicación ID: $publicacion_id\n", FILE_APPEND);
         file_put_contents($logFile, "Foto principal index: $foto_principal_index\n", FILE_APPEND);
+        file_put_contents($logFile, "Archivos completos: " . print_r($archivos, true) . "\n", FILE_APPEND);
 
         $total_imagenes = count($archivos['name']);
         $foto_principal_url = null;
 
         file_put_contents($logFile, "Total de archivos recibidos: $total_imagenes\n", FILE_APPEND);
+        
+        // Verificar si realmente hay archivos
+        if (empty($archivos['name'][0])) {
+            file_put_contents($logFile, "ERROR: No hay archivos para procesar (name[0] está vacío)\n", FILE_APPEND);
+            return;
+        }
 
         // Validar cantidad (máximo 6 imágenes)
         if ($total_imagenes > 6) {
@@ -637,8 +695,8 @@ class PublicacionController
             $extension = strtolower(pathinfo($archivo['name'], PATHINFO_EXTENSION));
             $nombre_archivo = uniqid('pub_' . $publicacion_id . '_') . '.' . $extension;
 
-            // Crear directorio si no existe
-            $directorio = __DIR__ . '/../../public/uploads/publicaciones/' . date('Y') . '/' . date('m');
+            // Crear directorio si no existe (usando constante UPLOAD_PATH)
+            $directorio = UPLOAD_PATH . '/publicaciones/' . date('Y') . '/' . date('m');
             if (!is_dir($directorio)) {
                 mkdir($directorio, 0777, true);
                 file_put_contents($logFile, "  - Directorio creado: $directorio\n", FILE_APPEND);
@@ -648,6 +706,9 @@ class PublicacionController
             $ruta_completa = $directorio . '/' . $nombre_archivo;
 
             file_put_contents($logFile, "  - Ruta completa: $ruta_completa\n", FILE_APPEND);
+            file_put_contents($logFile, "  - Directorio existe: " . (is_dir($directorio) ? 'SÍ' : 'NO') . "\n", FILE_APPEND);
+            file_put_contents($logFile, "  - Directorio escribible: " . (is_writable($directorio) ? 'SÍ' : 'NO') . "\n", FILE_APPEND);
+            file_put_contents($logFile, "  - Archivo temporal existe: " . (file_exists($archivo['tmp_name']) ? 'SÍ' : 'NO') . "\n", FILE_APPEND);
 
             // Mover archivo subido
             if (move_uploaded_file($archivo['tmp_name'], $ruta_completa)) {
@@ -675,7 +736,10 @@ class PublicacionController
                     $foto_principal_url = $ruta_relativa;
                 }
             } else {
+                $error = error_get_last();
                 file_put_contents($logFile, "  - ✗ ERROR al mover archivo\n", FILE_APPEND);
+                file_put_contents($logFile, "  - Error PHP: " . print_r($error, true) . "\n", FILE_APPEND);
+                file_put_contents($logFile, "  - Permisos directorio: " . substr(sprintf('%o', fileperms($directorio)), -4) . "\n", FILE_APPEND);
             }
         }
 

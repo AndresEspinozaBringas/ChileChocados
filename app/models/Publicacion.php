@@ -404,16 +404,30 @@ class Publicacion extends Model
         $sql = "INSERT INTO publicacion_fotos (publicacion_id, ruta, orden, es_principal, fecha_subida)
                 VALUES (?, ?, ?, ?, NOW())";
         
+        error_log("=== AGREGAR IMAGEN ===");
+        error_log("Publicación ID: " . $publicacionId);
+        error_log("Datos: " . print_r($datos, true));
+        error_log("SQL: " . $sql);
+        
         try {
             $stmt = $this->db->prepare($sql);
-            return $stmt->execute([
+            $params = [
                 $publicacionId,
                 $datos['ruta'],
                 $datos['orden'] ?? 1,
                 $datos['es_principal'] ?? 0
-            ]);
+            ];
+            error_log("Parámetros: " . print_r($params, true));
+            
+            $resultado = $stmt->execute($params);
+            error_log("Resultado execute: " . ($resultado ? 'TRUE' : 'FALSE'));
+            error_log("Rows affected: " . $stmt->rowCount());
+            
+            return $resultado;
         } catch (\PDOException $e) {
-            error_log("ERROR al guardar imagen: " . $e->getMessage());
+            error_log("ERROR PDO al guardar imagen: " . $e->getMessage());
+            error_log("Error code: " . $e->getCode());
+            error_log("Stack trace: " . $e->getTraceAsString());
             return false;
         }
     }
