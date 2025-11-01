@@ -456,9 +456,10 @@ class UsuarioController
 
         $userId = $_SESSION['user_id'];
 
-        // Obtener publicaciones del usuario desde la BD (incluyendo borradores)
+        // Obtener publicaciones del usuario desde la BD (incluyendo borradores y motivo de rechazo)
         $stmt = $this->db->prepare("
             SELECT p.*,
+                   p.motivo_rechazo,
                    COALESCE(
                        (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id AND es_principal = 1 LIMIT 1),
                        (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id ORDER BY orden LIMIT 1),

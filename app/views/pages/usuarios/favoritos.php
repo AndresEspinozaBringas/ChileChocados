@@ -12,65 +12,6 @@ $favoritos = $data['favoritos'] ?? [];
 $total = $data['total'] ?? 0;
 $currentPage = 'favoritos';
 
-// MOCKUP DATA - Datos de ejemplo mientras no hay BD
-if (empty($favoritos)) {
-    $favoritos = [
-        (object)[
-            'id' => 1,
-            'titulo' => 'Toyota Corolla 2018 - Daño Frontal',
-            'descripcion' => 'Vehículo con daño frontal moderado, motor en perfecto estado. Ideal para repuestos o reparación.',
-            'precio' => 4500000,
-            'precio_formateado' => '4.500.000',
-            'foto_principal' => 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=600&fit=crop',
-            'categoria_nombre' => 'Automóviles',
-            'subcategoria_nombre' => 'Sedán',
-            'comuna_nombre' => 'Santiago Centro',
-            'visitas' => 245,
-            'tiempo_favorito' => 'Hace 2 días'
-        ],
-        (object)[
-            'id' => 2,
-            'titulo' => 'Honda CBR 600RR 2020 - Daño Lateral',
-            'descripcion' => 'Motocicleta deportiva con daño en carenado lateral derecho. Motor y transmisión funcionando.',
-            'precio' => 3200000,
-            'precio_formateado' => '3.200.000',
-            'foto_principal' => 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800&h=600&fit=crop',
-            'categoria_nombre' => 'Motocicletas',
-            'subcategoria_nombre' => 'Deportiva',
-            'comuna_nombre' => 'Las Condes',
-            'visitas' => 189,
-            'tiempo_favorito' => 'Hace 5 días'
-        ],
-        (object)[
-            'id' => 3,
-            'titulo' => 'Chevrolet Spark 2019 - Choque Trasero',
-            'descripcion' => 'Auto compacto con daño en parachoques trasero. Mecánica en excelente estado.',
-            'precio' => 2800000,
-            'precio_formateado' => '2.800.000',
-            'foto_principal' => 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800&h=600&fit=crop',
-            'categoria_nombre' => 'Automóviles',
-            'subcategoria_nombre' => 'Hatchback',
-            'comuna_nombre' => 'Maipú',
-            'visitas' => 312,
-            'tiempo_favorito' => 'Hace 1 semana'
-        ],
-        (object)[
-            'id' => 4,
-            'titulo' => 'Nissan X-Trail 2017 - Volcamiento',
-            'descripcion' => 'SUV con daño por volcamiento. Motor y caja de cambios operativos. Ideal para repuestos.',
-            'precio' => 5500000,
-            'precio_formateado' => '5.500.000',
-            'foto_principal' => 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop',
-            'categoria_nombre' => 'SUV',
-            'subcategoria_nombre' => 'Mediana',
-            'comuna_nombre' => 'Providencia',
-            'visitas' => 428,
-            'tiempo_favorito' => 'Hoy'
-        ]
-    ];
-    $total = count($favoritos);
-}
-
 // Cargar header
 require_once __DIR__ . '/../../layouts/header.php';
 ?>
@@ -382,10 +323,11 @@ require_once __DIR__ . '/../../layouts/header.php';
                     <!-- Imagen -->
                     <div class="favorito-image-wrapper">
                         <img 
-                            src="<?php echo htmlspecialchars($favorito->foto_principal); ?>" 
+                            src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo htmlspecialchars($favorito->foto_principal); ?>" 
                             alt="<?php echo htmlspecialchars($favorito->titulo); ?>"
                             class="favorito-image"
                             loading="lazy"
+                            onerror="this.src='<?php echo BASE_URL; ?>/assets/images/no-image.jpg'"
                         >
                         
                         <!-- Badge fecha agregado -->
@@ -454,7 +396,7 @@ require_once __DIR__ . '/../../layouts/header.php';
                     
                     <!-- Footer -->
                     <div class="favorito-footer">
-                        <a href="<?php echo BASE_URL; ?>/detalle/<?php echo $favorito->id; ?>" class="btn-ver-detalle">
+                        <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $favorito->id; ?>" class="btn-ver-detalle">
                             Ver Detalle
                         </a>
                     </div>
@@ -467,15 +409,37 @@ require_once __DIR__ . '/../../layouts/header.php';
 
 <script>
 /**
- * Eliminar publicación de favoritos
+ * Mostrar modal de confirmación para eliminar favorito
  */
 function eliminarFavorito(publicacionId) {
-    if (!confirm('¿Estás seguro de eliminar esta publicación de favoritos?')) {
-        return;
-    }
-    
-    // Encontrar la card
+    // Obtener el título de la publicación
     const card = document.querySelector(`[data-publicacion-id="${publicacionId}"]`);
+    const titulo = card ? card.querySelector('.favorito-titulo').textContent : 'esta publicación';
+    
+    // Actualizar el modal con la información
+    document.getElementById('publicacion_id_eliminar').value = publicacionId;
+    document.getElementById('titulo_publicacion_eliminar').textContent = titulo;
+    
+    // Mostrar el modal
+    document.getElementById('modalEliminarFavorito').style.display = 'flex';
+}
+
+/**
+ * Cerrar modal de confirmación
+ */
+function cerrarModalEliminar() {
+    document.getElementById('modalEliminarFavorito').style.display = 'none';
+}
+
+/**
+ * Confirmar eliminación de favorito
+ */
+function confirmarEliminarFavorito() {
+    const publicacionId = document.getElementById('publicacion_id_eliminar').value;
+    const card = document.querySelector(`[data-publicacion-id="${publicacionId}"]`);
+    
+    // Cerrar modal
+    cerrarModalEliminar();
     
     // Animación de salida
     if (card) {
@@ -484,7 +448,7 @@ function eliminarFavorito(publicacionId) {
     }
     
     // Hacer petición AJAX
-    fetch('/favoritos/eliminar', {
+    fetch('<?php echo BASE_URL; ?>/favoritos/eliminar', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -546,7 +510,135 @@ document.addEventListener('DOMContentLoaded', function() {
         }, index * 50);
     });
 });
+
+// Cerrar modal al hacer clic fuera
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('modalEliminarFavorito');
+    if (event.target === modal) {
+        cerrarModalEliminar();
+    }
+});
 </script>
+
+<!-- Modal: Confirmar eliminación de favorito -->
+<div id="modalEliminarFavorito" class="admin-modal" style="display: none;">
+  <div class="admin-modal-content admin-modal-small">
+    <div class="admin-modal-header">
+      <h2 class="h2" style="margin: 0; display: flex; align-items: center; gap: 12px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        Eliminar de Favoritos
+      </h2>
+    </div>
+    <div class="admin-modal-body">
+      <input type="hidden" id="publicacion_id_eliminar" value="">
+      
+      <p class="meta" style="margin-bottom: 16px; color: #6B7280; line-height: 1.6;">
+        ¿Estás seguro de que deseas eliminar esta publicación de tus favoritos?
+      </p>
+      
+      <div style="background: #FEF2F2; border-left: 3px solid #EF4444; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px;">
+        <p style="margin: 0; font-weight: 600; color: #991B1B; font-size: 14px;" id="titulo_publicacion_eliminar"></p>
+      </div>
+      
+      <p class="meta" style="margin-bottom: 20px; color: #6B7280; font-size: 13px;">
+        Esta acción no se puede deshacer, pero siempre puedes volver a agregarla a favoritos más tarde.
+      </p>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button type="button" onclick="cerrarModalEliminar()" class="btn outline">
+          Cancelar
+        </button>
+        <button type="button" onclick="confirmarEliminarFavorito()" class="btn" style="background: #EF4444; color: white; border-color: #EF4444;">
+          Sí, Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estilos para el modal (reutilizando estilos de admin) -->
+<style>
+/* Modal overlay */
+.admin-modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Modal content container */
+.admin-modal-content {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: adminModalFadeIn 0.3s ease-out;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-modal-small {
+  max-width: 500px;
+  width: 95%;
+}
+
+/* Modal header */
+.admin-modal-header {
+  padding: 24px 32px;
+  border-bottom: 2px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Modal body */
+.admin-modal-body {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+@keyframes adminModalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Scrollbar personalizado para el modal */
+.admin-modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-track {
+  background: #F3F4F6;
+  border-radius: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb {
+  background: #9CA3AF;
+  border-radius: 10px;
+}
+</style>
 
 <?php
 // Cargar footer

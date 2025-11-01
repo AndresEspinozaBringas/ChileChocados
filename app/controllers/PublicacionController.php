@@ -187,18 +187,20 @@ class PublicacionController
             $titulo = 'Borrador sin título';
         }
 
-        // Determinar si es destacada (las fechas se activan cuando el admin aprueba)
+        // Determinar si es destacada
         $promocion = !empty($_POST['promocion']) ? sanitize($_POST['promocion']) : 'normal';
         $es_destacada = in_array($promocion, ['destacada15', 'destacada30']) ? 1 : 0;
         
-        // Guardar la duración deseada en días (se usará cuando el admin apruebe)
+        // Guardar la duración deseada en días
         $dias_destacado = 0;
         if ($es_destacada) {
             $dias_destacado = $promocion === 'destacada15' ? 15 : 30;
         }
 
+        // IMPORTANTE: Si es destacada, guardar como borrador hasta que se pague
+        $estado_inicial = $es_borrador ? 'borrador' : ($es_destacada ? 'borrador' : 'pendiente');
+
         // Preparar datos para guardar
-        
         $datos = [
             'usuario_id' => $_SESSION['user_id'],
             'tipificacion' => !empty($_POST['tipificacion']) ? sanitize($_POST['tipificacion']) : null,
@@ -213,10 +215,10 @@ class PublicacionController
             'precio' => (!empty($_POST['tipo_venta']) && $_POST['tipo_venta'] === 'completo' && !empty($_POST['precio'])) ? (float) str_replace(['.', ','], ['', '.'], $_POST['precio']) : null,
             'region_id' => !empty($_POST['region_id']) ? (int) $_POST['region_id'] : null,
             'comuna_id' => !empty($_POST['comuna_id']) ? (int) $_POST['comuna_id'] : null,
-            'estado' => $es_borrador ? 'borrador' : 'pendiente',
-            'es_destacada' => $es_destacada,
-            'fecha_destacada_inicio' => null, // Se activa cuando el admin aprueba
-            'fecha_destacada_fin' => $dias_destacado > 0 ? date('Y-m-d', strtotime("+$dias_destacado days")) : null, // Guardamos fecha futura como referencia
+            'estado' => $estado_inicial,
+            'es_destacada' => 0, // Se activará después del pago
+            'fecha_destacada_inicio' => null,
+            'fecha_destacada_fin' => null,
             'fecha_publicacion' => $es_borrador ? null : date('Y-m-d H:i:s')
         ];
 
@@ -236,13 +238,33 @@ class PublicacionController
         }
 
         // Redirigir según el tipo de guardado
+        error_log("=== REDIRECCION DESPUES DE CREAR PUBLICACION ===");
+        error_log("Es borrador: " . ($es_borrador ? 'SI' : 'NO'));
+        error_log("Es destacada: " . ($es_destacada ? 'SI' : 'NO'));
+        error_log("Promocion: $promocion");
+        error_log("Publicacion ID: $publicacion_id");
+        error_log("Estado guardado: $estado_inicial");
+        
         if ($es_borrador) {
+            error_log("Redirigiendo a: mis-publicaciones (borrador)");
             $_SESSION['success'] = 'Borrador guardado exitosamente. Puedes continuar editándolo más tarde.';
             header('Location: ' . BASE_URL . '/mis-publicaciones');
         } else {
-            // Guardar ID de publicación en sesión para página de confirmación
-            $_SESSION['publicacion_creada_id'] = $publicacion_id;
-            header('Location: ' . BASE_URL . '/publicaciones/approval');
+            // Si es destacada, redirigir a pago (publicación guardada como borrador)
+            if ($es_destacada && !$es_borrador) {
+                error_log("Redirigiendo a: /pago/preparar (destacada - guardada como borrador)");
+                $_SESSION['publicacion_pendiente_pago'] = [
+                    'publicacion_id' => $publicacion_id,
+                    'tipo_destacado' => $promocion
+                ];
+                error_log("Sesion guardada: " . print_r($_SESSION['publicacion_pendiente_pago'], true));
+                header('Location: ' . BASE_URL . '/pago/preparar');
+            } else {
+                error_log("Redirigiendo a: /publicaciones/approval (normal)");
+                // Guardar ID de publicación en sesión para página de confirmación
+                $_SESSION['publicacion_creada_id'] = $publicacion_id;
+                header('Location: ' . BASE_URL . '/publicaciones/approval');
+            }
         }
         exit;
     }
@@ -323,6 +345,11 @@ class PublicacionController
     {
         Auth::require();
 
+        // Log temporal para debugging
+        error_log("=== UPDATE PUBLICACION ID: $id ===");
+        error_log("POST data: " . print_r($_POST, true));
+        error_log("guardar_borrador isset: " . (isset($_POST['guardar_borrador']) ? 'SI' : 'NO'));
+
         // Verificar CSRF
         if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
             $_SESSION['error'] = 'Token de seguridad inválido';
@@ -332,6 +359,7 @@ class PublicacionController
 
         // Obtener publicación
         $publicacion = $this->publicacionModel->find($id);
+        error_log("Estado anterior de publicacion: " . ($publicacion ? $publicacion->estado : 'NO ENCONTRADA'));
 
         // Verificar permisos
         if (!$publicacion || $publicacion->usuario_id != $_SESSION['user_id']) {
@@ -340,30 +368,30 @@ class PublicacionController
             exit;
         }
 
-        // Validar datos (pasando true porque es edición)
-        $errores = $this->validarDatosPublicacion($_POST, true);
-
-        if (!empty($errores)) {
-            $_SESSION['errores'] = $errores;
-            $_SESSION['old'] = $_POST;
-            header('Location: ' . BASE_URL . '/publicaciones/' . $id . '/editar');
-            exit;
-        }
-
-        // Determinar si es borrador
+        // Determinar si es borrador PRIMERO
         $es_borrador = isset($_POST['guardar_borrador']);
         
-        // Determinar si es destacada y calcular fechas
+        error_log("es_borrador: " . ($es_borrador ? 'SI' : 'NO'));
+
+        // Validar datos solo si NO es borrador
+        if (!$es_borrador) {
+            $errores = $this->validarDatosPublicacion($_POST, true);
+
+            if (!empty($errores)) {
+                error_log("Errores de validación: " . print_r($errores, true));
+                $_SESSION['errores'] = $errores;
+                $_SESSION['old'] = $_POST;
+                header('Location: ' . BASE_URL . '/publicaciones/' . $id . '/editar');
+                exit;
+            }
+        }
+        
+        // Determinar si es destacada
         $promocion = !empty($_POST['promocion']) ? sanitize($_POST['promocion']) : 'normal';
         $es_destacada = in_array($promocion, ['destacada15', 'destacada30']) ? 1 : 0;
-        $fecha_destacada_inicio = null;
-        $fecha_destacada_fin = null;
-        
-        if ($es_destacada && !$es_borrador) {
-            $fecha_destacada_inicio = date('Y-m-d H:i:s');
-            $dias = $promocion === 'destacada15' ? 15 : 30;
-            $fecha_destacada_fin = date('Y-m-d H:i:s', strtotime("+$dias days"));
-        }
+
+        // IMPORTANTE: Si es destacada, mantener como borrador hasta que se pague
+        $estado_actualizado = $es_borrador ? 'borrador' : ($es_destacada ? 'borrador' : 'pendiente');
 
         // Generar título automático
         $titulo = trim(sanitize($_POST['marca'] ?? '') . ' ' . sanitize($_POST['modelo'] ?? '') . ' ' . ($_POST['anio'] ?? ''));
@@ -385,12 +413,20 @@ class PublicacionController
             'precio' => (!empty($_POST['tipo_venta']) && $_POST['tipo_venta'] === 'completo' && !empty($_POST['precio'])) ? (float) str_replace(['.', ','], ['', '.'], $_POST['precio']) : null,
             'region_id' => !empty($_POST['region_id']) ? (int) $_POST['region_id'] : null,
             'comuna_id' => !empty($_POST['comuna_id']) ? (int) $_POST['comuna_id'] : null,
-            'estado' => $es_borrador ? 'borrador' : 'pendiente',
-            'es_destacada' => $es_destacada,
-            'fecha_destacada_inicio' => $fecha_destacada_inicio,
-            'fecha_destacada_fin' => $fecha_destacada_fin,
+            'estado' => $estado_actualizado,
+            'es_destacada' => 0, // Se activará después del pago
+            'fecha_destacada_inicio' => null,
+            'fecha_destacada_fin' => null,
             'fecha_publicacion' => $es_borrador ? null : date('Y-m-d H:i:s')
         ];
+
+        // Verificar si el estado anterior era borrador y ahora se está enviando para aprobación
+        $estado_anterior = $publicacion->estado;
+        $cambio_de_borrador_a_pendiente = ($estado_anterior === 'borrador' && !$es_borrador);
+        
+        error_log("Estado anterior: $estado_anterior");
+        error_log("Nuevo estado: " . $datos['estado']);
+        error_log("Cambio de borrador a pendiente: " . ($cambio_de_borrador_a_pendiente ? 'SI' : 'NO'));
 
         // Actualizar en BD
         $this->publicacionModel->update($id, $datos);
@@ -407,13 +443,33 @@ class PublicacionController
             error_log("UPDATE - No se recibieron imágenes nuevas");
         }
 
-        // Mensaje según el tipo de guardado
+        // Redirigir según el tipo de guardado
+        error_log("=== REDIRECCION DESPUES DE ACTUALIZAR ===");
+        error_log("Es borrador: " . ($es_borrador ? 'SI' : 'NO'));
+        error_log("Es destacada: " . ($es_destacada ? 'SI' : 'NO'));
+        error_log("Estado actualizado: $estado_actualizado");
+        
         if ($es_borrador) {
             $_SESSION['success'] = 'Borrador actualizado exitosamente.';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+        } elseif ($cambio_de_borrador_a_pendiente) {
+            // Si cambió de borrador a pendiente y es destacada, redirigir a pago
+            if ($es_destacada) {
+                error_log("Redirigiendo a pago (destacada - guardada como borrador)");
+                $_SESSION['publicacion_pendiente_pago'] = [
+                    'publicacion_id' => $id,
+                    'tipo_destacado' => $promocion
+                ];
+                header('Location: ' . BASE_URL . '/pago/preparar');
+            } else {
+                // Si no es destacada, mostrar pantalla de éxito
+                $_SESSION['publicacion_creada_id'] = $id;
+                header('Location: ' . BASE_URL . '/publicaciones/approval');
+            }
         } else {
             $_SESSION['success'] = 'Publicación actualizada exitosamente. Está pendiente de revisión.';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
         }
-        header('Location: ' . BASE_URL . '/mis-publicaciones');
         exit;
     }
 

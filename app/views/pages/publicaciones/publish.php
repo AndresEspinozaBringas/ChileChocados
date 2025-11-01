@@ -359,7 +359,7 @@ require_once APP_PATH . '/views/layouts/header.php';
 
     <div class="sticky-actions">
       <button type="button" class="btn" onclick="guardarBorrador()">Guardar borrador</button>
-      <button type="submit" class="btn primary">
+      <button type="submit" class="btn primary" id="btn-enviar">
         <?php echo $modoEdicion ? 'Actualizar publicación' : 'Enviar a revisión'; ?>
       </button>
     </div>
@@ -559,6 +559,14 @@ document.querySelectorAll('input[type="file"][name="fotos[]"]').forEach((input, 
 });
 
 function guardarBorrador() {
+  // Validar campos requeridos
+  const errores = validarFormulario(true);
+  
+  if (errores.length > 0) {
+    mostrarModalValidacion(errores);
+    return;
+  }
+  
   const form = document.getElementById('form-publicar');
   
   // Verificar que el formulario existe
@@ -567,6 +575,12 @@ function guardarBorrador() {
     console.error('Formulario #form-publicar no encontrado');
     return;
   }
+  
+  // Bloquear botón y mostrar loader
+  const btnBorrador = event.target;
+  const textoOriginal = btnBorrador.innerHTML;
+  btnBorrador.disabled = true;
+  btnBorrador.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Guardando...</span>';
   
   // Remover validación HTML5 temporalmente
   const requiredFields = form.querySelectorAll('[required]');
@@ -593,6 +607,23 @@ function guardarBorrador() {
   // Enviar formulario
   form.submit();
 }
+
+// Agregar event listener al formulario para limpiar campo borrador en submit normal
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('form-publicar');
+  const btnEnviar = document.getElementById('btn-enviar');
+  
+  if (form && btnEnviar) {
+    // Cuando se hace click en el botón de enviar (no borrador)
+    btnEnviar.addEventListener('click', function(e) {
+      const borradorInput = form.querySelector('input[name="guardar_borrador"]');
+      if (borradorInput) {
+        borradorInput.remove();
+        console.log('Campo guardar_borrador eliminado antes de enviar');
+      }
+    });
+  }
+});
 
 // ============================================================================
 // MODO EDICIÓN: Cargar subcategoría y comuna seleccionadas
@@ -646,6 +677,227 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 <?php endif; ?>
+
+// ============================================================================
+// VALIDACIÓN DEL FORMULARIO
+// ============================================================================
+
+function validarFormulario(esBorrador = false) {
+  const errores = [];
+  
+  // Obtener valores
+  const marca = document.querySelector('input[name="marca"]')?.value.trim();
+  const modelo = document.querySelector('input[name="modelo"]')?.value.trim();
+  const anio = document.querySelector('input[name="anio"]')?.value;
+  const categoriaPadre = document.querySelector('select[name="categoria_padre_id"]')?.value;
+  const subcategoria = document.querySelector('select[name="subcategoria_id"]')?.value;
+  const region = document.querySelector('select[name="region_id"]')?.value;
+  const comuna = document.querySelector('select[name="comuna_id"]')?.value;
+  const descripcion = document.querySelector('textarea[name="descripcion"]')?.value.trim();
+  
+  // Validar fotos (solo si no es modo edición o si no hay fotos existentes)
+  const fotosExistentes = document.querySelectorAll('.gallery-item').length;
+  const fotosNuevas = document.querySelector('input[name="fotos[]"]')?.files.length || 0;
+  const totalFotos = fotosExistentes + fotosNuevas;
+  
+  // Validaciones básicas (siempre requeridas)
+  if (!marca) errores.push('Marca del vehículo');
+  if (!modelo) errores.push('Modelo del vehículo');
+  if (!anio) errores.push('Año del vehículo');
+  if (!categoriaPadre) errores.push('Categoría');
+  if (!subcategoria) errores.push('Subcategoría');
+  if (!region) errores.push('Región');
+  if (!comuna) errores.push('Comuna');
+  if (!descripcion || descripcion.length < 20) {
+    errores.push('Descripción (mínimo 20 caracteres)');
+  }
+  if (totalFotos === 0) {
+    errores.push('Al menos 1 foto del vehículo');
+  }
+  
+  return errores;
+}
+
+function mostrarModalValidacion(errores) {
+  const modal = document.getElementById('modalValidacion');
+  const listaErrores = document.getElementById('listaErrores');
+  
+  // Limpiar lista
+  listaErrores.innerHTML = '';
+  
+  // Agregar errores
+  errores.forEach(error => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span style="color: #DC2626;">✗</span> ${error}`;
+    li.style.padding = '4px 0';
+    li.style.display = 'flex';
+    li.style.alignItems = 'center';
+    li.style.gap = '8px';
+    listaErrores.appendChild(li);
+  });
+  
+  modal.style.display = 'flex';
+}
+
+function cerrarModalValidacion() {
+  document.getElementById('modalValidacion').style.display = 'none';
+}
+
+// Validar antes de enviar el formulario - Esperar a que el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('form-publicar');
+  
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      const errores = validarFormulario(false);
+      
+      if (errores.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        mostrarModalValidacion(errores);
+        return false;
+      }
+      
+      // Bloquear botón y mostrar loader
+      const btnEnviar = document.getElementById('btn-enviar');
+      if (btnEnviar) {
+        btnEnviar.disabled = true;
+        btnEnviar.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Enviando...</span>';
+      }
+      
+      // El formulario se enviará normalmente
+    });
+  }
+});
+
+// Cerrar modal al hacer clic fuera
+window.addEventListener('click', function(event) {
+  const modal = document.getElementById('modalValidacion');
+  if (event.target === modal) {
+    cerrarModalValidacion();
+  }
+});
+
 </script>
+
+<!-- Modal de Validación -->
+<div id="modalValidacion" class="admin-modal" style="display: none;">
+  <div class="admin-modal-content admin-modal-small">
+    <div class="admin-modal-header">
+      <h2 class="h2" style="margin: 0; display: flex; align-items: center; gap: 12px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Campos Requeridos
+      </h2>
+    </div>
+    <div class="admin-modal-body">
+      <p class="meta" style="margin-bottom: 16px; color: #6B7280;">
+        Por favor, completa los siguientes campos antes de continuar:
+      </p>
+      
+      <ul id="listaErrores" style="list-style: none; padding: 0; margin: 0 0 20px 0; font-size: 14px; line-height: 1.4;">
+        <!-- Los errores se agregarán aquí dinámicamente -->
+      </ul>
+      
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button type="button" onclick="cerrarModalValidacion()" class="btn primary">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Estilos para el modal -->
+<style>
+/* Modal overlay */
+.admin-modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Modal content container */
+.admin-modal-content {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: adminModalFadeIn 0.3s ease-out;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-modal-small {
+  max-width: 500px;
+  width: 95%;
+}
+
+/* Modal header */
+.admin-modal-header {
+  padding: 24px 32px;
+  border-bottom: 2px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Modal body */
+.admin-modal-body {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+@keyframes adminModalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scrollbar personalizado para el modal */
+.admin-modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-track {
+  background: #F3F4F6;
+  border-radius: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb {
+  background: #9CA3AF;
+  border-radius: 10px;
+}
+</style>
 
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

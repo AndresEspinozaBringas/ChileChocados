@@ -91,6 +91,11 @@ $specialRoutes = [
     // RUTAS DE FAVORITOS
     // ====================================
     'favoritos' => ['controller' => 'FavoritoController', 'method' => 'index'],
+    
+    // ====================================
+    // RUTAS DE PAGOS CON FLOW
+    // ====================================
+    'pago' => ['controller' => 'PagoController', 'method' => 'index'],
 ];
 
 // Aplicar rutas especiales si coincide
@@ -148,6 +153,12 @@ if (!empty($url[0]) && $url[0] === 'mensajes') {
             case 'marcar-leido':
                 // POST /mensajes/marcar-leido - Marcar conversación como leída
                 $method = 'marcarLeido';
+                $params = [];
+                break;
+                
+            case 'obtener-nuevos':
+                // GET /mensajes/obtener-nuevos - Obtener nuevos mensajes (polling)
+                $method = 'obtenerNuevos';
                 $params = [];
                 break;
                 
@@ -375,6 +386,12 @@ if (!empty($url[0]) && $url[0] === 'admin') {
             exit;
         }
     }
+    
+    // /admin/mensajes - Sistema de mensajería
+    if ($url[1] === 'mensajes') {
+        $controller->mensajes();
+        exit;
+    }
 }
 
 // ====================================
@@ -421,6 +438,73 @@ if (!empty($url[0]) && $url[0] === 'favoritos') {
         $method = 'total';
         $params = [];
     }
+}
+
+// ====================================
+// RUTAS DE PAGOS CON FLOW
+// ====================================
+if (!empty($url[0]) && $url[0] === 'pago') {
+    error_log("=== ROUTING PAGO ===");
+    error_log("URL: " . print_r($url, true));
+    error_log("Method: " . $_SERVER['REQUEST_METHOD']);
+    
+    $controllerName = 'PagoController';
+    
+    if (empty($url[1])) {
+        // GET /pago - Redirigir a mis publicaciones
+        header('Location: ' . BASE_URL . '/mis-publicaciones');
+        exit;
+    } elseif ($url[1] === 'preparar') {
+        // GET /pago/preparar - Pantalla de confirmación antes de pagar
+        error_log("Ruta: /pago/preparar");
+        $method = 'preparar';
+        $params = [];
+    } elseif ($url[1] === 'iniciar') {
+        // POST /pago/iniciar - Iniciar proceso de pago con Flow
+        error_log("=== RUTA /pago/iniciar DETECTADA ===");
+        error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
+        error_log("Expected: POST");
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            error_log("✅ Método POST correcto - Ejecutando PagoController::iniciar()");
+            $method = 'iniciar';
+            $params = [];
+        } else {
+            error_log("❌ Método incorrecto: " . $_SERVER['REQUEST_METHOD']);
+            error_log("Redirigiendo a /pago/preparar");
+            header('Location: ' . BASE_URL . '/pago/preparar');
+            exit;
+        }
+    } elseif ($url[1] === 'confirmar') {
+        // POST /pago/confirmar - Callback de Flow (confirmación del pago)
+        error_log("Ruta: /pago/confirmar");
+        $method = 'confirmar';
+        $params = [];
+    } elseif ($url[1] === 'retorno') {
+        // GET /pago/retorno - Página de retorno después del pago
+        error_log("Ruta: /pago/retorno");
+        $method = 'retorno';
+        $params = [];
+    } elseif ($url[1] === 'reintentar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        // POST /pago/reintentar - Reintentar un pago rechazado
+        error_log("Ruta: POST /pago/reintentar");
+        $method = 'reintentar';
+        $params = [];
+    } elseif ($url[1] === 'simulador') {
+        if (empty($url[2])) {
+            // GET /pago/simulador - Mostrar simulador de Flow
+            error_log("Ruta: /pago/simulador");
+            $method = 'simulador';
+            $params = [];
+        } elseif ($url[2] === 'procesar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            // POST /pago/simulador/procesar - Procesar resultado del simulador
+            error_log("Ruta: POST /pago/simulador/procesar");
+            $method = 'simularProcesar';
+            $params = [];
+        }
+    }
+    
+    error_log("Controller: $controllerName, Method: $method");
 }
 
 // ====================================

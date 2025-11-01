@@ -766,28 +766,47 @@ class AdminController
     {
         $this->requireAdmin();
         
-        // Obtener conversación activa desde URL
-        $conversacionActiva = isset($_GET['conversacion']) ? (int)$_GET['conversacion'] : null;
+        require_once APP_PATH . '/models/Mensaje.php';
         
-        // DATOS MOCK: Todas las conversaciones del sistema (admin ve todo)
-        $conversaciones = $this->getMockTodasConversaciones();
+        $mensajeModel = new \App\Models\Mensaje();
         
-        // Seleccionar primera conversación si no hay una activa
-        if (!$conversacionActiva && !empty($conversaciones)) {
-            $conversacionActiva = $conversaciones[0]['id'];
+        // Obtener conversación activa desde URL (formato: publicacion_id-usuario1_id-usuario2_id)
+        $conversacionKey = isset($_GET['conversacion']) ? $_GET['conversacion'] : null;
+        
+        // Obtener todas las conversaciones del sistema usando el nuevo método del modelo
+        $conversacionesRaw = $mensajeModel->getTodasLasConversaciones();
+        
+        // Formatear conversaciones
+        $conversaciones = [];
+        foreach ($conversacionesRaw as $conv) {
+            $convArray = (array) $conv;
+            $convArray['ultimo_mensaje_fecha_relativa'] = $this->formatearFecha($conv->ultimo_mensaje_fecha);
+            $convArray['conversacion_titulo'] = trim($conv->usuario1_nombre) . ' ↔ ' . trim($conv->usuario2_nombre);
+            $conversaciones[] = $convArray;
+        }
+        
+        // Determinar conversación activa
+        $conversacionActiva = null;
+        $mensajes = [];
+        
+        if ($conversacionKey) {
+            foreach ($conversaciones as $conv) {
+                if ($conv['conversacion_key'] === $conversacionKey) {
+                    $conversacionActiva = $conv;
+                    break;
+                }
+            }
+        } elseif (!empty($conversaciones)) {
+            $conversacionActiva = $conversaciones[0];
         }
         
         // Obtener mensajes de la conversación activa
-        $mensajes = $conversacionActiva ? $this->getMockMensajesAdmin($conversacionActiva) : [];
-        
-        // Obtener info de la conversación activa
-        $conversacionInfo = null;
         if ($conversacionActiva) {
-            foreach ($conversaciones as $conv) {
-                if ($conv['id'] == $conversacionActiva) {
-                    $conversacionInfo = $conv;
-                    break;
-                }
+            $mensajes = $mensajeModel->getConversacionPorClave($conversacionActiva['conversacion_key']);
+            
+            // Formatear fechas
+            foreach ($mensajes as &$mensaje) {
+                $mensaje->fecha_formateada = $this->formatearFecha($mensaje->fecha_envio);
             }
         }
         
@@ -795,140 +814,89 @@ class AdminController
         $data = [
             'title' => 'Mensajes - Panel Admin',
             'conversaciones' => $conversaciones,
-            'conversacion_activa_id' => $conversacionActiva,
-            'conversacion_info' => $conversacionInfo,
+            'conversacion_activa' => $conversacionActiva,
             'mensajes' => $mensajes,
             'user_id' => $_SESSION['user_id'] ?? 1,
             'is_admin' => true
         ];
         
-        // Renderizar vista de mensajes (misma vista, diferente data)
-        require_once __DIR__ . '/../views/pages/mensajes/index.php';
+        // Renderizar vista admin de mensajes
+        require_once __DIR__ . '/../views/pages/admin/mensajes.php';
     }
     
     /**
-     * MOCK: Obtener todas las conversaciones del sistema (vista admin)
+     * Obtener todas las conversaciones del sistema (para admin)
      */
-    private function getMockTodasConversaciones()
+    private function obtenerTodasConversaciones()
     {
-        return [
-            [
-                'id' => 1,
-                'publicacion_id' => 1,
-                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
-                'publicacion_foto' => 'ford-territory.jpg',
-                'vendedor_id' => 5,
-                'vendedor_nombre' => 'Juan Pérez',
-                'comprador_id' => 10,
-                'comprador_nombre' => 'Pedro Sánchez',
-                'otro_usuario_id' => 10,
-                'otro_usuario_nombre' => 'Pedro Sánchez (Comprador) → Juan Pérez (Vendedor)',
-                'otro_usuario_tipo' => 'comprador',
-                'ultimo_mensaje' => '¿Puedo ir a verlo mañana?',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 hour')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 1 hora',
-                'mensajes_no_leidos' => 1,
-                'esta_activa' => true
-            ],
-            [
-                'id' => 2,
-                'publicacion_id' => 1,
-                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
-                'publicacion_foto' => 'ford-territory.jpg',
-                'vendedor_id' => 5,
-                'vendedor_nombre' => 'Juan Pérez',
-                'comprador_id' => 11,
-                'comprador_nombre' => 'Laura Díaz',
-                'otro_usuario_id' => 11,
-                'otro_usuario_nombre' => 'Laura Díaz (Comprador) → Juan Pérez (Vendedor)',
-                'otro_usuario_tipo' => 'comprador',
-                'ultimo_mensaje' => '¿Acepta permuta?',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-3 hours')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 3 horas',
-                'mensajes_no_leidos' => 0,
-                'esta_activa' => false
-            ],
-            [
-                'id' => 3,
-                'publicacion_id' => 2,
-                'publicacion_titulo' => 'Kia Cerato 2020 - Choque Lateral',
-                'publicacion_foto' => 'kia-cerato.jpg',
-                'vendedor_id' => 6,
-                'vendedor_nombre' => 'María González',
-                'comprador_id' => 12,
-                'comprador_nombre' => 'Roberto Muñoz',
-                'otro_usuario_id' => 12,
-                'otro_usuario_nombre' => 'Roberto Muñoz (Comprador) → María González (Vendedor)',
-                'otro_usuario_tipo' => 'comprador',
-                'ultimo_mensaje' => 'Perfecto, quedamos en contacto',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 day')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 1 día',
-                'mensajes_no_leidos' => 0,
-                'esta_activa' => false
-            ],
-            [
-                'id' => 4,
-                'publicacion_id' => 3,
-                'publicacion_titulo' => 'Kia Rio 5 2019 - Choque Trasero',
-                'publicacion_foto' => 'kia-rio-5.jpg',
-                'vendedor_id' => 7,
-                'vendedor_nombre' => 'Carlos Muñoz',
-                'comprador_id' => 13,
-                'comprador_nombre' => 'Ana Torres',
-                'otro_usuario_id' => 13,
-                'otro_usuario_nombre' => 'Ana Torres (Comprador) → Carlos Muñoz (Vendedor)',
-                'otro_usuario_tipo' => 'comprador',
-                'ultimo_mensaje' => '¿Tiene más fotos del motor?',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-2 days')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 2 días',
-                'mensajes_no_leidos' => 0,
-                'esta_activa' => false
-            ]
-        ];
-    }
-    
-    /**
-     * MOCK: Obtener mensajes de una conversación (vista admin)
-     */
-    private function getMockMensajesAdmin($conversacionId)
-    {
-        // Retornar mensajes mock según la conversación
-        $mensajesPorConversacion = [
-            1 => [
-                [
-                    'id' => 1,
-                    'remitente_id' => 10,
-                    'remitente_nombre' => 'Pedro Sánchez',
-                    'destinatario_id' => 5,
-                    'mensaje' => 'Hola, me interesa el Ford Territory',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-2 hours')),
-                    'fecha_relativa' => 'Hace 2 horas',
-                    'leido' => true
-                ],
-                [
-                    'id' => 2,
-                    'remitente_id' => 5,
-                    'remitente_nombre' => 'Juan Pérez',
-                    'destinatario_id' => 10,
-                    'mensaje' => 'Hola Pedro, sí está disponible',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-1.5 hours')),
-                    'fecha_relativa' => 'Hace 1.5 horas',
-                    'leido' => true
-                ],
-                [
-                    'id' => 3,
-                    'remitente_id' => 10,
-                    'remitente_nombre' => 'Pedro Sánchez',
-                    'destinatario_id' => 5,
-                    'mensaje' => '¿Puedo ir a verlo mañana?',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-1 hour')),
-                    'fecha_relativa' => 'Hace 1 hora',
-                    'leido' => false
-                ]
-            ]
-        ];
+        $sql = "SELECT 
+                    p.id as publicacion_id,
+                    p.titulo as publicacion_titulo,
+                    p.foto_principal,
+                    m.remitente_id as usuario1_id,
+                    m.destinatario_id as usuario2_id,
+                    CONCAT(u1.nombre, ' ', u1.apellido) as usuario1_nombre,
+                    CONCAT(u2.nombre, ' ', u2.apellido) as usuario2_nombre,
+                    u1.rol as usuario1_rol,
+                    u2.rol as usuario2_rol,
+                    MAX(m.fecha_envio) as ultimo_mensaje_fecha,
+                    (SELECT mensaje FROM mensajes 
+                     WHERE publicacion_id = p.id 
+                     AND ((remitente_id = m.remitente_id AND destinatario_id = m.destinatario_id)
+                          OR (remitente_id = m.destinatario_id AND destinatario_id = m.remitente_id))
+                     ORDER BY fecha_envio DESC LIMIT 1) as ultimo_mensaje,
+                    (SELECT COUNT(*) FROM mensajes 
+                     WHERE publicacion_id = p.id 
+                     AND ((remitente_id = m.remitente_id AND destinatario_id = m.destinatario_id)
+                          OR (remitente_id = m.destinatario_id AND destinatario_id = m.remitente_id))
+                     AND leido = 0) as mensajes_no_leidos
+                FROM mensajes m
+                INNER JOIN publicaciones p ON m.publicacion_id = p.id
+                INNER JOIN usuarios u1 ON m.remitente_id = u1.id
+                INNER JOIN usuarios u2 ON m.destinatario_id = u2.id
+                GROUP BY p.id, m.remitente_id, m.destinatario_id
+                ORDER BY ultimo_mensaje_fecha DESC";
         
-        return $mensajesPorConversacion[$conversacionId] ?? [];
+        $stmt = $this->db->query($sql);
+        $conversaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Formatear datos
+        foreach ($conversaciones as &$conv) {
+            $conv['ultimo_mensaje_fecha_relativa'] = $this->formatearFecha($conv['ultimo_mensaje_fecha']);
+            $conv['conversacion_key'] = $conv['publicacion_id'] . '-' . $conv['usuario1_id'] . '-' . $conv['usuario2_id'];
+            $conv['conversacion_titulo'] = $conv['usuario1_nombre'] . ' ↔ ' . $conv['usuario2_nombre'];
+        }
+        
+        return $conversaciones;
     }
-
+    
+    /**
+     * Formatear fecha de forma relativa (hace X tiempo)
+     */
+    private function formatearFecha($fecha)
+    {
+        if (!$fecha) return '';
+        
+        $timestamp = strtotime($fecha);
+        $diff = time() - $timestamp;
+        
+        if ($diff < 60) {
+            return 'Justo ahora';
+        } elseif ($diff < 3600) {
+            $mins = floor($diff / 60);
+            return 'Hace ' . $mins . ' ' . ($mins == 1 ? 'minuto' : 'minutos');
+        } elseif ($diff < 86400) {
+            $hours = floor($diff / 3600);
+            return 'Hace ' . $hours . ' ' . ($hours == 1 ? 'hora' : 'horas');
+        } elseif ($diff < 604800) {
+            $days = floor($diff / 86400);
+            return 'Hace ' . $days . ' ' . ($days == 1 ? 'día' : 'días');
+        } elseif ($diff < 2592000) {
+            $weeks = floor($diff / 604800);
+            return 'Hace ' . $weeks . ' ' . ($weeks == 1 ? 'semana' : 'semanas');
+        } else {
+            return date('d/m/Y', $timestamp);
+        }
+    }
+    
 }

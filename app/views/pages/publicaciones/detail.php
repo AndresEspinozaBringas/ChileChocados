@@ -96,10 +96,17 @@ layout('header');
       
       <!-- Botones de acción -->
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px;">
-        <a class="btn primary" href="<?php echo BASE_URL; ?>/mensajes?publicacion=<?php echo $publicacion->id; ?>">
-            <?php echo icon('message-circle', 18); ?>
-            Contactar vendedor
-        </a>
+        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] != $publicacion->usuario_id): ?>
+          <a class="btn primary" href="<?php echo BASE_URL; ?>/mensajes?publicacion=<?php echo $publicacion->id; ?>&usuario=<?php echo $publicacion->usuario_id; ?>">
+              <?php echo icon('message-circle', 18); ?>
+              Contactar al vendedor
+          </a>
+        <?php elseif (!isset($_SESSION['user_id'])): ?>
+          <a class="btn primary" href="<?php echo BASE_URL; ?>/login?redirect=<?php echo urlencode('/publicacion/' . $publicacion->id); ?>">
+              <?php echo icon('message-circle', 18); ?>
+              Iniciar sesión para contactar
+          </a>
+        <?php endif; ?>
 <!-- Botón Favorito (agregar después del título) -->
 <button 
     id="btnFavorito" 
@@ -145,43 +152,94 @@ layout('header');
 </style>
 
 <script>
-// Sistema de favoritos con localStorage (mock - sin BD)
+// Sistema de favoritos con base de datos
 document.addEventListener('DOMContentLoaded', function() {
     const publicacionId = <?php echo $publicacion->id; ?>;
     verificarEstadoFavorito(publicacionId);
 });
 
 function verificarEstadoFavorito(publicacionId) {
-    const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
-    const enFavoritos = favoritos.includes(publicacionId);
-    actualizarBotonFavorito(enFavoritos);
+    <?php if (isset($_SESSION['user_id'])): ?>
+    // Usuario autenticado - verificar en BD
+    fetch('<?php echo BASE_URL; ?>/favoritos/verificar/' + publicacionId)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                actualizarBotonFavorito(data.en_favoritos);
+            }
+        })
+        .catch(error => console.error('Error al verificar favorito:', error));
+    <?php else: ?>
+    // Usuario no autenticado - deshabilitar botón
+    const btn = document.getElementById('btnFavorito');
+    btn.disabled = false; // Permitir click para mostrar mensaje
+    <?php endif; ?>
 }
 
 function toggleFavorito(publicacionId) {
+    <?php if (!isset($_SESSION['user_id'])): ?>
+    // Usuario no autenticado
+    mostrarNotificacion('Debes iniciar sesión para guardar favoritos', 'warning');
+    setTimeout(() => {
+        window.location.href = '<?php echo BASE_URL; ?>/login';
+    }, 1500);
+    return;
+    <?php endif; ?>
+    
     const btn = document.getElementById('btnFavorito');
     const esActivo = btn.classList.contains('activo');
     
-    // Obtener favoritos del localStorage
-    let favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+    // Deshabilitar botón temporalmente
+    btn.disabled = true;
     
     if (esActivo) {
         // Eliminar de favoritos
-        favoritos = favoritos.filter(id => id !== publicacionId);
-        localStorage.setItem('favoritos', JSON.stringify(favoritos));
-        actualizarBotonFavorito(false);
-        
-        // Mostrar notificación
-        mostrarNotificacion('Eliminado de favoritos', 'info');
+        fetch('<?php echo BASE_URL; ?>/favoritos/eliminar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'publicacion_id=' + publicacionId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                actualizarBotonFavorito(false);
+                mostrarNotificacion('Eliminado de favoritos', 'info');
+            } else {
+                mostrarNotificacion(data.message || 'Error al eliminar', 'error');
+            }
+            btn.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarNotificacion('Error al eliminar de favoritos', 'error');
+            btn.disabled = false;
+        });
     } else {
         // Agregar a favoritos
-        if (!favoritos.includes(publicacionId)) {
-            favoritos.push(publicacionId);
-            localStorage.setItem('favoritos', JSON.stringify(favoritos));
-        }
-        actualizarBotonFavorito(true);
-        
-        // Mostrar notificación
-        mostrarNotificacion('Agregado a favoritos ❤️', 'success');
+        fetch('<?php echo BASE_URL; ?>/favoritos/agregar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'publicacion_id=' + publicacionId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                actualizarBotonFavorito(true);
+                mostrarNotificacion('Agregado a favoritos ❤️', 'success');
+            } else {
+                mostrarNotificacion(data.message || 'Error al agregar', 'error');
+            }
+            btn.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarNotificacion('Error al agregar a favoritos', 'error');
+            btn.disabled = false;
+        });
     }
 }
 
@@ -202,13 +260,22 @@ function actualizarBotonFavorito(esActivo) {
 }
 
 function mostrarNotificacion(mensaje, tipo) {
+    const colores = {
+        success: { bg: '#d4edda', color: '#155724' },
+        info: { bg: '#d1ecf1', color: '#0c5460' },
+        warning: { bg: '#fff3cd', color: '#856404' },
+        error: { bg: '#f8d7da', color: '#721c24' }
+    };
+    
+    const estilo = colores[tipo] || colores.info;
+    
     const notif = document.createElement('div');
     notif.style.cssText = `
         position: fixed;
         top: 80px;
         right: 20px;
-        background: ${tipo === 'success' ? '#d4edda' : '#d1ecf1'};
-        color: ${tipo === 'success' ? '#155724' : '#0c5460'};
+        background: ${estilo.bg};
+        color: ${estilo.color};
         padding: 12px 20px;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -255,16 +322,19 @@ function mostrarNotificacion(mensaje, tipo) {
       <div class="h3">Vendedor</div>
       <div style="margin-top: 12px;">
         <div style="font-weight: 600; margin-bottom: 8px;">
-          <?php echo e($publicacion->usuario_nombre ?? 'Usuario'); ?>
+          <?php echo e($publicacion->vendedor_nombre ?? 'Usuario'); ?>
+          <?php if (!empty($publicacion->vendedor_apellido)): ?>
+            <?php echo e($publicacion->vendedor_apellido); ?>
+          <?php endif; ?>
         </div>
         <div class="meta">
           <?php echo icon('mail', 16); ?>
-          <?php echo e($publicacion->usuario_email ?? 'Email no disponible'); ?>
+          <?php echo e($publicacion->vendedor_email ?? 'Email no disponible'); ?>
         </div>
-        <?php if (!empty($publicacion->usuario_telefono)): ?>
+        <?php if (!empty($publicacion->vendedor_telefono)): ?>
           <div class="meta" style="margin-top: 4px;">
             <?php echo icon('phone', 16); ?>
-            <?php echo e($publicacion->usuario_telefono); ?>
+            <?php echo e($publicacion->vendedor_telefono); ?>
           </div>
         <?php endif; ?>
       </div>

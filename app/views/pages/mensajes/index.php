@@ -7,8 +7,7 @@
 // Variables disponibles desde el controlador
 $pageTitle = $data['title'] ?? 'Mensajes';
 $conversaciones = $data['conversaciones'] ?? [];
-$conversacionActivaId = $data['conversacion_activa_id'] ?? null;
-$conversacionInfo = $data['conversacion_info'] ?? null;
+$conversacionActiva = $data['conversacion_activa'] ?? null;
 $mensajes = $data['mensajes'] ?? [];
 $userId = $data['user_id'] ?? 1;
 
@@ -327,8 +326,8 @@ require_once __DIR__ . '/../../layouts/nav.php';
     
     <!-- Breadcrumb -->
     <div class="breadcrumbs" style="margin-bottom: 16px;">
-        <?php if ($conversacionInfo && isset($conversacionInfo['publicacion_id'])): ?>
-            <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $conversacionInfo['publicacion_id']; ?>">
+        <?php if ($conversacionActiva && isset($conversacionActiva['publicacion_id'])): ?>
+            <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $conversacionActiva['publicacion_id']; ?>">
                 ← Volver a la publicación
             </a>
         <?php else: ?>
@@ -355,13 +354,26 @@ require_once __DIR__ . '/../../layouts/nav.php';
                     </div>
                 <?php else: ?>
                     <?php foreach ($conversaciones as $conv): ?>
+                        <?php 
+                            $esActiva = $conversacionActiva && 
+                                       $conversacionActiva['publicacion_id'] == $conv['publicacion_id'] && 
+                                       $conversacionActiva['otro_usuario_id'] == $conv['otro_usuario_id'];
+                        ?>
                         <a 
-                            href="<?php echo BASE_URL; ?>/mensajes?conversacion=<?php echo $conv['id']; ?>" 
-                            class="conversacion-item <?php echo ($conv['id'] == $conversacionActivaId) ? 'activa' : ''; ?>"
+                            href="<?php echo BASE_URL; ?>/mensajes?conversacion=<?php echo $conv['conversacion_key']; ?>" 
+                            class="conversacion-item <?php echo $esActiva ? 'activa' : ''; ?>"
                         >
-                            <div class="conversacion-foto" style="display: flex; align-items: center; justify-content: center; background: var(--cc-primary-pale, #FFF5F4);">
-                                <?php echo icon($conv['otro_usuario_tipo'] === 'vendedor' ? 'user-check' : 'user', 28, 'icon-usuario'); ?>
-                            </div>
+                            <?php if ($conv['foto_principal']): ?>
+                                <img 
+                                    src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo $conv['foto_principal']; ?>" 
+                                    alt="<?php echo htmlspecialchars($conv['publicacion_titulo']); ?>"
+                                    class="conversacion-foto"
+                                >
+                            <?php else: ?>
+                                <div class="conversacion-foto" style="display: flex; align-items: center; justify-content: center; background: var(--cc-primary-pale, #FFF5F4);">
+                                    <?php echo icon('image', 28, 'icon-usuario'); ?>
+                                </div>
+                            <?php endif; ?>
                             
                             <div class="conversacion-info">
                                 <h4 class="conversacion-titulo">
@@ -372,9 +384,11 @@ require_once __DIR__ . '/../../layouts/nav.php';
                                     <span style="color: #ccc;">·</span>
                                     <?php echo ucfirst($conv['otro_usuario_tipo']); ?>
                                 </p>
-                                <p class="conversacion-ultimo-mensaje">
-                                    <?php echo htmlspecialchars($conv['ultimo_mensaje']); ?>
-                                </p>
+                                <?php if ($conv['ultimo_mensaje']): ?>
+                                    <p class="conversacion-ultimo-mensaje">
+                                        <?php echo htmlspecialchars($conv['ultimo_mensaje']); ?>
+                                    </p>
+                                <?php endif; ?>
                                 <div class="conversacion-meta">
                                     <span class="conversacion-fecha">
                                         <?php echo $conv['ultimo_mensaje_fecha_relativa']; ?>
@@ -394,17 +408,25 @@ require_once __DIR__ . '/../../layouts/nav.php';
 
         <!-- PANEL DERECHO: Chat activo -->
         <section class="chat-panel">
-            <?php if ($conversacionInfo): ?>
+            <?php if ($conversacionActiva): ?>
                 
                 <!-- Header del chat -->
                 <div class="chat-header">
                     <div class="chat-header-info">
-                        <div style="width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--cc-primary-pale, #FFF5F4);">
-                            <?php echo icon($conversacionInfo['otro_usuario_tipo'] === 'vendedor' ? 'user-check' : 'user', 24, 'icon-usuario'); ?>
-                        </div>
+                        <?php if (isset($conversacionActiva['otro_usuario_foto']) && $conversacionActiva['otro_usuario_foto']): ?>
+                            <img 
+                                src="<?php echo BASE_URL; ?>/uploads/usuarios/<?php echo $conversacionActiva['otro_usuario_foto']; ?>" 
+                                alt="<?php echo htmlspecialchars($conversacionActiva['otro_usuario_nombre']); ?>"
+                                style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover;"
+                            >
+                        <?php else: ?>
+                            <div style="width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--cc-primary-pale, #FFF5F4);">
+                                <?php echo icon($conversacionActiva['otro_usuario_tipo'] === 'vendedor' ? 'user-check' : 'user', 24, 'icon-usuario'); ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="chat-header-titulo">
-                            <h3><?php echo htmlspecialchars($conversacionInfo['publicacion_titulo']); ?></h3>
-                            <p>Conversación con <?php echo htmlspecialchars($conversacionInfo['otro_usuario_nombre']); ?></p>
+                            <h3><?php echo htmlspecialchars($conversacionActiva['publicacion_titulo']); ?></h3>
+                            <p>Conversación con <?php echo htmlspecialchars($conversacionActiva['otro_usuario_nombre']); ?></p>
                         </div>
                     </div>
                 </div>
@@ -421,10 +443,10 @@ require_once __DIR__ . '/../../layouts/nav.php';
                         </div>
                     <?php else: ?>
                         <?php foreach ($mensajes as $msg): ?>
-                            <div class="mensaje <?php echo ($msg['remitente_id'] == $userId) ? 'enviado' : 'recibido'; ?>">
+                            <div class="mensaje <?php echo ($msg->remitente_id == $userId) ? 'enviado' : 'recibido'; ?>">
                                 <div class="mensaje-contenido">
-                                    <p class="mensaje-texto"><?php echo nl2br(htmlspecialchars($msg['mensaje'])); ?></p>
-                                    <div class="mensaje-fecha"><?php echo $msg['fecha_formateada']; ?></div>
+                                    <p class="mensaje-texto"><?php echo nl2br(htmlspecialchars($msg->mensaje)); ?></p>
+                                    <div class="mensaje-fecha"><?php echo $msg->fecha_formateada; ?></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -434,7 +456,8 @@ require_once __DIR__ . '/../../layouts/nav.php';
                 <!-- Input de mensaje -->
                 <div class="chat-input-container">
                     <form class="chat-input-form" id="formEnviarMensaje" onsubmit="return enviarMensaje(event);">
-                        <input type="hidden" name="conversacion_id" value="<?php echo $conversacionActivaId; ?>">
+                        <input type="hidden" name="publicacion_id" value="<?php echo $conversacionActiva['publicacion_id']; ?>">
+                        <input type="hidden" name="destinatario_id" value="<?php echo $conversacionActiva['otro_usuario_id']; ?>">
                         <textarea 
                             class="chat-input" 
                             id="inputMensaje"
@@ -482,7 +505,7 @@ if (chatMensajes) {
     chatMensajes.scrollTop = chatMensajes.scrollHeight;
 }
 
-// Función para enviar mensaje (simulada con datos mock)
+// Función para enviar mensaje
 function enviarMensaje(event) {
     event.preventDefault();
     
@@ -497,57 +520,61 @@ function enviarMensaje(event) {
     btnEnviar.disabled = true;
     btnEnviar.textContent = 'Enviando...';
     
-    // SIMULACIÓN: Agregar mensaje al chat inmediatamente
-    const chatMensajes = document.getElementById('chatMensajes');
-    const mensajeHtml = `
-        <div class="mensaje enviado">
-            <div class="mensaje-contenido">
-                <p class="mensaje-texto">${mensaje.replace(/\n/g, '<br>')}</p>
-                <div class="mensaje-fecha">Justo ahora</div>
-            </div>
-        </div>
-    `;
+    // Preparar datos del formulario
+    const formData = new FormData(form);
     
-    chatMensajes.insertAdjacentHTML('beforeend', mensajeHtml);
-    chatMensajes.scrollTop = chatMensajes.scrollHeight;
-    
-    // Limpiar input
-    inputMensaje.value = '';
-    inputMensaje.style.height = 'auto';
-    
-    // Re-habilitar botón
-    setTimeout(() => {
-        btnEnviar.disabled = false;
-        btnEnviar.textContent = 'Enviar';
-    }, 500);
-    
-    // NOTA: En producción, aquí iría la llamada AJAX real al servidor
-    /*
+    // Enviar mensaje al servidor
     fetch('<?php echo BASE_URL; ?>/mensajes/enviar', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            conversacion_id: <?php echo $conversacionActivaId ?? 0; ?>,
-            mensaje: mensaje
-        })
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Agregar mensaje al DOM
-            // Scroll automático
+            // Agregar mensaje al chat
+            const chatMensajes = document.getElementById('chatMensajes');
+            const mensajeHtml = `
+                <div class="mensaje enviado">
+                    <div class="mensaje-contenido">
+                        <p class="mensaje-texto">${escapeHtml(mensaje).replace(/\n/g, '<br>')}</p>
+                        <div class="mensaje-fecha">${data.mensaje.fecha_formateada}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Si el chat estaba vacío, remover el mensaje de "sin mensajes"
+            const mensajeVacio = chatMensajes.querySelector('.mensaje-vacio');
+            if (mensajeVacio) {
+                mensajeVacio.remove();
+            }
+            
+            chatMensajes.insertAdjacentHTML('beforeend', mensajeHtml);
+            chatMensajes.scrollTop = chatMensajes.scrollHeight;
+            
+            // Limpiar input
+            inputMensaje.value = '';
+            inputMensaje.style.height = 'auto';
+        } else {
+            alert('Error al enviar el mensaje: ' + (data.error || 'Error desconocido'));
         }
     })
-    .catch(error => console.error('Error:', error))
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al enviar el mensaje. Por favor, intenta de nuevo.');
+    })
     .finally(() => {
         btnEnviar.disabled = false;
         btnEnviar.textContent = 'Enviar';
     });
-    */
     
     return false;
+}
+
+// Función auxiliar para escapar HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Enviar con Enter (Ctrl+Enter para nueva línea)
@@ -559,6 +586,87 @@ if (inputMensaje) {
         }
     });
 }
+
+// ============================================
+// POLLING AUTOMÁTICO PARA NUEVOS MENSAJES
+// ============================================
+<?php if ($conversacionActiva && !empty($mensajes)): ?>
+let ultimoMensajeId = <?php echo end($mensajes)->id; ?>;
+<?php elseif ($conversacionActiva): ?>
+let ultimoMensajeId = 0;
+<?php endif; ?>
+
+<?php if ($conversacionActiva): ?>
+// Función para verificar nuevos mensajes
+function verificarNuevosMensajes() {
+    const publicacionId = <?php echo $conversacionActiva['publicacion_id']; ?>;
+    const otroUsuarioId = <?php echo $conversacionActiva['otro_usuario_id']; ?>;
+    
+    fetch(`<?php echo BASE_URL; ?>/mensajes/obtener-nuevos?publicacion_id=${publicacionId}&otro_usuario_id=${otroUsuarioId}&ultimo_mensaje_id=${ultimoMensajeId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.mensajes && data.mensajes.length > 0) {
+                const chatMensajes = document.getElementById('chatMensajes');
+                
+                // Verificar si el usuario está al final del scroll
+                const estaAlFinal = chatMensajes.scrollHeight - chatMensajes.scrollTop <= chatMensajes.clientHeight + 100;
+                
+                // Agregar cada mensaje nuevo
+                data.mensajes.forEach(msg => {
+                    const mensajeHtml = `
+                        <div class="mensaje ${msg.es_propio ? 'enviado' : 'recibido'}">
+                            <div class="mensaje-contenido">
+                                <p class="mensaje-texto">${escapeHtml(msg.mensaje).replace(/\n/g, '<br>')}</p>
+                                <div class="mensaje-fecha">${msg.fecha_formateada}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Si el chat estaba vacío, remover el mensaje de "sin mensajes"
+                    const mensajeVacio = chatMensajes.querySelector('.mensaje-vacio');
+                    if (mensajeVacio) {
+                        mensajeVacio.remove();
+                    }
+                    
+                    chatMensajes.insertAdjacentHTML('beforeend', mensajeHtml);
+                    
+                    // Actualizar último mensaje ID
+                    ultimoMensajeId = msg.id;
+                });
+                
+                // Hacer scroll solo si el usuario estaba al final
+                if (estaAlFinal) {
+                    chatMensajes.scrollTop = chatMensajes.scrollHeight;
+                }
+                
+                // Mostrar notificación si el mensaje es de otro usuario
+                const ultimoMensaje = data.mensajes[data.mensajes.length - 1];
+                if (!ultimoMensaje.es_propio && document.hidden) {
+                    // Actualizar título de la página para notificar
+                    document.title = '(1) Nuevo mensaje - ChileChocados';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al verificar nuevos mensajes:', error);
+        });
+}
+
+// Iniciar polling cada 3 segundos
+const pollingInterval = setInterval(verificarNuevosMensajes, 3000);
+
+// Limpiar interval cuando se cierra la página
+window.addEventListener('beforeunload', function() {
+    clearInterval(pollingInterval);
+});
+
+// Restaurar título cuando el usuario vuelve a la página
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        document.title = 'Mensajes - ChileChocados';
+    }
+});
+<?php endif; ?>
 </script>
 
 <?php

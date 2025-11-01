@@ -203,6 +203,26 @@ require_once __DIR__ . '/../../layouts/header.php';
                                     ?>
                                 </span>
                             </div>
+                            
+                            <?php if ($pub['estado'] === 'rechazada' && !empty($pub['motivo_rechazo'])): ?>
+                                <div style="margin-top: 12px; padding: 12px; background: #FEE2E2; border-left: 3px solid #DC2626; border-radius: 4px;">
+                                    <div style="display: flex; align-items: start; gap: 8px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                        </svg>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; color: #DC2626; font-size: 13px; margin-bottom: 4px;">
+                                                Motivo del rechazo:
+                                            </div>
+                                            <div style="color: #991B1B; font-size: 13px; line-height: 1.5;">
+                                                <?php echo nl2br(htmlspecialchars($pub['motivo_rechazo'])); ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="publicacion-actions">
                             <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub['id']; ?>" class="btn" style="white-space: nowrap;">

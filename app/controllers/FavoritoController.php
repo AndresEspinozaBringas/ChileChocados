@@ -6,11 +6,17 @@
 
 namespace App\Controllers;
 
+use PDO;
+use PDOException;
+use DateTime;
+
 class FavoritoController
 {
+    private $db;
+    
     public function __construct()
     {
-        // TODO: Conectar con BD en futuras etapas
+        $this->db = getDB();
     }
     
     /**
@@ -28,17 +34,43 @@ class FavoritoController
         
         $userId = $_SESSION['user_id'];
         
-        // TODO: Conectar con BD en futuras etapas
-        // Por ahora mostramos favoritos desde localStorage (se maneja en el frontend)
-        $favoritos = [];
+        // Obtener favoritos desde la BD
+        try {
+            $stmt = $this->db->prepare("
+                SELECT 
+                    f.id as favorito_id,
+                    f.fecha_agregado,
+                    p.*,
+                    cat.nombre as categoria_nombre,
+                    subcat.nombre as subcategoria_nombre,
+                    com.nombre as comuna_nombre,
+                    COALESCE(
+                        (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id AND es_principal = 1 LIMIT 1),
+                        (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id ORDER BY orden LIMIT 1),
+                        p.foto_principal
+                    ) as foto_principal
+                FROM favoritos f
+                INNER JOIN publicaciones p ON f.publicacion_id = p.id
+                LEFT JOIN categorias_padre cat ON p.categoria_padre_id = cat.id
+                LEFT JOIN subcategorias subcat ON p.subcategoria_id = subcat.id
+                LEFT JOIN comunas com ON p.comuna_id = com.id
+                WHERE f.usuario_id = ?
+                ORDER BY f.fecha_agregado DESC
+            ");
+            $stmt->execute([$userId]);
+            $favoritos = $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch (PDOException $e) {
+            error_log('Error al obtener favoritos: ' . $e->getMessage());
+            $favoritos = [];
+        }
         
         // Formatear datos para la vista
         foreach ($favoritos as $favorito) {
             // Formatear precio
-            $favorito->precio_formateado = number_format($favorito->precio, 0, ',', '.');
+            $favorito->precio_formateado = number_format($favorito->precio ?? 0, 0, ',', '.');
             
             // Calcular días desde que se agregó a favoritos
-            $fecha = new DateTime($favorito->fecha_favorito);
+            $fecha = new DateTime($favorito->fecha_agregado);
             $ahora = new DateTime();
             $diferencia = $ahora->diff($fecha);
             
@@ -55,6 +87,11 @@ class FavoritoController
                 $meses = floor($diferencia->days / 30);
                 $favorito->tiempo_favorito = 'Hace ' . $meses . ' mes' . ($meses > 1 ? 'es' : '');
             }
+            
+            // Asegurar valores por defecto si no hay datos
+            $favorito->categoria_nombre = $favorito->categoria_nombre ?? 'Sin categoría';
+            $favorito->subcategoria_nombre = $favorito->subcategoria_nombre ?? '';
+            $favorito->comuna_nombre = $favorito->comuna_nombre ?? 'Sin ubicación';
         }
         
         // Datos para la vista
@@ -168,8 +205,8 @@ class FavoritoController
                 echo json_encode(['success' => false, 'message' => 'Debes iniciar sesión']);
                 return;
             }
-            Session::flash('error', 'Debes iniciar sesión');
-            header('Location: /login');
+            setFlash('error', 'Debes iniciar sesión');
+            header('Location: ' . BASE_URL . '/login');
             exit;
         }
         
@@ -188,8 +225,8 @@ class FavoritoController
                 echo json_encode(['success' => false, 'message' => 'ID inválido']);
                 return;
             }
-            Session::flash('error', 'ID de publicación inválido');
-            header('Location: /favoritos');
+            setFlash('error', 'ID de publicación inválido');
+            header('Location: ' . BASE_URL . '/favoritos');
             exit;
         }
         
@@ -209,8 +246,8 @@ class FavoritoController
                     ]);
                     return;
                 }
-                Session::flash('error', 'Publicación no encontrada en favoritos');
-                header('Location: /favoritos');
+                setFlash('error', 'Publicación no encontrada en favoritos');
+                header('Location: ' . BASE_URL . '/favoritos');
                 exit;
             }
             
@@ -228,8 +265,8 @@ class FavoritoController
                     'total_favoritos' => $total
                 ]);
             } else {
-                Session::flash('success', 'Publicación eliminada de favoritos');
-                header('Location: /favoritos');
+                setFlash('success', 'Publicación eliminada de favoritos');
+                header('Location: ' . BASE_URL . '/favoritos');
                 exit;
             }
             
@@ -240,8 +277,8 @@ class FavoritoController
                 http_response_code(500);
                 echo json_encode(['success' => false, 'message' => 'Error al eliminar']);
             } else {
-                Session::flash('error', 'Error al eliminar de favoritos');
-                header('Location: /favoritos');
+                setFlash('error', 'Error al eliminar de favoritos');
+                header('Location: ' . BASE_URL . '/favoritos');
                 exit;
             }
         }

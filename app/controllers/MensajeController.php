@@ -2,71 +2,123 @@
 /**
  * MensajeController
  * Controlador para el sistema de mensajería interna
- * 
- * NOTA: Implementación con datos MOCK (sin base de datos)
- * Para desarrollo y testing de UI/UX
  */
 
 namespace App\Controllers;
 
+use App\Models\Mensaje;
+use App\Models\Publicacion;
+use App\Models\Usuario;
+
 class MensajeController
 {
+    private $mensajeModel;
+    private $publicacionModel;
+    private $usuarioModel;
+    
+    public function __construct()
+    {
+        $this->mensajeModel = new Mensaje();
+        $this->publicacionModel = new Publicacion();
+        $this->usuarioModel = new Usuario();
+    }
+    
     /**
      * Vista principal de mensajería
      * Muestra conversaciones y chat activo
      */
     public function index()
     {
-        // Verificar sesión de usuario (simulada)
+        // Verificar sesión de usuario
         if (!isset($_SESSION['user_id'])) {
-            $_SESSION['user_id'] = 1; // Usuario mock para desarrollo
-            $_SESSION['user_nombre'] = 'Juan Pérez';
-            $_SESSION['user_role'] = 'vendedor'; // Por defecto vendedor
+            header('Location: ' . BASE_URL . '/login');
+            exit;
         }
         
         $userId = $_SESSION['user_id'];
-        $userRole = $_SESSION['user_role'] ?? 'vendedor';
         
-        // Obtener ID de publicación desde URL (si viene desde "Contactar vendedor")
+        // Si es admin, redirigir a la vista de admin
+        if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin') {
+            header('Location: ' . BASE_URL . '/admin/mensajes');
+            exit;
+        }
+        
+        // Obtener parámetros de URL
         $publicacionId = isset($_GET['publicacion']) ? (int)$_GET['publicacion'] : null;
-        $conversacionActiva = isset($_GET['conversacion']) ? (int)$_GET['conversacion'] : null;
+        $otroUsuarioId = isset($_GET['usuario']) ? (int)$_GET['usuario'] : null;
+        $conversacionKey = isset($_GET['conversacion']) ? $_GET['conversacion'] : null;
         
-        // DATOS MOCK: Conversaciones según el rol del usuario
-        // Vendedor: solo sus publicaciones
-        // Admin: todas las conversaciones del sistema (se maneja en admin)
-        $conversaciones = $this->getMockConversaciones($userId, $userRole);
+        // Obtener conversaciones del usuario
+        $conversaciones = $this->obtenerConversaciones($userId);
         
-        // Si viene desde una publicación, buscar/crear conversación
-        if ($publicacionId && !$conversacionActiva) {
+        // Determinar conversación activa
+        $conversacionActiva = null;
+        $mensajes = [];
+        
+        // Si viene desde una publicación con un usuario específico
+        if ($publicacionId && $otroUsuarioId) {
+            // Buscar si ya existe conversación
             foreach ($conversaciones as $conv) {
-                if ($conv['publicacion_id'] == $publicacionId) {
-                    $conversacionActiva = $conv['id'];
+                if ($conv['publicacion_id'] == $publicacionId && $conv['otro_usuario_id'] == $otroUsuarioId) {
+                    $conversacionActiva = $conv;
                     break;
                 }
             }
             
-            // Si no existe conversación, crear una nueva (mock)
+            // Si no existe, crear info de nueva conversación
             if (!$conversacionActiva) {
-                $conversacionActiva = count($conversaciones) + 1;
+                $publicacion = $this->publicacionModel->find($publicacionId);
+                $otroUsuario = $this->usuarioModel->find($otroUsuarioId);
+                
+                if ($publicacion && $otroUsuario) {
+                    $conversacionActiva = [
+                        'publicacion_id' => $publicacionId,
+                        'publicacion_titulo' => $publicacion->titulo,
+                        'publicacion_foto' => $publicacion->foto_principal,
+                        'otro_usuario_id' => $otroUsuarioId,
+                        'otro_usuario_nombre' => $otroUsuario->nombre . ' ' . $otroUsuario->apellido,
+                        'otro_usuario_foto' => $otroUsuario->foto_perfil,
+                        'otro_usuario_tipo' => $otroUsuario->rol,
+                        'ultimo_mensaje' => null,
+                        'ultimo_mensaje_fecha' => null,
+                        'mensajes_no_leidos' => 0,
+                        'es_nueva' => true
+                    ];
+                }
             }
         }
-        
-        // Seleccionar primera conversación si no hay una activa
-        if (!$conversacionActiva && !empty($conversaciones)) {
-            $conversacionActiva = $conversaciones[0]['id'];
+        // Si viene con clave de conversación (publicacion_id-otro_usuario_id)
+        elseif ($conversacionKey) {
+            foreach ($conversaciones as $conv) {
+                $key = $conv['publicacion_id'] . '-' . $conv['otro_usuario_id'];
+                if ($key === $conversacionKey) {
+                    $conversacionActiva = $conv;
+                    break;
+                }
+            }
+        }
+        // Seleccionar primera conversación por defecto
+        elseif (!empty($conversaciones)) {
+            $conversacionActiva = $conversaciones[0];
         }
         
         // Obtener mensajes de la conversación activa
-        $mensajes = $conversacionActiva ? $this->getMockMensajes($conversacionActiva, $userId) : [];
-        
-        // Obtener info de la conversación activa
-        $conversacionInfo = null;
-        if ($conversacionActiva) {
-            foreach ($conversaciones as $conv) {
-                if ($conv['id'] == $conversacionActiva) {
-                    $conversacionInfo = $conv;
-                    break;
-                }
+        if ($conversacionActiva && !isset($conversacionActiva['es_nueva'])) {
+            $mensajes = $this->mensajeModel->getConversacion(
+                $conversacionActiva['publicacion_id'],
+                $userId,
+                $conversacionActiva['otro_usuario_id']
+            );
+            
+            // Marcar mensajes como leídos
+            $this->mensajeModel->marcarConversacionLeida(
+                $conversacionActiva['publicacion_id'],
+                $userId
+            );
+            
+            // Formatear fechas
+            foreach ($mensajes as &$mensaje) {
+                $mensaje->fecha_formateada = $this->formatearFecha($mensaje->fecha_envio);
             }
         }
         
@@ -74,8 +126,7 @@ class MensajeController
         $data = [
             'title' => 'Mensajes - ChileChocados',
             'conversaciones' => $conversaciones,
-            'conversacion_activa_id' => $conversacionActiva,
-            'conversacion_info' => $conversacionInfo,
+            'conversacion_activa' => $conversacionActiva,
             'mensajes' => $mensajes,
             'user_id' => $userId
         ];
@@ -85,10 +136,12 @@ class MensajeController
     }
     
     /**
-     * Enviar mensaje (AJAX endpoint simulado)
+     * Enviar mensaje (AJAX endpoint)
      */
     public function enviar()
     {
+        header('Content-Type: application/json');
+        
         // Verificar método POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
@@ -96,30 +149,73 @@ class MensajeController
             return;
         }
         
-        // Simulación de envío exitoso
-        $mensaje = $_POST['mensaje'] ?? '';
-        $conversacionId = $_POST['conversacion_id'] ?? 0;
+        // Verificar sesión
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'No autorizado']);
+            return;
+        }
         
+        $userId = $_SESSION['user_id'];
+        
+        // Obtener datos del POST
+        $publicacionId = isset($_POST['publicacion_id']) ? (int)$_POST['publicacion_id'] : 0;
+        $destinatarioId = isset($_POST['destinatario_id']) ? (int)$_POST['destinatario_id'] : 0;
+        $mensaje = isset($_POST['mensaje']) ? trim($_POST['mensaje']) : '';
+        
+        // Validaciones
         if (empty($mensaje)) {
             http_response_code(400);
             echo json_encode(['error' => 'El mensaje no puede estar vacío']);
             return;
         }
         
-        // Respuesta mock exitosa
-        $response = [
-            'success' => true,
-            'mensaje' => [
-                'id' => rand(1000, 9999),
-                'texto' => $mensaje,
-                'remitente_id' => $_SESSION['user_id'] ?? 1,
-                'fecha' => date('Y-m-d H:i:s'),
-                'fecha_formateada' => 'Justo ahora'
-            ]
-        ];
+        if (!$publicacionId || !$destinatarioId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos incompletos']);
+            return;
+        }
         
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        // Verificar que la publicación existe
+        $publicacion = $this->publicacionModel->find($publicacionId);
+        if (!$publicacion) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Publicación no encontrada']);
+            return;
+        }
+        
+        // Verificar que el usuario puede enviar mensajes sobre esta publicación
+        // (debe ser el dueño o un interesado)
+        if ($publicacion->usuario_id != $userId && $destinatarioId != $publicacion->usuario_id) {
+            http_response_code(403);
+            echo json_encode(['error' => 'No tienes permiso para enviar mensajes en esta publicación']);
+            return;
+        }
+        
+        // Enviar mensaje
+        $mensajeId = $this->mensajeModel->enviar(
+            $publicacionId,
+            $userId,
+            $destinatarioId,
+            $mensaje
+        );
+        
+        if ($mensajeId) {
+            $response = [
+                'success' => true,
+                'mensaje' => [
+                    'id' => $mensajeId,
+                    'texto' => $mensaje,
+                    'remitente_id' => $userId,
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'fecha_formateada' => 'Justo ahora'
+                ]
+            ];
+            echo json_encode($response);
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Error al enviar el mensaje']);
+        }
     }
     
     /**
@@ -127,164 +223,124 @@ class MensajeController
      */
     public function marcarLeido()
     {
-        $conversacionId = $_POST['conversacion_id'] ?? 0;
+        header('Content-Type: application/json');
         
-        // Simulación: siempre exitoso
-        echo json_encode(['success' => true]);
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'No autorizado']);
+            return;
+        }
+        
+        $publicacionId = isset($_POST['publicacion_id']) ? (int)$_POST['publicacion_id'] : 0;
+        
+        if ($publicacionId) {
+            $this->mensajeModel->marcarConversacionLeida($publicacionId, $_SESSION['user_id']);
+            echo json_encode(['success' => true]);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos incompletos']);
+        }
     }
     
     /**
-     * DATOS MOCK: Obtener conversaciones del usuario
-     * @param int $userId ID del usuario
-     * @param string $userRole Rol del usuario (vendedor, comprador, admin)
+     * Obtener nuevos mensajes de una conversación (AJAX endpoint para polling)
      */
-    private function getMockConversaciones($userId, $userRole = 'vendedor')
+    public function obtenerNuevos()
     {
-        // Conversaciones de ejemplo para un vendedor (usuario_id = 1)
-        // Muestra compradores interesados en sus publicaciones
-        $conversacionesVendedor = [
-            [
-                'id' => 1,
-                'publicacion_id' => 1,
-                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
-                'publicacion_foto' => 'ford-territory.jpg',
-                'otro_usuario_id' => 10,
-                'otro_usuario_nombre' => 'Pedro Sánchez',
-                'otro_usuario_tipo' => 'comprador',
-                'ultimo_mensaje' => '¿Puedo ir a verlo mañana?',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 hour')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 1 hora',
-                'mensajes_no_leidos' => 1,
-                'esta_activa' => true
-            ],
-            [
-                'id' => 2,
-                'publicacion_id' => 1,
-                'publicacion_titulo' => 'Ford Territory 2022 - Chocado Frontal',
-                'publicacion_foto' => 'ford-territory.jpg',
-                'otro_usuario_id' => 11,
-                'otro_usuario_nombre' => 'Laura Díaz',
-                'otro_usuario_tipo' => 'comprador',
-                'ultimo_mensaje' => '¿Acepta permuta?',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-3 hours')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 3 horas',
-                'mensajes_no_leidos' => 0,
-                'esta_activa' => false
-            ],
-            [
-                'id' => 3,
-                'publicacion_id' => 2,
-                'publicacion_titulo' => 'Kia Cerato 2020 - Choque Lateral',
-                'publicacion_foto' => 'kia-cerato.jpg',
-                'otro_usuario_id' => 12,
-                'otro_usuario_nombre' => 'Roberto Muñoz',
-                'otro_usuario_tipo' => 'comprador',
-                'ultimo_mensaje' => 'Perfecto, quedamos en contacto',
-                'ultimo_mensaje_fecha' => date('Y-m-d H:i:s', strtotime('-1 day')),
-                'ultimo_mensaje_fecha_relativa' => 'Hace 1 día',
-                'mensajes_no_leidos' => 0,
-                'esta_activa' => false
-            ]
-        ];
+        header('Content-Type: application/json');
         
-        // Si es vendedor, retornar solo sus conversaciones
-        return $conversacionesVendedor;
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode(['error' => 'No autorizado']);
+            return;
+        }
+        
+        $userId = $_SESSION['user_id'];
+        $publicacionId = isset($_GET['publicacion_id']) ? (int)$_GET['publicacion_id'] : 0;
+        $otroUsuarioId = isset($_GET['otro_usuario_id']) ? (int)$_GET['otro_usuario_id'] : 0;
+        $ultimoMensajeId = isset($_GET['ultimo_mensaje_id']) ? (int)$_GET['ultimo_mensaje_id'] : 0;
+        
+        if (!$publicacionId || !$otroUsuarioId) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Datos incompletos']);
+            return;
+        }
+        
+        // Obtener mensajes de la conversación
+        $mensajes = $this->mensajeModel->getConversacion($publicacionId, $userId, $otroUsuarioId);
+        
+        // Filtrar solo mensajes nuevos (después del último ID conocido)
+        $mensajesNuevos = array_filter($mensajes, function($msg) use ($ultimoMensajeId) {
+            return $msg->id > $ultimoMensajeId;
+        });
+        
+        // Marcar como leídos los mensajes recibidos
+        if (!empty($mensajesNuevos)) {
+            $this->mensajeModel->marcarConversacionLeida($publicacionId, $userId);
+        }
+        
+        // Formatear mensajes
+        $mensajesFormateados = array_map(function($msg) use ($userId) {
+            return [
+                'id' => $msg->id,
+                'mensaje' => $msg->mensaje,
+                'remitente_id' => $msg->remitente_id,
+                'es_propio' => $msg->remitente_id == $userId,
+                'fecha_formateada' => $this->formatearFecha($msg->fecha_envio)
+            ];
+        }, array_values($mensajesNuevos));
+        
+        echo json_encode([
+            'success' => true,
+            'mensajes' => $mensajesFormateados
+        ]);
     }
     
     /**
-     * DATOS MOCK: Obtener mensajes de una conversación
+     * Obtener conversaciones del usuario agrupadas por publicación y otro usuario
      */
-    private function getMockMensajes($conversacionId, $userId)
+    private function obtenerConversaciones($usuarioId)
     {
-        $mensajesPorConversacion = [
-            1 => [ // Conversación con María González
-                [
-                    'id' => 1,
-                    'remitente_id' => 1, // Usuario actual
-                    'remitente_nombre' => 'Juan Pérez',
-                    'destinatario_id' => 2,
-                    'mensaje' => 'Hola, ¿el vehículo aún está disponible?',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-3 hours')),
-                    'fecha_formateada' => 'Hace 3 horas',
-                    'leido' => true
-                ],
-                [
-                    'id' => 2,
-                    'remitente_id' => 2, // Vendedor
-                    'remitente_nombre' => 'María González',
-                    'destinatario_id' => 1,
-                    'mensaje' => 'Sí, todavía está disponible. ¿Te interesa verlo?',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-2 hours 45 minutes')),
-                    'fecha_formateada' => 'Hace 2 horas',
-                    'leido' => true
-                ],
-                [
-                    'id' => 3,
-                    'remitente_id' => 1,
-                    'remitente_nombre' => 'Juan Pérez',
-                    'destinatario_id' => 2,
-                    'mensaje' => 'Sí, me gustaría saber más detalles. ¿Cuál es el estado exacto del motor?',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-2 hours 30 minutes')),
-                    'fecha_formateada' => 'Hace 2 horas',
-                    'leido' => true
-                ],
-                [
-                    'id' => 4,
-                    'remitente_id' => 2,
-                    'remitente_nombre' => 'María González',
-                    'destinatario_id' => 1,
-                    'mensaje' => 'El motor está en perfectas condiciones, el choque fue solo frontal en la carrocería. Puedo enviarte más fotos si quieres.',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-2 hours')),
-                    'fecha_formateada' => 'Hace 2 horas',
-                    'leido' => false
-                ]
-            ],
-            2 => [ // Conversación con Carlos Ramírez
-                [
-                    'id' => 5,
-                    'remitente_id' => 1,
-                    'remitente_nombre' => 'Juan Pérez',
-                    'destinatario_id' => 3,
-                    'mensaje' => '¿Aceptas ofertas?',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-2 days')),
-                    'fecha_formateada' => 'Hace 2 días',
-                    'leido' => true
-                ],
-                [
-                    'id' => 6,
-                    'remitente_id' => 3,
-                    'remitente_nombre' => 'Carlos Ramírez',
-                    'destinatario_id' => 1,
-                    'mensaje' => 'El precio es negociable según el estado',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-1 day')),
-                    'fecha_formateada' => 'Hace 1 día',
-                    'leido' => true
-                ]
-            ],
-            3 => [ // Conversación con Ana Martínez
-                [
-                    'id' => 7,
-                    'remitente_id' => 1,
-                    'remitente_nombre' => 'Juan Pérez',
-                    'destinatario_id' => 4,
-                    'mensaje' => 'Me interesan las piezas del motor',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-4 days')),
-                    'fecha_formateada' => 'Hace 4 días',
-                    'leido' => true
-                ],
-                [
-                    'id' => 8,
-                    'remitente_id' => 4,
-                    'remitente_nombre' => 'Ana Martínez',
-                    'destinatario_id' => 1,
-                    'mensaje' => 'Perfecto, quedamos en contacto',
-                    'fecha' => date('Y-m-d H:i:s', strtotime('-3 days')),
-                    'fecha_formateada' => 'Hace 3 días',
-                    'leido' => true
-                ]
-            ]
-        ];
+        $conversaciones = $this->mensajeModel->getConversacionesUsuario($usuarioId);
         
-        return $mensajesPorConversacion[$conversacionId] ?? [];
+        // Convertir objetos a arrays y formatear
+        $resultado = [];
+        foreach ($conversaciones as $conv) {
+            $convArray = (array) $conv;
+            $convArray['ultimo_mensaje_fecha_relativa'] = $this->formatearFecha($conv->ultimo_mensaje_fecha);
+            $convArray['conversacion_key'] = $conv->publicacion_id . '-' . $conv->otro_usuario_id;
+            $resultado[] = $convArray;
+        }
+        
+        return $resultado;
+    }
+    
+    /**
+     * Formatear fecha de forma relativa (hace X tiempo)
+     */
+    private function formatearFecha($fecha)
+    {
+        if (!$fecha) return '';
+        
+        $timestamp = strtotime($fecha);
+        $diff = time() - $timestamp;
+        
+        if ($diff < 60) {
+            return 'Justo ahora';
+        } elseif ($diff < 3600) {
+            $mins = floor($diff / 60);
+            return 'Hace ' . $mins . ' ' . ($mins == 1 ? 'minuto' : 'minutos');
+        } elseif ($diff < 86400) {
+            $hours = floor($diff / 3600);
+            return 'Hace ' . $hours . ' ' . ($hours == 1 ? 'hora' : 'horas');
+        } elseif ($diff < 604800) {
+            $days = floor($diff / 86400);
+            return 'Hace ' . $days . ' ' . ($days == 1 ? 'día' : 'días');
+        } elseif ($diff < 2592000) {
+            $weeks = floor($diff / 604800);
+            return 'Hace ' . $weeks . ' ' . ($weeks == 1 ? 'semana' : 'semanas');
+        } else {
+            return date('d/m/Y', $timestamp);
+        }
     }
 }
