@@ -121,6 +121,8 @@ require_once __DIR__ . '/../../layouts/header.php';
     border-radius: 8px;
     font-size: 15px;
     transition: all 0.2s;
+    background: var(--cc-white);
+    color: var(--cc-text-primary);
 }
 
 .form-input:focus {
@@ -134,6 +136,23 @@ require_once __DIR__ . '/../../layouts/header.php';
     cursor: not-allowed;
 }
 
+/* Forzar estilos consistentes para todos los tipos de input */
+input[type="text"].form-input,
+input[type="email"].form-input,
+input[type="tel"].form-input {
+    background: var(--cc-white) !important;
+    color: var(--cc-text-primary) !important;
+}
+
+/* Prevenir estilos de autocompletado del navegador */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--cc-white) inset !important;
+    -webkit-text-fill-color: var(--cc-text-primary) !important;
+    box-shadow: 0 0 0 1000px var(--cc-white) inset !important;
+}
+
 .form-help {
     font-size: 13px;
     color: var(--cc-text-secondary);
@@ -141,9 +160,275 @@ require_once __DIR__ . '/../../layouts/header.php';
 }
 
 @media (max-width: 768px) {
+    .profile-container {
+        margin: 16px auto;
+        padding: 0 16px;
+    }
+    
+    .profile-header {
+        padding: 20px;
+    }
+    
+    .profile-header > div {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 16px !important;
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+    }
+    
     .profile-stats {
         grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 16px;
     }
+    
+    .profile-stat {
+        padding: 16px 12px;
+    }
+    
+    .profile-stat-value {
+        font-size: 24px;
+    }
+    
+    .profile-stat-label {
+        font-size: 11px;
+    }
+    
+    .profile-section {
+        padding: 20px;
+    }
+    
+    .profile-section-title {
+        font-size: 18px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+    }
+    
+    .profile-section form > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    .form-group {
+        margin-bottom: 16px;
+    }
+    
+    .form-label {
+        font-size: 13px;
+    }
+    
+    .form-input {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+    
+    .profile-section > div[style*="display: flex"] {
+        flex-direction: column !important;
+    }
+    
+    .profile-section > div[style*="display: flex"] button,
+    .profile-section > div[style*="display: flex"] a {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    /* Grid de publicaciones */
+    .profile-section > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-header h1 {
+        font-size: 22px !important;
+    }
+    
+    .profile-header p {
+        font-size: 14px !important;
+    }
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] {
+    --cc-white: #1F2937;
+    --cc-bg-default: #111827;
+    --cc-bg-surface: #1F2937;
+    --cc-bg-muted: #374151;
+    --cc-border-default: #374151;
+    --cc-text-primary: #F3F4F6;
+    --cc-text-secondary: #D1D5DB;
+    --cc-text-tertiary: #9CA3AF;
+}
+
+:root[data-theme="dark"] .profile-header {
+    background: #1F2937;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .profile-avatar {
+    background: rgba(230, 51, 42, 0.15);
+    border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .profile-stat {
+    background: #111827;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .profile-stat-label {
+    color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .profile-section {
+    background: #1F2937;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .profile-section-title {
+    color: #F3F4F6;
+    border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .form-label {
+    color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .form-input {
+    background: #374151 !important;
+    border-color: #4B5563;
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .form-input:focus {
+    border-color: var(--cc-primary);
+    background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] .form-input:disabled {
+    background: #4B5563 !important;
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .form-input::placeholder {
+    color: #9CA3AF;
+}
+
+/* Forzar estilos consistentes en modo oscuro para todos los tipos de input */
+:root[data-theme="dark"] input[type="text"].form-input,
+:root[data-theme="dark"] input[type="email"].form-input,
+:root[data-theme="dark"] input[type="tel"].form-input {
+    background: #374151 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Prevenir estilos de autocompletado del navegador en modo oscuro */
+:root[data-theme="dark"] .form-input:-webkit-autofill,
+:root[data-theme="dark"] .form-input:-webkit-autofill:hover,
+:root[data-theme="dark"] .form-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #374151 inset !important;
+    -webkit-text-fill-color: #F3F4F6 !important;
+    box-shadow: 0 0 0 1000px #374151 inset !important;
+}
+
+:root[data-theme="dark"] .form-help {
+    color: #9CA3AF;
+}
+
+/* Badges y spans con estilos inline */
+:root[data-theme="dark"] span[style*="background: var(--cc-bg-muted)"] {
+    background: #374151 !important;
+    color: #D1D5DB !important;
+}
+
+/* Títulos y textos */
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] p[style*="color: var(--cc-text-secondary)"] {
+    color: #D1D5DB !important;
+}
+
+/* Publicaciones cards */
+:root[data-theme="dark"] div[style*="border: 2px solid var(--cc-border-default)"] {
+    border-color: #374151 !important;
+    background: #1F2937;
+}
+
+:root[data-theme="dark"] div[style*="border: 2px solid var(--cc-border-default)"]:hover {
+    border-color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] div[style*="background: var(--cc-bg-muted)"] {
+    background: #374151 !important;
+}
+
+:root[data-theme="dark"] div[style*="color: var(--cc-text-primary)"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] div[style*="color: var(--cc-text-secondary)"] {
+    color: #9CA3AF !important;
+}
+
+/* Mensajes flash */
+:root[data-theme="dark"] div[style*="background: rgba(16, 185, 129, 0.1)"] {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border-color: #10B981 !important;
+    color: #6EE7B7 !important;
+}
+
+:root[data-theme="dark"] div[style*="background: rgba(239, 68, 68, 0.1)"] {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: #EF4444 !important;
+    color: #FCA5A5 !important;
+}
+
+/* Botones */
+:root[data-theme="dark"] .btn {
+    background: #374151;
+    color: #F3F4F6;
+    border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .btn:hover {
+    background: #4B5563;
+    border-color: #6B7280;
+}
+
+:root[data-theme="dark"] .btn.primary {
+    background: var(--cc-primary);
+    color: white;
+    border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .btn.primary:hover {
+    background: var(--cc-primary-dark);
+    border-color: var(--cc-primary-dark);
+}
+
+/* Imágenes de publicaciones */
+:root[data-theme="dark"] img {
+    opacity: 0.9;
+}
+
+:root[data-theme="dark"] img:hover {
+    opacity: 1;
 }
 </style>
 

@@ -16,9 +16,9 @@ require_once APP_PATH . '/views/layouts/header.php';
   </div>
 
   <!-- Banner de categorías -->
-  <div class="card" style="margin-top: 16px; background: linear-gradient(135deg, #0066CC 0%, #004C99 100%); color: white;">
-    <div class="h1" style="color: white;">Explora por Categoría</div>
-    <p class="meta" style="margin-top: 8px; color: rgba(255,255,255,0.9);">
+  <div class="card" style="margin-top: 16px; background: #2C3E50; color: white; text-align: center; padding: 48px 32px; border: 2px solid #34495E;">
+    <div class="h1" style="color: white; margin-bottom: 12px;">Explora por Categoría</div>
+    <p style="font-size: 16px; color: rgba(255,255,255,0.9); margin: 0;">
       Encuentra vehículos siniestrados y en desarme organizados por tipo. 
       <?php echo count($categorias); ?> categorías disponibles con 
       <?php echo number_format($total_publicaciones, 0, ',', '.'); ?> publicaciones activas.
@@ -130,16 +130,16 @@ require_once APP_PATH . '/views/layouts/header.php';
   <?php endif; ?>
 
   <!-- Call to action -->
-  <div class="card" style="margin-top: 48px; background: #f8f9fa; text-align: center; padding: 32px;">
-    <div class="h2">¿Tienes un vehículo para vender?</div>
-    <p class="meta" style="margin-top: 8px;">
+  <div class="card" style="margin-top: 48px; background: #2C3E50; color: white; text-align: center; padding: 48px 32px; border: 2px solid #34495E;">
+    <div class="h2" style="color: white; margin-bottom: 12px;">¿Tienes un vehículo para vender?</div>
+    <p style="font-size: 16px; color: rgba(255,255,255,0.9); margin: 0 0 24px 0;">
       Publica tu vehículo siniestrado o en desarme de forma gratuita
     </p>
-    <div style="margin-top: 16px;">
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
       <a href="<?php echo BASE_URL; ?>/publicaciones/crear" class="btn primary" style="padding: 12px 24px;">
         Publicar mi vehículo
       </a>
-      <a href="<?php echo BASE_URL; ?>/listado" class="btn" style="margin-left: 12px; padding: 12px 24px;">
+      <a href="<?php echo BASE_URL; ?>/listado" class="btn" style="padding: 12px 24px; background: transparent; color: white; border: 2px solid white;">
         Ver todas las publicaciones
       </a>
     </div>
@@ -186,6 +186,176 @@ require_once APP_PATH . '/views/layouts/header.php';
 
 .cat-count {
   flex-shrink: 0;
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .breadcrumbs {
+  color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .breadcrumbs a {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .breadcrumbs span {
+  color: #D1D5DB;
+}
+
+/* Banner de categorías */
+:root[data-theme="dark"] .card[style*="background: #2C3E50"] {
+  background: #2C3E50 !important;
+  border-color: #34495E !important;
+}
+
+:root[data-theme="dark"] .card[style*="background: #2C3E50"] .h1,
+:root[data-theme="dark"] .card[style*="background: #2C3E50"] .h2 {
+  color: white !important;
+}
+
+:root[data-theme="dark"] .card[style*="background: #2C3E50"] p {
+  color: rgba(255,255,255,0.9) !important;
+}
+
+/* Títulos y textos */
+:root[data-theme="dark"] .h2 {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .h3 {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .meta {
+  color: #9CA3AF;
+}
+
+/* Cards generales */
+:root[data-theme="dark"] .card {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+/* Cards de categorías */
+:root[data-theme="dark"] .cat-card {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .cat-card:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .cat-card .h3 {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .cat-card .meta {
+  color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .iconify svg {
+  color: var(--cc-primary) !important;
+  stroke: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .cat-count {
+  background: var(--cc-primary) !important;
+  color: white !important;
+}
+
+/* Sección de subcategorías */
+:root[data-theme="dark"] .card .h3 {
+  color: #F3F4F6;
+}
+
+/* Botones de subcategorías */
+:root[data-theme="dark"] .btn {
+  background: #374151;
+  color: #F3F4F6;
+  border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .btn:hover {
+  background: #4B5563;
+  border-color: #6B7280;
+}
+
+:root[data-theme="dark"] .btn.primary {
+  background: var(--cc-primary);
+  color: white;
+  border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .btn.primary:hover {
+  background: #c72a22;
+  border-color: #c72a22;
+}
+
+:root[data-theme="dark"] .btn span {
+  color: #9CA3AF;
+}
+
+/* CTA final - ya no es necesario porque usa el mismo estilo que el banner */
+
+/* Botones en CTA */
+:root[data-theme="dark"] .card[style*="background: #2C3E50"] .btn[style*="background: transparent"] {
+  background: transparent !important;
+  color: white !important;
+  border-color: white !important;
+}
+
+:root[data-theme="dark"] .card[style*="background: #2C3E50"] .btn[style*="background: transparent"]:hover {
+  background: rgba(255,255,255,0.1) !important;
+}
+
+/* Estado vacío */
+:root[data-theme="dark"] .card[style*="grid-column: 1 / -1"] {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .card[style*="grid-column: 1 / -1"] .meta {
+  color: #9CA3AF !important;
+}
+
+/* Forzar fondo oscuro en todas las cards que no sean los banners especiales */
+:root[data-theme="dark"] .card:not([style*="background: #2C3E50"]) {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Asegurar que las subcategorías tengan fondo oscuro */
+:root[data-theme="dark"] section .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] section .card .h3 {
+  color: #F3F4F6 !important;
+}
+
+/* Grid de subcategorías */
+:root[data-theme="dark"] .card .grid {
+  background: transparent;
+}
+
+:root[data-theme="dark"] .card .grid .btn {
+  background: #374151 !important;
+  color: #F3F4F6 !important;
+  border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .card .grid .btn:hover {
+  background: #4B5563 !important;
+  border-color: #6B7280 !important;
+}
+
+:root[data-theme="dark"] .card .grid .btn span {
+  color: #9CA3AF !important;
 }
 </style>
 

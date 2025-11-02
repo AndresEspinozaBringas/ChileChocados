@@ -72,11 +72,53 @@ require_once __DIR__ . '/../../layouts/header.php';
     border-radius: 6px;
     font-size: 14px;
     background: var(--cc-white, #FFFFFF);
+    color: var(--cc-text-primary, #2E2E2E);
+}
+
+.card {
+    background: var(--cc-white, #FFFFFF);
+    border: 1px solid var(--cc-border-default, #E5E5E5);
+    border-radius: 8px;
+    padding: 20px;
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding: 16px !important;
+        margin-top: 16px !important;
+    }
+    
+    /* Header */
+    main > div:first-child {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px !important;
+    }
+    
+    main > div:first-child a.btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    /* Filtros */
+    .filters-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+    
+    .filters-bar button {
+        width: 100%;
+    }
+    
+    /* Publicación item */
     .publicacion-item {
         flex-direction: column;
+        padding: 12px;
     }
     
     .publicacion-img {
@@ -84,9 +126,238 @@ require_once __DIR__ . '/../../layouts/header.php';
         height: 180px;
     }
     
+    .publicacion-info h3 {
+        font-size: 16px !important;
+    }
+    
+    .publicacion-info > div:first-child {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+    
+    .publicacion-meta {
+        gap: 12px;
+        font-size: 12px;
+    }
+    
+    /* Acciones */
     .publicacion-actions {
         flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
     }
+    
+    .publicacion-actions a,
+    .publicacion-actions button {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        font-size: 13px;
+        padding: 8px 12px;
+        white-space: nowrap;
+    }
+    
+    /* Modal */
+    .admin-modal {
+        padding: 12px;
+    }
+    
+    .admin-modal-content {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .admin-modal-header {
+        padding: 20px;
+    }
+    
+    .admin-modal-header h2 {
+        font-size: 18px !important;
+    }
+    
+    .admin-modal-body {
+        padding: 20px;
+    }
+    
+    .admin-modal-body form > div {
+        flex-direction: column !important;
+    }
+    
+    .admin-modal-body form button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .publicacion-actions a,
+    .publicacion-actions button {
+        min-width: 100%;
+        flex: 1 1 100%;
+    }
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] {
+    --cc-white: #1F2937;
+    --cc-bg-default: #111827;
+    --cc-bg-surface: #1F2937;
+    --cc-bg-muted: #374151;
+    --cc-border-default: #374151;
+    --cc-text-primary: #F3F4F6;
+    --cc-text-secondary: #D1D5DB;
+    --cc-text-tertiary: #9CA3AF;
+}
+
+:root[data-theme="dark"] .publicacion-item {
+    background: #1F2937;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .publicacion-item:hover {
+    border-color: var(--cc-primary);
+    box-shadow: 0 2px 8px rgba(230, 51, 42, 0.3);
+}
+
+:root[data-theme="dark"] .publicacion-img {
+    background: #374151;
+}
+
+:root[data-theme="dark"] .publicacion-info h3 a {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .publicacion-meta {
+    color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .filter-select {
+    background: #374151 !important;
+    border-color: #4B5563 !important;
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .filter-select:focus {
+    border-color: var(--cc-primary) !important;
+    background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] .filter-select::placeholder {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .filter-select option {
+    background: #374151;
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .btn {
+    background: #374151;
+    color: #F3F4F6;
+    border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .btn:hover {
+    background: #4B5563;
+    border-color: #6B7280;
+}
+
+:root[data-theme="dark"] .btn.primary {
+    background: var(--cc-primary);
+    color: white;
+    border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .btn.primary:hover {
+    background: #c72a22;
+    border-color: #c72a22;
+}
+
+:root[data-theme="dark"] .btn.outline {
+    background: transparent;
+    color: #F3F4F6;
+    border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .btn.outline:hover {
+    background: #374151;
+    border-color: #6B7280;
+}
+
+/* Badges en dark mode */
+:root[data-theme="dark"] .badge {
+    opacity: 0.9;
+}
+
+/* Botones de acción específicos */
+:root[data-theme="dark"] .publicacion-actions button[style*="background: #d1fae5"] {
+    background: rgba(16, 185, 129, 0.2) !important;
+    color: #6EE7B7 !important;
+    border-color: #10B981 !important;
+}
+
+:root[data-theme="dark"] .publicacion-actions button[style*="background: #fee2e2"] {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #FCA5A5 !important;
+    border-color: #EF4444 !important;
+}
+
+/* Mensaje de rechazo en dark mode */
+:root[data-theme="dark"] .publicacion-info > div[style*="background: #FEE2E2"] {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-left-color: #EF4444 !important;
+}
+
+:root[data-theme="dark"] .publicacion-info > div[style*="background: #FEE2E2"] div[style*="color: #DC2626"] {
+    color: #FCA5A5 !important;
+}
+
+:root[data-theme="dark"] .publicacion-info > div[style*="background: #FEE2E2"] div[style*="color: #991B1B"] {
+    color: #FCA5A5 !important;
+}
+
+/* Estado vacío */
+:root[data-theme="dark"] .card > div[style*="text-align: center"] {
+    color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .card > div[style*="text-align: center"] h3 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .card > div[style*="text-align: center"] p {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .card > div[style*="text-align: center"] svg {
+    opacity: 0.2;
+}
+
+/* Títulos y textos */
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] .h3,
+:root[data-theme="dark"] .h4 {
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .meta {
+    color: #9CA3AF;
+}
+
+/* Asegurar que el contenedor principal tenga fondo oscuro */
+:root[data-theme="dark"] .container {
+    background: transparent;
+}
+
+:root[data-theme="dark"] main {
+    background: transparent;
 }
 </style>
 
@@ -483,6 +754,90 @@ document.addEventListener('keydown', function(e) {
 
 .admin-modal-body::-webkit-scrollbar-thumb:hover {
     background: #6B7280;
+}
+
+/* ============================================================================
+ * DARK MODE - MODALES
+ * ============================================================================ */
+
+:root[data-theme="dark"] .admin-modal {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme="dark"] .admin-modal-content {
+    background-color: #1F2937;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-header {
+    border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-header h2 {
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .admin-modal-body {
+    color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .admin-modal-body p {
+    color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .admin-modal-body p[style*="font-weight: 700"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body p[style*="color: #065f46"] {
+    color: #6EE7B7 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body p[style*="color: var(--cc-danger)"] {
+    color: #FCA5A5 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body div[style*="background: #d1fae5"] {
+    background: rgba(16, 185, 129, 0.15) !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body div[style*="background: #d1fae5"] svg {
+    stroke: #6EE7B7 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-thumb {
+    background: #4B5563;
+}
+
+:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #6B7280;
+}
+
+/* Botones específicos en modales */
+:root[data-theme="dark"] .admin-modal-body button[style*="background: #10B981"] {
+    background: #10B981 !important;
+    color: white !important;
+    border-color: #10B981 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body button[style*="background: #10B981"]:hover {
+    background: #059669 !important;
+    border-color: #059669 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body button[style*="background: var(--cc-danger)"] {
+    background: #EF4444 !important;
+    color: white !important;
+    border-color: #EF4444 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body button[style*="background: var(--cc-danger)"]:hover {
+    background: #DC2626 !important;
+    border-color: #DC2626 !important;
 }
 </style>
 

@@ -75,16 +75,16 @@ layout('header');
   </div>
 
   <!-- Filtros Adicionales (Colapsables) -->
-  <div class="card" style="margin-bottom: 24px; padding: 16px 24px;">
-    <button type="button" onclick="toggleFilters()" class="filter-toggle" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: none; border: none; cursor: pointer; padding: 8px 0;">
-      <span style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+  <div class="card filtros-card" style="margin-bottom: 24px; padding: 16px 24px;">
+    <button type="button" onclick="toggleFilters()" class="filter-toggle" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: none; border: none; cursor: pointer; padding: 8px 0; color: var(--cc-text-primary);">
+      <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--cc-text-primary);">
         <?php echo icon('filter', 18); ?>
         Filtros Avanzados
       </span>
       <?php echo icon('chevron-down', 18); ?>
     </button>
     
-    <div id="advanced-filters" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cc-border-default, #D4D4D4);">
+    <div id="advanced-filters" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cc-border-default);">
       <form method="GET" action="<?php echo BASE_URL; ?>/admin/publicaciones" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
         
         <!-- Mantener estado actual -->
@@ -94,8 +94,8 @@ layout('header');
         
         <!-- Categoría -->
         <div>
-          <label class="label">Categoría</label>
-          <select name="categoria" class="input">
+          <label class="label" style="color: var(--cc-text-secondary);">Categoría</label>
+          <select name="categoria" class="input" style="background: var(--cc-bg-surface); color: var(--cc-text-primary); border-color: var(--cc-border-default);">
             <option value="">Todas las categorías</option>
             <?php foreach ($categorias ?? [] as $cat): ?>
               <option value="<?php echo $cat->id; ?>" <?php echo ($filtros['categoria_id'] ?? '') == $cat->id ? 'selected' : ''; ?>>
@@ -107,35 +107,38 @@ layout('header');
 
         <!-- Búsqueda -->
         <div>
-          <label class="label">Buscar</label>
+          <label class="label" style="color: var(--cc-text-secondary);">Buscar</label>
           <input 
             type="text" 
             name="q" 
           class="input" 
           placeholder="Título, marca, modelo..." 
           value="<?php echo htmlspecialchars($filtros['busqueda'] ?? ''); ?>"
+          style="background: var(--cc-bg-surface); color: var(--cc-text-primary); border-color: var(--cc-border-default);"
         >
       </div>
 
       <!-- Fecha desde -->
       <div>
-        <label class="label">Desde</label>
+        <label class="label" style="color: var(--cc-text-secondary);">Desde</label>
         <input 
           type="date" 
           name="fecha_desde" 
           class="input"
           value="<?php echo $filtros['fecha_desde'] ?? ''; ?>"
+          style="background: var(--cc-bg-surface); color: var(--cc-text-primary); border-color: var(--cc-border-default); color-scheme: dark;"
         >
       </div>
 
       <!-- Fecha hasta -->
       <div>
-        <label class="label">Hasta</label>
+        <label class="label" style="color: var(--cc-text-secondary);">Hasta</label>
         <input 
           type="date" 
           name="fecha_hasta" 
           class="input"
           value="<?php echo $filtros['fecha_hasta'] ?? ''; ?>"
+          style="background: var(--cc-bg-surface); color: var(--cc-text-primary); border-color: var(--cc-border-default); color-scheme: dark;"
         >
       </div>
 
@@ -151,8 +154,8 @@ layout('header');
     </form>
   </div>
 
-  <!-- Tabla de publicaciones -->
-  <div class="card">
+  <!-- Tabla de publicaciones (Desktop) -->
+  <div class="card publicaciones-table-view">
     <div style="overflow-x: auto;">
       <table class="table">
         <thead>
@@ -171,7 +174,7 @@ layout('header');
               <tr id="pub-<?php echo $pub->id; ?>">
                 <!-- ID -->
                 <td>
-                  <span style="font-weight: 600; color: #666;">#<?php echo $pub->id; ?></span>
+                  <span style="font-weight: 600; color: var(--cc-text-secondary);">#<?php echo $pub->id; ?></span>
                 </td>
 
                 <!-- Título y usuario -->
@@ -181,7 +184,7 @@ layout('header');
                       href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>" 
                       target="_blank"
                       class="h4" 
-                      style="color: #0066CC; text-decoration: none; display: block; margin-bottom: 4px;"
+                      style="color: var(--cc-primary); text-decoration: none; display: block; margin-bottom: 4px;"
                     >
                       <?php echo htmlspecialchars($pub->titulo); ?>
                     </a>
@@ -297,6 +300,122 @@ layout('header');
         </tbody>
       </table>
     </div>
+
+  </div>
+  
+  <!-- Vista de Cards para Móvil -->
+  <div class="card publicaciones-cards-view" style="display: none;">
+    <?php if (!empty($publicaciones)): ?>
+      <div class="publicaciones-cards-container">
+        <?php foreach ($publicaciones as $pub): ?>
+          <div class="publicacion-card" id="pub-card-<?php echo $pub->id; ?>">
+            <!-- Header del card -->
+            <div class="publicacion-card-header">
+              <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span style="font-weight: 700; color: var(--cc-text-secondary); font-size: 12px;">#<?php echo $pub->id; ?></span>
+                  <?php
+                  $estadoColores = [
+                    'pendiente' => 'background: #FF9500; color: white;',
+                    'aprobada' => 'background: #34C759; color: white;',
+                    'rechazada' => 'background: #FF3B30; color: white;'
+                  ];
+                  $estadoTexto = [
+                    'pendiente' => 'Pendiente',
+                    'aprobada' => 'Aprobada',
+                    'rechazada' => 'Rechazada'
+                  ];
+                  ?>
+                  <span class="badge" style="<?php echo $estadoColores[$pub->estado] ?? ''; ?> font-size: 11px;">
+                    <?php echo $estadoTexto[$pub->estado] ?? ucfirst($pub->estado); ?>
+                  </span>
+                </div>
+                <a 
+                  href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>" 
+                  target="_blank"
+                  style="color: var(--cc-primary); text-decoration: none; font-weight: 600; font-size: 14px; line-height: 1.3; display: block;"
+                >
+                  <?php echo htmlspecialchars($pub->titulo); ?>
+                </a>
+              </div>
+            </div>
+            
+            <!-- Body del card -->
+            <div class="publicacion-card-body">
+              <div class="publicacion-card-row">
+                <span class="publicacion-label">Usuario:</span>
+                <span class="publicacion-value">
+                  <?php echo htmlspecialchars($pub->usuario_nombre . ' ' . $pub->usuario_apellido); ?>
+                </span>
+              </div>
+              <div class="publicacion-card-row">
+                <span class="publicacion-label">Email:</span>
+                <span class="publicacion-value" style="font-size: 12px;">
+                  <?php echo htmlspecialchars($pub->usuario_email); ?>
+                </span>
+              </div>
+              <div class="publicacion-card-row">
+                <span class="publicacion-label">Categoría:</span>
+                <span class="publicacion-value">
+                  <span class="badge" style="font-size: 11px;">
+                    <?php echo htmlspecialchars($pub->categoria_nombre ?? 'Sin categoría'); ?>
+                  </span>
+                </span>
+              </div>
+              <div class="publicacion-card-row">
+                <span class="publicacion-label">Fecha:</span>
+                <span class="publicacion-value">
+                  <?php echo date('d/m/Y H:i', strtotime($pub->fecha_creacion)); ?>
+                </span>
+              </div>
+            </div>
+            
+            <!-- Footer con acciones -->
+            <div class="publicacion-card-actions">
+              <?php if ($pub->estado === 'pendiente'): ?>
+                <button 
+                  onclick="aprobarPublicacion(<?php echo $pub->id; ?>)" 
+                  class="btn btn-primary"
+                  style="flex: 1; padding: 10px; font-size: 13px; background: var(--cc-success, #10B981); border-color: var(--cc-success, #10B981); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"
+                >
+                  <?php echo icon('check', 16); ?>
+                  <span>Aprobar</span>
+                </button>
+                <button 
+                  onclick="mostrarModalRechazo(<?php echo $pub->id; ?>)" 
+                  class="btn"
+                  style="flex: 1; padding: 10px; font-size: 13px; background: var(--cc-danger, #EF4444); border-color: var(--cc-danger, #EF4444); color: white; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"
+                >
+                  <?php echo icon('x', 16); ?>
+                  <span>Rechazar</span>
+                </button>
+              <?php endif; ?>
+              <button 
+                onclick="verDetallePublicacion(<?php echo $pub->id; ?>)" 
+                class="btn btn-outline"
+                style="flex: 1; padding: 10px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;"
+              >
+                <?php echo icon('eye', 16); ?>
+                <span>Ver</span>
+              </button>
+              <button 
+                onclick="eliminarPublicacion(<?php echo $pub->id; ?>)" 
+                class="btn btn-outline"
+                style="padding: 10px; font-size: 13px; color: var(--cc-danger, #EF4444); border-color: var(--cc-danger, #EF4444); display: inline-flex; align-items: center; justify-content: center; gap: 6px;"
+              >
+                <?php echo icon('trash-2', 16); ?>
+              </button>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    <?php else: ?>
+      <div style="text-align: center; padding: 48px; color: #999;">
+        <div class="h3" style="margin-bottom: 8px;">No hay publicaciones</div>
+        <p class="meta">No se encontraron publicaciones con los filtros seleccionados</p>
+      </div>
+    <?php endif; ?>
+  </div>
 
     <!-- Paginación -->
     <?php if (!empty($publicaciones) && isset($pagination) && $pagination['total_pages'] > 1): ?>
@@ -686,11 +805,11 @@ window.onclick = function(event) {
 
 /* Modal content container */
 .admin-modal-content {
-  background-color: #FFFFFF;
+  background-color: var(--cc-bg-surface);
   border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   animation: adminModalFadeIn 0.3s ease-out;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--cc-border-default);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -709,11 +828,12 @@ window.onclick = function(event) {
 /* Modal header */
 .admin-modal-header {
   padding: 24px 32px;
-  border-bottom: 2px solid #E5E7EB;
+  border-bottom: 2px solid var(--cc-border-default);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
+  background: var(--cc-bg-muted);
 }
 
 /* Modal body */
@@ -721,6 +841,8 @@ window.onclick = function(event) {
   padding: 32px;
   overflow-y: auto;
   flex: 1;
+  background: var(--cc-bg-surface);
+  color: var(--cc-text-primary);
 }
 
 @keyframes adminModalFadeIn {
@@ -740,17 +862,17 @@ window.onclick = function(event) {
 }
 
 .admin-modal-body::-webkit-scrollbar-track {
-  background: #F3F4F6;
+  background: var(--cc-bg-muted);
   border-radius: 10px;
 }
 
 .admin-modal-body::-webkit-scrollbar-thumb {
-  background: #9CA3AF;
+  background: var(--cc-text-tertiary);
   border-radius: 10px;
 }
 
 .admin-modal-body::-webkit-scrollbar-thumb:hover {
-  background: #6B7280;
+  background: var(--cc-text-secondary);
 }
 
 .badge {
@@ -759,8 +881,8 @@ window.onclick = function(event) {
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  background: #E5E5E5;
-  color: #666;
+  background: var(--cc-bg-muted);
+  color: var(--cc-text-secondary);
 }
 
 /* Mejoras para las imágenes en el modal */
@@ -775,9 +897,9 @@ window.onclick = function(event) {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
-  background: #f5f5f5;
+  background: var(--cc-bg-muted);
   aspect-ratio: 4/3;
-  border: 2px solid #E5E5E5;
+  border: 2px solid var(--cc-border-default);
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -814,7 +936,7 @@ window.onclick = function(event) {
 }
 
 .info-table tr {
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid var(--cc-border-default);
 }
 
 .info-table tr:last-child {
@@ -828,36 +950,40 @@ window.onclick = function(event) {
 
 .info-table td:first-child {
   font-weight: 600;
-  color: #666;
+  color: var(--cc-text-secondary);
   width: 140px;
 }
 
 .info-table td:last-child {
-  color: #1A1A1A;
+  color: var(--cc-text-primary);
 }
 
 /* Secciones del modal */
 .modal-section {
-  background: #F9FAFB;
+  background: var(--cc-bg-muted);
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 20px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid var(--cc-border-default);
 }
 
 .modal-section-title {
   font-size: 16px;
   font-weight: 700;
-  color: var(--cc-primary, #E6332A);
+  color: var(--cc-primary);
   margin-bottom: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* Responsive */
+/* ============================================================================
+ * RESPONSIVE DESIGN
+ * ============================================================================ */
+
+/* Tablets y pantallas medianas */
 @media (max-width: 968px) {
-  .modal-content {
+  .admin-modal-content {
     padding: 20px;
     width: 100%;
     max-height: 95vh;
@@ -867,6 +993,464 @@ window.onclick = function(event) {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 12px;
   }
+  
+  /* Modal detalle en 1 columna */
+  .admin-modal-body > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  /* Container principal */
+  .admin-container {
+    padding: 16px !important;
+  }
+  
+  /* Header */
+  main > div:first-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+  
+  main > div:first-child h1 {
+    font-size: 24px !important;
+  }
+  
+  main > div:first-child > div:last-child {
+    width: 100%;
+    flex-direction: column !important;
+  }
+  
+  main > div:first-child > div:last-child .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Tabs responsive */
+  .tabs-container {
+    padding: 6px;
+  }
+  
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .tab {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  
+  .tab span:not(.tab-badge) {
+    display: none;
+  }
+  
+  .tab-badge {
+    min-width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+  
+  /* Filtros */
+  .card {
+    padding: 12px 16px !important;
+  }
+  
+  #advanced-filters form {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  #advanced-filters form > div:last-child {
+    flex-direction: column !important;
+  }
+  
+  #advanced-filters form > div:last-child .btn {
+    width: 100%;
+  }
+  
+  /* Tabla responsive */
+  .table {
+    font-size: 12px;
+  }
+  
+  .table thead th {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+  
+  .table tbody td {
+    padding: 12px 8px;
+  }
+  
+  /* Ocultar columnas menos importantes */
+  .table thead th:nth-child(3),
+  .table tbody td:nth-child(3) {
+    display: none;
+  }
+  
+  .table thead th:nth-child(5),
+  .table tbody td:nth-child(5) {
+    display: none;
+  }
+  
+  /* Ajustar columna de título */
+  .table tbody td:nth-child(2) .h4 {
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+  }
+  
+  .table tbody td:nth-child(2) .meta {
+    font-size: 11px !important;
+  }
+  
+  /* Botones de acción más compactos */
+  .table tbody td:last-child > div {
+    flex-direction: column !important;
+    gap: 6px !important;
+    align-items: stretch !important;
+  }
+  
+  .table tbody td:last-child .btn {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+    justify-content: center;
+  }
+  
+  .table tbody td:last-child .btn span {
+    display: inline !important;
+  }
+  
+  /* Paginación */
+  .card > div:last-child {
+    padding: 16px !important;
+  }
+  
+  .card > div:last-child > div {
+    gap: 6px !important;
+  }
+  
+  .card > div:last-child .btn {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+  
+  /* Modales en móvil */
+  .admin-modal {
+    padding: 10px;
+  }
+  
+  .admin-modal-content {
+    max-height: 95vh;
+    border-radius: 12px;
+  }
+  
+  .admin-modal-header {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .admin-modal-header h2 {
+    font-size: 18px !important;
+  }
+  
+  .admin-modal-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .admin-modal-body {
+    padding: 20px;
+  }
+  
+  /* Grid del modal en 1 columna */
+  .admin-modal-body > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  /* Secciones del modal */
+  .modal-section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .modal-section-title {
+    font-size: 14px !important;
+  }
+  
+  /* Tabla de info en modal */
+  .info-table td {
+    padding: 10px 0;
+    font-size: 13px;
+  }
+  
+  .info-table td:first-child {
+    width: 100px;
+    font-size: 12px;
+  }
+  
+  /* Grid de fotos */
+  .foto-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  
+  .foto-item {
+    aspect-ratio: 1 !important;
+  }
+  
+  .foto-principal-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+  
+  /* Acciones del modal */
+  .admin-modal-body > div:last-child {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .admin-modal-body > div:last-child .btn {
+    width: 100% !important;
+    justify-content: center;
+  }
+  
+  /* Modal de rechazo */
+  .admin-modal-small {
+    max-width: 95%;
+  }
+  
+  #formRechazo > div:last-child {
+    flex-direction: column !important;
+  }
+  
+  #formRechazo > div:last-child .btn {
+    width: 100%;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .admin-container {
+    padding: 12px !important;
+  }
+  
+  main > div:first-child h1 {
+    font-size: 20px !important;
+  }
+  
+  .tab {
+    padding: 8px 12px;
+  }
+  
+  .table {
+    font-size: 11px;
+  }
+  
+  .table thead th {
+    padding: 8px 6px;
+    font-size: 10px;
+  }
+  
+  .table tbody td {
+    padding: 10px 6px;
+  }
+  
+  .table tbody td:nth-child(2) .h4 {
+    font-size: 13px !important;
+  }
+  
+  .table tbody td:last-child .btn {
+    padding: 6px 8px !important;
+    font-size: 10px !important;
+  }
+  
+  .foto-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================================
+ * VISTA DE CARDS PARA MÓVIL
+ * ============================================================================ */
+
+.publicaciones-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.publicacion-card {
+  background: var(--cc-bg-surface);
+  border: 2px solid var(--cc-border-default);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.publicacion-card:hover {
+  border-color: var(--cc-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.publicacion-card-header {
+  padding: 16px;
+  background: var(--cc-bg-muted);
+  border-bottom: 1px solid var(--cc-border-default);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.publicacion-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--cc-bg-surface);
+}
+
+.publicacion-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.publicacion-label {
+  font-weight: 600;
+  color: var(--cc-text-secondary);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.publicacion-value {
+  font-weight: 500;
+  color: var(--cc-text-primary);
+  text-align: right;
+  word-break: break-word;
+}
+
+.publicacion-card-actions {
+  padding: 12px 16px;
+  background: var(--cc-bg-muted);
+  border-top: 1px solid var(--cc-border-default);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Mostrar/ocultar vistas según tamaño de pantalla */
+@media (min-width: 769px) {
+  .publicaciones-cards-view {
+    display: none !important;
+  }
+  
+  .publicaciones-table-view {
+    display: block !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .publicaciones-table-view {
+    display: none !important;
+  }
+  
+  .publicaciones-cards-view {
+    display: block !important;
+  }
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .publicacion-card {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .publicacion-card:hover {
+  border-color: var(--cc-primary, #E6332A);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme="dark"] .publicacion-card-header {
+  background: #111827;
+  border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .publicacion-card-actions {
+  background: #111827;
+  border-top-color: #374151;
+}
+
+:root[data-theme="dark"] .transaction-card {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .transaction-card-header {
+  border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-content {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-header {
+  border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-body {
+  background: #1F2937;
+}
+
+:root[data-theme="dark"] .modal-section {
+  background: #111827;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .info-table tr {
+  border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .foto-item {
+  background: #374151;
+  border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .foto-item:hover {
+  border-color: var(--cc-primary, #E6332A);
+}
+
+/* Elementos con color hardcodeado - Dark Mode */
+:root[data-theme="dark"] [style*="color: #999"],
+:root[data-theme="dark"] [style*="color:#999"] {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] div[style*="text-align: center"][style*="padding"] {
+  color: #D1D5DB;
+}
+
+/* Divs de "no hay fotos" - Dark Mode */
+:root[data-theme="dark"] div[style*="background: #F9FAFB"] {
+  background: #111827 !important;
+  border-color: #374151 !important;
 }
   
   /* ============================================================================
@@ -981,6 +1565,85 @@ window.onclick = function(event) {
   .filter-toggle.active svg {
     transform: rotate(180deg);
   }
+
+  /* ============================================================================
+   * DARK MODE - ELEMENTOS ADICIONALES
+   * ============================================================================ */
+  
+  /* Card de filtros */
+  :root[data-theme="dark"] .filtros-card {
+    background: var(--cc-bg-surface) !important;
+    border-color: var(--cc-border-default) !important;
+  }
+  
+  /* Labels y inputs en dark mode */
+  :root[data-theme="dark"] .label {
+    color: var(--cc-text-secondary) !important;
+  }
+  
+  :root[data-theme="dark"] .input,
+  :root[data-theme="dark"] .select,
+  :root[data-theme="dark"] input[type="text"],
+  :root[data-theme="dark"] input[type="date"],
+  :root[data-theme="dark"] select {
+    background: var(--cc-bg-surface) !important;
+    color: var(--cc-text-primary) !important;
+    border-color: var(--cc-border-default) !important;
+  }
+  
+  :root[data-theme="dark"] input[type="date"] {
+    color-scheme: dark;
+  }
+  
+  :root[data-theme="dark"] .input::placeholder {
+    color: var(--cc-text-tertiary) !important;
+  }
+  
+  /* Botón de filtros */
+  :root[data-theme="dark"] .filter-toggle {
+    color: var(--cc-text-primary) !important;
+  }
+  
+  :root[data-theme="dark"] .filter-toggle span {
+    color: var(--cc-text-primary) !important;
+  }
+  
+  /* Botones outline en dark mode */
+  :root[data-theme="dark"] .btn.outline {
+    background: transparent !important;
+    color: var(--cc-text-primary) !important;
+    border-color: var(--cc-border-default) !important;
+  }
+  
+  :root[data-theme="dark"] .btn.outline:hover {
+    background: var(--cc-bg-muted) !important;
+    border-color: var(--cc-border-strong) !important;
+  }
+  
+  /* Título del modal en dark mode */
+  :root[data-theme="dark"] .admin-modal-header h2 {
+    color: var(--cc-text-primary) !important;
+  }
+  
+  /* Botón cerrar del modal */
+  :root[data-theme="dark"] .admin-modal-header .btn {
+    background: var(--cc-bg-muted) !important;
+    color: var(--cc-text-primary) !important;
+    border-color: var(--cc-border-default) !important;
+  }
+  
+  /* Vista de cards móvil - fondo transparente en dark mode */
+  :root[data-theme="dark"] .publicaciones-cards-view.card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  
+  /* Container de cards */
+  :root[data-theme="dark"] .publicaciones-cards-container {
+    background: transparent !important;
+  }
 </style>
 
 <!-- Cargar sistema de feedback -->
@@ -1038,16 +1701,20 @@ async function aprobarPublicacion(id) {
       ButtonLoader.success(button, '¡Aprobada!');
       Toast.success('Publicación aprobada exitosamente');
       
-      // Animar y remover fila, luego recargar para actualizar contadores
+      // Animar y remover fila o card, luego recargar para actualizar contadores
       setTimeout(() => {
         const row = button.closest('tr');
+        const card = button.closest('.publicacion-card');
+        
         if (row) {
           Animate.fadeOut(row, () => {
-            // Recargar la página para actualizar contadores y tabla
+            location.reload();
+          });
+        } else if (card) {
+          Animate.fadeOut(card, () => {
             location.reload();
           });
         } else {
-          // Si no hay fila, recargar directamente
           location.reload();
         }
       }, 1000);
@@ -1098,16 +1765,20 @@ async function rechazarPublicacion() {
       Toast.success('Publicación rechazada');
       cerrarModal('modalRechazo');
       
-      // Animar y remover fila, luego recargar para actualizar contadores
+      // Animar y remover fila o card, luego recargar para actualizar contadores
       setTimeout(() => {
         const row = document.querySelector(`#pub-${id}`);
+        const card = document.querySelector(`#pub-card-${id}`);
+        
         if (row) {
           Animate.fadeOut(row, () => {
-            // Recargar la página para actualizar contadores y tabla
+            location.reload();
+          });
+        } else if (card) {
+          Animate.fadeOut(card, () => {
             location.reload();
           });
         } else {
-          // Si no hay fila, recargar directamente
           location.reload();
         }
       }, 500);
@@ -1138,10 +1809,19 @@ async function eliminarPublicacion(id) {
       Toast.success('Publicación eliminada permanentemente');
       
       const row = button.closest('tr');
+      const card = button.closest('.publicacion-card');
+      
       if (row) {
         Animate.fadeOut(row, () => {
           const tbody = row.closest('tbody');
           if (tbody && tbody.querySelectorAll('tr').length === 0) {
+            location.reload();
+          }
+        });
+      } else if (card) {
+        Animate.fadeOut(card, () => {
+          const container = card.closest('.publicaciones-cards-container');
+          if (container && container.querySelectorAll('.publicacion-card').length === 0) {
             location.reload();
           }
         });

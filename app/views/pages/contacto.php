@@ -154,4 +154,87 @@ require_once __DIR__ . '/../layouts/header.php';
 
 </main>
 
+<style>
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .container {
+  background: #111827;
+}
+
+:root[data-theme="dark"] .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .h1,
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] .h3,
+:root[data-theme="dark"] .h4 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .meta {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] p {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] strong {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] a {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] a:hover {
+  color: #c72a22;
+}
+
+/* Formularios */
+:root[data-theme="dark"] label {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] input[type="text"],
+:root[data-theme="dark"] input[type="email"],
+:root[data-theme="dark"] input[type="tel"],
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+  background: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F3F4F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+}
+
+/* Cards con fondos especiales */
+:root[data-theme="dark"] .card[style*="background: #d4edda"] {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: #10B981 !important;
+}
+
+:root[data-theme="dark"] .card[style*="background: #f8d7da"] {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: #EF4444 !important;
+}
+
+:root[data-theme="dark"] .card[style*="background: var(--cc-bg-muted"] {
+  background: #374151 !important;
+}
+</style>
+
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

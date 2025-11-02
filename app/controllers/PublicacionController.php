@@ -91,11 +91,13 @@ class PublicacionController
             exit;
         }
         
-        // Verificar que esté aprobada (excepto si es el dueño o admin)
+        // Verificar que esté aprobada o vendida (excepto si es el dueño o admin)
         $es_dueno = isset($_SESSION['user_id']) && $_SESSION['user_id'] == $publicacion->usuario_id;
         $es_admin = isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin';
         
-        if ($publicacion->estado !== 'aprobada' && !$es_dueno && !$es_admin) {
+        // Permitir ver publicaciones aprobadas y vendidas
+        $estados_permitidos = ['aprobada', 'vendida'];
+        if (!in_array($publicacion->estado, $estados_permitidos) && !$es_dueno && !$es_admin) {
             $_SESSION['error'] = 'Esta publicación no está disponible';
             header('Location: ' . BASE_URL . '/listado');
             exit;

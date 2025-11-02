@@ -60,9 +60,13 @@ require_once APP_PATH . '/views/layouts/header.php';
 
 .container form select {
   appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-color: #fff !important;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
   background-position: right 12px center !important;
+  background-size: 12px !important;
   padding-right: 36px !important;
 }
 
@@ -939,6 +943,240 @@ window.addEventListener('click', function(event) {
 .admin-modal-body::-webkit-scrollbar-thumb {
   background: #9CA3AF;
   border-radius: 10px;
+}
+
+/* ============================================================================
+ * RESPONSIVE MEJORADO
+ * ============================================================================ */
+
+@media (max-width: 768px) {
+  /* Container principal */
+  .container {
+    padding: 16px !important;
+  }
+  
+  /* Título principal */
+  .container > .h1 {
+    font-size: 24px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  /* Cards */
+  .container .card {
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .container .card .h3 {
+    font-size: 18px !important;
+    margin-bottom: 12px !important;
+  }
+  
+  /* Inputs y selects */
+  .container form input[type="text"],
+  .container form input[type="number"],
+  .container form select,
+  .container form textarea {
+    font-size: 16px !important;
+    padding: 12px 14px !important;
+  }
+  
+  /* Labels */
+  .container form label {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  /* Meta text */
+  .container .meta {
+    font-size: 12px !important;
+  }
+  
+  /* Botones */
+  .container button[type="submit"],
+  .container .btn {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 15px !important;
+  }
+  
+  /* Kit de radio buttons */
+  .kit label.tag {
+    padding: 14px 16px !important;
+    font-size: 14px !important;
+  }
+  
+  /* Gallery de fotos */
+  .gallery label {
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px !important;
+  }
+  
+  .container > .h1 {
+    font-size: 22px !important;
+  }
+  
+  .container .card {
+    padding: 14px !important;
+  }
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+/* Container y cards */
+:root[data-theme="dark"] .container {
+  background: #111827;
+}
+
+:root[data-theme="dark"] .container .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Títulos */
+:root[data-theme="dark"] .container .h1,
+:root[data-theme="dark"] .container .h2,
+:root[data-theme="dark"] .container .h3 {
+  color: #F3F4F6 !important;
+}
+
+/* Labels */
+:root[data-theme="dark"] .container form label {
+  color: #D1D5DB !important;
+}
+
+/* Inputs, selects y textareas */
+:root[data-theme="dark"] .container form input[type="text"],
+:root[data-theme="dark"] .container form input[type="number"],
+:root[data-theme="dark"] .container form input[type="tel"],
+:root[data-theme="dark"] .container form textarea {
+  background: #374151 !important;
+  background-color: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .container form select {
+  background: #374151 !important;
+  background-color: #374151 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F3F4F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 12px !important;
+  border-color: #4B5563 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .container form input::placeholder,
+:root[data-theme="dark"] .container form textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+/* Opciones del select en dark mode */
+:root[data-theme="dark"] .container form select option {
+  background: #374151 !important;
+  color: #F3F4F6 !important;
+}
+
+/* Radio buttons - kit */
+:root[data-theme="dark"] .kit label.tag {
+  background: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .kit label.tag:hover {
+  border-color: #E6332A !important;
+  background: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .kit label.tag input[type="radio"]:checked + span,
+:root[data-theme="dark"] .kit label.tag:has(input[type="radio"]:checked) {
+  background: #E6332A !important;
+  border-color: #E6332A !important;
+  color: #FFFFFF !important;
+}
+
+/* Meta text */
+:root[data-theme="dark"] .container .meta,
+:root[data-theme="dark"] .container p[style*="color"] {
+  color: #9CA3AF !important;
+}
+
+/* Gallery de fotos */
+:root[data-theme="dark"] .gallery label {
+  background: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .gallery label:hover {
+  border-color: #E6332A !important;
+  background: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .gallery label span {
+  color: #9CA3AF !important;
+}
+
+/* Botones */
+:root[data-theme="dark"] .container button[type="submit"] {
+  background: #E6332A !important;
+  color: #FFFFFF !important;
+}
+
+:root[data-theme="dark"] .container .btn-outline {
+  background: #374151 !important;
+  color: #F3F4F6 !important;
+  border-color: #4B5563 !important;
+}
+
+/* Textos con estilos inline */
+:root[data-theme="dark"] .container strong {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .container small {
+  color: #9CA3AF !important;
+}
+
+/* Modal */
+:root[data-theme="dark"] .admin-modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+:root[data-theme="dark"] .admin-modal {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-header {
+  background: #374151;
+  border-bottom-color: #4B5563;
+}
+
+:root[data-theme="dark"] .admin-modal-header h2 {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .admin-modal-body {
+  background: #1F2937;
+  color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-thumb {
+  background: #6B7280;
 }
 </style>
 

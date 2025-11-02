@@ -190,6 +190,135 @@ require_once APP_PATH . '/views/layouts/header.php';
   </div>
 </main>
 
+<style>
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .breadcrumbs {
+  color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .breadcrumbs a {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .breadcrumbs span {
+  color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .h1,
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] .h3 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .meta {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] p {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] li {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] strong {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] a {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] a:hover {
+  color: #c72a22;
+}
+
+/* Cajas de información */
+:root[data-theme="dark"] div[style*="background: #DBEAFE"] {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-left-color: #3B82F6 !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #DBEAFE"] p {
+  color: #93C5FD !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #FEF3C7"] {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-left-color: #F59E0B !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #FEF3C7"] p {
+  color: #FCD34D !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #FEE2E2"] {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-left-color: #EF4444 !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #FEE2E2"] p {
+  color: #FCA5A5 !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #F9FAFB"] {
+  background: #374151 !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #FEF2F2"] {
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #DCFCE7"] {
+  background: rgba(16, 185, 129, 0.15) !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #DCFCE7"] p {
+  color: #6EE7B7 !important;
+}
+
+/* Títulos con colores específicos */
+:root[data-theme="dark"] .h2[style*="color: var(--cc-primary)"],
+:root[data-theme="dark"] div[style*="color: var(--cc-primary)"] {
+  color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .h2[style*="color: #EF4444"],
+:root[data-theme="dark"] div[style*="color: #EF4444"] {
+  color: #EF4444 !important;
+}
+
+/* Textos con colores específicos */
+:root[data-theme="dark"] p[style*="color: #555"] {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] p[style*="color: #92400E"] {
+  color: #FCD34D !important;
+}
+
+:root[data-theme="dark"] p[style*="color: #1E40AF"] {
+  color: #93C5FD !important;
+}
+
+:root[data-theme="dark"] p[style*="color: #991B1B"] {
+  color: #FCA5A5 !important;
+}
+
+:root[data-theme="dark"] p[style*="color: #166534"] {
+  color: #6EE7B7 !important;
+}
+</style>
+
 <?php
 // Incluir footer
 require_once APP_PATH . '/views/layouts/footer.php';

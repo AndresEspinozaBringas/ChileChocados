@@ -239,6 +239,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
 // RUTAS ESPECIALES PARA PUBLICACIONES
 // ====================================
 
+// Ruta: /publicacion/{id} - Ver detalle de publicación
+if (!empty($url[0]) && $url[0] === 'publicacion' && isset($url[1]) && is_numeric($url[1])) {
+    $controllerName = 'PublicacionController';
+    $method = 'show';
+    $params = [$url[1]];
+}
+
+// Ruta: /detalle/{id} - Ver detalle de publicación (alias)
+if (!empty($url[0]) && $url[0] === 'detalle' && isset($url[1]) && is_numeric($url[1])) {
+    $controllerName = 'PublicacionController';
+    $method = 'show';
+    $params = [$url[1]];
+}
+
 // Ruta: /publicaciones/approval
 if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && $url[1] === 'approval') {
     $controllerName = 'PublicacionController';

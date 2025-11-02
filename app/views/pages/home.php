@@ -18,9 +18,9 @@ require_once APP_PATH . '/views/layouts/nav.php';
 
 <!-- Hero Section -->
 <section class="hero">
-    <div class="hero-content">
-        <h1 class="h1">Encuentra vehículos siniestrados al mejor precio</h1>
-        <p class="h3" style="margin-top: 12px; font-weight: 400; color: var(--text-secondary);">
+    <div class="card hero-banner">
+        <h1 class="h1 hero-title">Encuentra vehículos siniestrados al mejor precio</h1>
+        <p class="hero-text">
             Compra y vende vehículos chocados, siniestrados o en desarme de forma segura
         </p>
     </div>
@@ -64,7 +64,7 @@ require_once APP_PATH . '/views/layouts/nav.php';
     
     <div class="grid cols-4">
         <?php foreach ($publicacionesDestacadas as $pub): ?>
-            <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>">
+            <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>" style="text-decoration: none; color: inherit;">
                 <!-- Imagen del vehículo -->
                 <div class="pub-img" style="width: 100%; height: 200px; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; position: relative;">
                     <?php if (!empty($pub->foto_principal)): ?>
@@ -83,7 +83,7 @@ require_once APP_PATH . '/views/layouts/nav.php';
                     
                     <!-- Badge de vendido en esquina superior izquierda -->
                     <?php if (isset($pub->estado) && $pub->estado === 'vendida'): ?>
-                    <span style="position: absolute; top: 12px; left: 12px; background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; z-index: 10;">
+                    <span style="position: absolute; top: 12px; left: 12px; background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; z-index: 10; pointer-events: none;">
                         ✓ VENDIDO
                     </span>
                     <?php endif; ?>
@@ -141,7 +141,7 @@ require_once APP_PATH . '/views/layouts/nav.php';
     <div class="grid cols-4">
         <?php if (!empty($publicacionesRecientes)): ?>
             <?php foreach ($publicacionesRecientes as $pub): ?>
-            <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>">
+            <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>" style="text-decoration: none; color: inherit;">
                 <!-- Imagen del vehículo -->
                 <div class="pub-img" style="width: 100%; height: 200px; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; position: relative;">
                     <?php if (!empty($pub->foto_principal)): ?>
@@ -160,7 +160,7 @@ require_once APP_PATH . '/views/layouts/nav.php';
                     
                     <!-- Badge de vendido en esquina superior izquierda -->
                     <?php if (isset($pub->estado) && $pub->estado === 'vendida'): ?>
-                    <span style="position: absolute; top: 12px; left: 12px; background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; z-index: 10;">
+                    <span style="position: absolute; top: 12px; left: 12px; background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; z-index: 10; pointer-events: none;">
                         ✓ VENDIDO
                     </span>
                     <?php endif; ?>
@@ -239,16 +239,16 @@ require_once APP_PATH . '/views/layouts/nav.php';
 
 <!-- CTA Vender -->
 <section>
-    <div class="card" style="background: linear-gradient(135deg, #E6332A 0%, #C02A23 100%); color: white; padding: 48px; text-align: center;">
-        <div class="h2" style="color: white; margin-bottom: 12px;">¿Tienes un vehículo siniestrado para vender?</div>
-        <p style="font-size: 18px; opacity: 0.9; margin-bottom: 24px;">
+    <div class="card cta-banner">
+        <div class="h2 cta-title">¿Tienes un vehículo siniestrado para vender?</div>
+        <p class="cta-text">
             Publica tu vehículo gratis y llega a miles de compradores potenciales
         </p>
-        <div class="row" style="gap: 12px; justify-content: center;">
-            <a class="btn" style="background: white; color: var(--primary); border: none;" href="<?php echo BASE_URL; ?>/publicar">
+        <div class="cta-buttons">
+            <a class="btn primary" href="<?php echo BASE_URL; ?>/publicar">
                 Publicar ahora
             </a>
-            <a class="btn" style="background: transparent; color: white; border: 2px solid white;" href="<?php echo BASE_URL; ?>/vender">
+            <a class="btn cta-btn-secondary" href="<?php echo BASE_URL; ?>/vender">
                 Ver más información
             </a>
         </div>
@@ -303,6 +303,61 @@ require_once APP_PATH . '/views/layouts/nav.php';
     text-align: center;
 }
 
+.hero-banner {
+    background: white;
+    border: 2px solid #E5E5E5;
+    text-align: center;
+    padding: 48px 32px;
+}
+
+.hero-title {
+    color: #2E2E2E;
+    margin-bottom: 12px;
+}
+
+.hero-text {
+    font-size: 18px;
+    color: #666666;
+    margin: 0;
+}
+
+/* CTA Banner */
+.cta-banner {
+    background: white;
+    border: 2px solid #E5E5E5;
+    text-align: center;
+    padding: 48px 32px;
+}
+
+.cta-title {
+    color: #2E2E2E;
+    margin-bottom: 12px;
+}
+
+.cta-text {
+    font-size: 18px;
+    color: #666666;
+    margin: 0 0 24px 0;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-btn-secondary {
+    background: white;
+    color: #2E2E2E;
+    border: 2px solid #E5E5E5;
+}
+
+.cta-btn-secondary:hover {
+    background: #F5F5F5;
+    border-color: var(--cc-primary);
+}
+
 /* Categorías */
 .cat-card {
     display: flex;
@@ -331,6 +386,364 @@ require_once APP_PATH . '/views/layouts/nav.php';
 .pub-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] main {
+    background: #111827 !important;
+}
+
+:root[data-theme="dark"] .container {
+    background: #111827 !important;
+}
+
+:root[data-theme="dark"] main.container {
+    background: #111827 !important;
+}
+
+:root[data-theme="dark"] .hero {
+    background: #111827 !important;
+}
+
+:root[data-theme="dark"] .hero-banner {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .hero-title {
+    color: white !important;
+}
+
+:root[data-theme="dark"] .hero-text {
+    color: rgba(255,255,255,0.9) !important;
+}
+
+/* Cards de estadísticas */
+:root[data-theme="dark"] .card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .card .h2,
+:root[data-theme="dark"] .card .h3,
+:root[data-theme="dark"] .card div[class*="h2"],
+:root[data-theme="dark"] .card div[class*="h3"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .card .meta,
+:root[data-theme="dark"] .card p[class*="meta"] {
+    color: #9CA3AF !important;
+}
+
+/* Estadísticas específicas */
+:root[data-theme="dark"] .stats .card {
+    background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] .stats .card .h2,
+:root[data-theme="dark"] .stats .card div[class*="h2"] {
+    color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .stats .card .meta,
+:root[data-theme="dark"] .stats .card p {
+    color: #9CA3AF !important;
+}
+
+/* Títulos de secciones */
+:root[data-theme="dark"] .h2 {
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .meta {
+    color: #9CA3AF;
+}
+
+/* Publicaciones cards */
+:root[data-theme="dark"] .pub-card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .pub-card:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    border-color: var(--primary);
+}
+
+:root[data-theme="dark"] .pub-card .h3,
+:root[data-theme="dark"] .pub-card div[class*="h3"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .pub-card .meta,
+:root[data-theme="dark"] .pub-card div[class*="meta"],
+:root[data-theme="dark"] .pub-card .row {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .pub-card .h2,
+:root[data-theme="dark"] .pub-card span[class*="h2"] {
+    color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .pub-img {
+    background: #374151 !important;
+}
+
+:root[data-theme="dark"] .pub-card span,
+:root[data-theme="dark"] .pub-card div {
+    color: inherit;
+}
+
+/* Categorías cards */
+:root[data-theme="dark"] .cat-card {
+    background: #1F2937;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .cat-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border-color: var(--primary);
+}
+
+:root[data-theme="dark"] .cat-card .h3 {
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .cat-card .meta {
+    color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .cat-count {
+    background: #374151 !important;
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .iconify svg {
+    stroke: var(--primary);
+}
+
+/* CTA Vender - dark mode */
+:root[data-theme="dark"] .cta-banner {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .cta-title {
+    color: white !important;
+}
+
+:root[data-theme="dark"] .cta-text {
+    color: rgba(255,255,255,0.9) !important;
+}
+
+:root[data-theme="dark"] .cta-btn-secondary {
+    background: transparent !important;
+    color: white !important;
+    border-color: white !important;
+}
+
+:root[data-theme="dark"] .cta-btn-secondary:hover {
+    background: rgba(255,255,255,0.1) !important;
+    border-color: white !important;
+}
+
+/* Sección "Cómo funciona" */
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] {
+    background: #1F2937;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] .h3 {
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] .meta {
+    color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] > div[style*="background: var(--bg-secondary)"] {
+    background: #374151 !important;
+}
+
+/* SVG icons */
+:root[data-theme="dark"] svg {
+    color: inherit;
+}
+
+/* Botones generales */
+:root[data-theme="dark"] .btn {
+    background: #374151;
+    color: #F3F4F6;
+    border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .btn:hover {
+    background: #4B5563;
+    border-color: #6B7280;
+}
+
+:root[data-theme="dark"] .btn.primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Estado vacío */
+:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] p {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] svg {
+    opacity: 0.2;
+}
+
+/* Asegurar que todos los textos en cards tengan buen contraste */
+:root[data-theme="dark"] section .card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] section .card * {
+    border-color: #374151;
+}
+
+/* Forzar colores en elementos con estilos inline */
+:root[data-theme="dark"] main div[style*="padding: 24px"] {
+    background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] main div[style*="text-align: center"] .h2,
+:root[data-theme="dark"] main div[style*="text-align: center"] div[class*="h2"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] main div[style*="text-align: center"] .meta,
+:root[data-theme="dark"] main div[style*="text-align: center"] p {
+    color: #9CA3AF !important;
+}
+
+/* Grid de publicaciones y categorías */
+:root[data-theme="dark"] .grid a.card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .grid .card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Sobrescribir estilos inline específicos */
+:root[data-theme="dark"] section div[style*="padding: 16px 0"] .h3,
+:root[data-theme="dark"] section div[style*="padding: 16px 0"] div[class*="h3"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] section div[style*="padding: 16px 0"] .row,
+:root[data-theme="dark"] section div[style*="padding: 16px 0"] div[class*="row"] {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] section div[style*="padding: 16px 0"] span[class*="h2"] {
+    color: var(--cc-primary) !important;
+}
+
+/* Asegurar que las imágenes de publicaciones tengan el fondo correcto */
+:root[data-theme="dark"] div[style*="height: 200px"] {
+    background: #374151 !important;
+}
+
+/* Sobrescribir todos los divs con estilos inline de padding */
+:root[data-theme="dark"] .card > div {
+    color: inherit;
+}
+
+:root[data-theme="dark"] .card > div * {
+    color: inherit;
+}
+
+/* Títulos de secciones con display flex */
+:root[data-theme="dark"] section > div[style*="display: flex"] .h2 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] section > div[style*="display: flex"] .meta {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] section > div[style*="display: flex"] p {
+    color: #9CA3AF !important;
+}
+
+/* Enlaces "Ver todas" */
+:root[data-theme="dark"] section > div[style*="display: flex"] a.btn {
+    background: #374151;
+    color: #F3F4F6;
+    border-color: #4B5563;
+}
+
+:root[data-theme="dark"] section > div[style*="display: flex"] a.btn:hover {
+    background: #4B5563;
+    border-color: #6B7280;
+}
+
+/* Asegurar que los badges de "VENDIDO" sean visibles */
+:root[data-theme="dark"] span[style*="background: #10B981"] {
+    background: #10B981 !important;
+    color: white !important;
+}
+
+/* Forzar que las cards NO tengan el fondo del banner especial */
+:root[data-theme="dark"] .grid .card:not([style*="background: #2C3E50"]) {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Excluir los banners especiales de las reglas generales de cards */
+:root[data-theme="dark"] .card:not([style*="background: #2C3E50"]):not(.hero-banner):not(.cta-banner) {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Asegurar que no haya fondos blancos en secciones */
+:root[data-theme="dark"] section {
+    background: #111827 !important;
+}
+
+/* Forzar que el body tenga el fondo correcto */
+:root[data-theme="dark"] body {
+    background: #111827 !important;
+}
+
+/* Asegurar que el área alrededor del hero tenga el fondo correcto */
+:root[data-theme="dark"] .hero,
+:root[data-theme="dark"] .hero * {
+    background-color: transparent;
+}
+
+:root[data-theme="dark"] .hero .card.hero-banner {
+    background: #1F2937 !important;
+}
+:root[data-theme="dark"] div[style*="height: 200px"] {
+    background: #374151 !important;
+}
+
+/* Sobrescribir todos los divs con estilos inline de padding */
+:root[data-theme="dark"] .card > div {
+    color: inherit;
+}
+
+:root[data-theme="dark"] .card > div * {
+    color: inherit;
 }
 </style>
 

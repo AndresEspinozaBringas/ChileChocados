@@ -61,4 +61,111 @@ require_once APP_PATH . '/views/layouts/header.php';
   </section>
 </main>
 
+<style>
+/* ============================================================================
+ * ESTILOS GENERALES
+ * ============================================================================ */
+
+.hero {
+  background: white;
+  border: 2px solid #E5E5E5;
+  border-radius: 12px;
+  padding: 48px 32px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.hero .h1 {
+  color: #2E2E2E;
+  margin-bottom: 12px;
+}
+
+.hero .meta {
+  color: #666666;
+  margin-bottom: 24px;
+}
+
+.hero .row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .hero {
+  background: #2C3E50 !important;
+  border: 2px solid #34495E !important;
+  border-radius: 12px;
+  padding: 48px 32px;
+  text-align: center;
+}
+
+:root[data-theme="dark"] .hero .h1 {
+  color: white !important;
+}
+
+:root[data-theme="dark"] .hero .meta {
+  color: rgba(255,255,255,0.9) !important;
+}
+
+:root[data-theme="dark"] .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .card .h3 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .card .meta {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .card p {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .card ul {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .card li {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .card strong {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .card em {
+  color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .btn {
+  background: #374151;
+  color: #F3F4F6;
+  border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .btn:hover {
+  background: #4B5563;
+  border-color: #6B7280;
+}
+
+:root[data-theme="dark"] .btn.primary {
+  background: var(--cc-primary);
+  color: white;
+  border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .btn.primary:hover {
+  background: #c72a22;
+  border-color: #c72a22;
+}
+</style>
+
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

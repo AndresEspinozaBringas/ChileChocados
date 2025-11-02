@@ -287,6 +287,65 @@ require_once APP_PATH . '/views/layouts/header.php';
   </div>
 </main>
 
+<style>
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .breadcrumbs {
+  color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .breadcrumbs a {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .breadcrumbs span {
+  color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .h1,
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] .h3 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .meta {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] p {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] li {
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] strong {
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] a {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] a:hover {
+  color: #c72a22;
+}
+
+/* Títulos con colores específicos */
+:root[data-theme="dark"] .h2[style*="color: var(--cc-primary)"],
+:root[data-theme="dark"] div[style*="color: var(--cc-primary)"] {
+  color: var(--cc-primary) !important;
+}
+</style>
+
 <?php
 // Incluir footer
 require_once APP_PATH . '/views/layouts/footer.php';

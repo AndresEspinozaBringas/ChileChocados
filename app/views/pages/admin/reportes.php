@@ -1,4 +1,5 @@
-<?php
+<?php  // phpcs:ignore PSR12.Files.FileHeader.SpacingAfterTagBlock, PSR12.Files.FileHeader.SpacingAfterTagBlock, PSR12.Files.FileHeader.SpacingAfterTagBlock
+
 /**
  * Dashboard de Reportes - Diseño UX/UI Optimizado
  * Enfoque: Insights accionables y toma de decisiones
@@ -181,19 +182,315 @@ layout('header');
     .dashboard-grid.cols-4 {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .grid.cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .dashboard-grid.cols-2 {
+        grid-template-columns: 1fr !important;
+    }
 }
 
-@media (max-width: 640px) {
-    .dashboard-grid.cols-4 {
-        grid-template-columns: 1fr;
+@media (max-width: 768px) {
+    .admin-container,
+    .container {
+        padding: 16px !important;
+    }
+    
+    /* Header */
+    main > div:first-child h1 {
+        font-size: 24px !important;
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+    
+    main > div:first-child p {
+        font-size: 13px !important;
+    }
+    
+    /* Dashboard grid */
+    .dashboard-grid.cols-4,
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    .grid.cols-2 {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    /* KPI Cards */
+    .kpi-card {
+        padding: 20px;
+    }
+    
+    .kpi-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
     }
     
     .kpi-value {
         font-size: 28px;
     }
     
+    .kpi-label {
+        font-size: 13px;
+    }
+    
+    .kpi-insight {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    /* Chart sections - MÁS RIGUROSO */
+    .chart-section {
+        padding: 16px !important;
+        margin-bottom: 16px;
+        overflow: hidden;
+    }
+    
+    .chart-header {
+        margin-bottom: 20px !important;
+    }
+    
+    .chart-title {
+        font-size: 15px !important;
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        line-height: 1.4 !important;
+    }
+    
+    .chart-subtitle {
+        font-size: 12px !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* ALTURA AUMENTADA Y PADDING PARA GRÁFICOS */
     .chart-container {
-        height: 250px;
+        height: 300px !important;
+        padding: 10px 0 !important;
+        margin: 0 !important;
+        position: relative !important;
+    }
+    
+    /* Contenedor específico para gráficos lado a lado */
+    .dashboard-grid.cols-2 .chart-container {
+        height: 280px !important;
+        padding: 10px 0 20px 0 !important;
+    }
+    
+    /* Canvas responsive */
+    .chart-container canvas {
+        max-width: 100% !important;
+        max-height: 100% !important;
+    }
+    
+    /* Tabla */
+    .data-table {
+        font-size: 12px;
+    }
+    
+    .data-table thead th {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+    
+    .data-table tbody td {
+        padding: 12px;
+    }
+    
+    /* Ocultar columnas menos importantes en móvil */
+    .data-table thead th:nth-child(6),
+    .data-table tbody td:nth-child(6) {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .kpi-value {
+        font-size: 24px;
+    }
+    
+    .kpi-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    /* ALTURA MAYOR PARA PANTALLAS PEQUEÑAS */
+    .chart-container {
+        height: 280px !important;
+        padding: 10px 0 25px 0 !important;
+    }
+    
+    /* Gráficos en grid necesitan más espacio */
+    .dashboard-grid.cols-2 .chart-container {
+        height: 260px !important;
+        padding: 10px 0 30px 0 !important;
+    }
+    
+    /* Tabla responsive - scroll horizontal */
+    .chart-section > div[style*="overflow-x: auto"] {
+        margin: 0 -16px;
+        padding: 0 16px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .data-table {
+        min-width: 700px;
+        display: table;
+    }
+    
+    .data-table thead th,
+    .data-table tbody td {
+        white-space: nowrap;
+    }
+    
+    /* Hacer la tabla más compacta */
+    .data-table thead th {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+    
+    .data-table tbody td {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .data-table tbody td code {
+        font-size: 11px;
+        padding: 2px 6px;
+    }
+    
+    .data-table tbody td small {
+        font-size: 11px;
+    }
+    
+    .data-table tbody td strong {
+        font-size: 13px;
+    }
+    
+    /* Badges más pequeños */
+    .data-table .badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+}
+
+/* Estilos adicionales para mejorar la visualización de gráficos en móvil */
+@media (max-width: 768px) {
+    /* Asegurar que los canvas de gráficos sean responsive */
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+    }
+    
+    /* Ajustar el contenedor de gráficos lado a lado */
+    .dashboard-grid.cols-2 > .chart-section {
+        width: 100%;
+    }
+    
+    .dashboard-grid.cols-2 > .chart-section .chart-container {
+        min-height: 280px !important;
+        height: 280px !important;
+    }
+    
+    /* Mejorar legibilidad de etiquetas en gráficos */
+    .chart-section canvas {
+        font-size: 10px !important;
+    }
+}
+
+/* Estilos para scroll horizontal suave en tablas */
+.chart-section > div[style*="overflow-x"] {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E0 #F7FAFC;
+}
+
+.chart-section > div[style*="overflow-x"]::-webkit-scrollbar {
+    height: 8px;
+}
+
+.chart-section > div[style*="overflow-x"]::-webkit-scrollbar-track {
+    background: #F7FAFC;
+    border-radius: 4px;
+}
+
+.chart-section > div[style*="overflow-x"]::-webkit-scrollbar-thumb {
+    background: #CBD5E0;
+    border-radius: 4px;
+}
+
+.chart-section > div[style*="overflow-x"]::-webkit-scrollbar-thumb:hover {
+    background: #A0AEC0;
+}
+
+/* Cards de transacciones para móvil */
+.transaction-card {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.transaction-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.transaction-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.transaction-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.transaction-label {
+    font-weight: 600;
+    color: #6B7280;
+}
+
+.transaction-value {
+    font-weight: 500;
+    color: #111827;
+    text-align: right;
+}
+
+/* Mostrar/ocultar vistas según el tamaño de pantalla */
+@media (min-width: 769px) {
+    .transactions-cards-view {
+        display: none !important;
+    }
+    
+    .transactions-table-view {
+        display: block !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .transactions-table-view {
+        display: none !important;
+    }
+    
+    .transactions-cards-view {
+        display: block !important;
     }
 }
 
@@ -217,6 +514,125 @@ layout('header');
 .kpi-card:nth-child(2) { animation-delay: 0.2s; }
 .kpi-card:nth-child(3) { animation-delay: 0.3s; }
 .kpi-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .kpi-card {
+  background: #1F2937;
+  box-shadow: var(--shadow-md);
+  border: 1px solid #374151;
+}
+
+:root[data-theme="dark"] .kpi-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: #4B5563;
+}
+
+:root[data-theme="dark"] .kpi-card::before {
+  background: var(--accent-color);
+}
+
+:root[data-theme="dark"] .kpi-icon {
+  /* Los iconos mantienen sus colores de fondo específicos */
+}
+
+:root[data-theme="dark"] .chart-section {
+  background: #1F2937;
+  box-shadow: var(--shadow-md);
+  border: 1px solid #374151;
+}
+
+:root[data-theme="dark"] .data-table thead th {
+  background: #111827;
+  border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .data-table tbody td {
+  border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .data-table tbody tr:hover {
+  background: #374151;
+}
+
+:root[data-theme="dark"] .transaction-card {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .transaction-card-header {
+  border-bottom-color: #374151;
+}
+
+/* Canvas de gráficos - Light Mode */
+canvas {
+  background: #FFFFFF;
+  border-radius: 8px;
+}
+
+.chart-section canvas {
+  background: #FFFFFF;
+}
+
+.chart-container canvas {
+  background: #FFFFFF;
+}
+
+/* Canvas de gráficos - Dark Mode */
+:root[data-theme="dark"] canvas {
+  background: #1F2937 !important;
+  border-radius: 8px;
+}
+
+:root[data-theme="dark"] .chart-section canvas {
+  background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] .chart-container canvas {
+  background: #1F2937 !important;
+}
+
+/* Elementos con color hardcodeado - Dark Mode */
+:root[data-theme="dark"] [style*="color: #999"],
+:root[data-theme="dark"] [style*="color:#999"] {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] div[style*="text-align: center"][style*="padding"] {
+  color: #D1D5DB;
+}
+
+/* Títulos de gráficas - Dark Mode */
+:root[data-theme="dark"] .chart-title {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .chart-subtitle {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .kpi-value {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .kpi-label {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .chart-header h2,
+:root[data-theme="dark"] .chart-header h3 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .transaction-label {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .transaction-value {
+  color: #F3F4F6 !important;
+}
 </style>
 
 <main class="container admin-container">
@@ -237,17 +653,17 @@ layout('header');
     
     <?php
     // Calcular insights
-    $totalUsuarios = $this->db->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
-    $usuariosUltimoMes = $this->db->query("SELECT COUNT(*) FROM usuarios WHERE fecha_registro >= DATE_SUB(NOW(), INTERVAL 1 MONTH)")->fetchColumn();
+    $totalUsuarios = $this->db->query('SELECT COUNT(*) FROM usuarios')->fetchColumn();
+    $usuariosUltimoMes = $this->db->query('SELECT COUNT(*) FROM usuarios WHERE fecha_registro >= DATE_SUB(NOW(), INTERVAL 1 MONTH)')->fetchColumn();
     $crecimientoUsuarios = $totalUsuarios > 0 ? round(($usuariosUltimoMes / $totalUsuarios) * 100, 1) : 0;
-    
+
     $totalPublicaciones = $this->db->query("SELECT COUNT(*) FROM publicaciones WHERE estado != 'archivada'")->fetchColumn();
     $publicacionesActivas = $this->db->query("SELECT COUNT(*) FROM publicaciones WHERE estado = 'aprobada'")->fetchColumn();
     $tasaAprobacion = $totalPublicaciones > 0 ? round(($publicacionesActivas / $totalPublicaciones) * 100, 1) : 0;
-    
-    $totalMensajes = $this->db->query("SELECT COUNT(*) FROM mensajes")->fetchColumn();
-    $mensajesHoy = $this->db->query("SELECT COUNT(*) FROM mensajes WHERE DATE(fecha_envio) = CURDATE()")->fetchColumn();
-    
+
+    $totalMensajes = $this->db->query('SELECT COUNT(*) FROM mensajes')->fetchColumn();
+    $mensajesHoy = $this->db->query('SELECT COUNT(*) FROM mensajes WHERE DATE(fecha_envio) = CURDATE()')->fetchColumn();
+
     $totalRecaudado = $estadisticasPagos->total_recaudado ?? 0;
     $pagosAprobados = $estadisticasPagos->pagos_aprobados ?? 0;
     $tasaConversion = ($estadisticasPagos->total_pagos ?? 0) > 0 ? round(($pagosAprobados / $estadisticasPagos->total_pagos) * 100, 1) : 0;
@@ -479,7 +895,9 @@ layout('header');
         Monitorea las transacciones más recientes para detectar anomalías o patrones.
       </p>
     </div>
-    <div style="overflow-x: auto;">
+    
+    <!-- Vista de tabla para desktop -->
+    <div class="transactions-table-view" style="overflow-x: auto;">
       <table class="data-table">
         <thead>
           <tr>
@@ -505,16 +923,17 @@ layout('header');
             </td>
             <td><strong style="font-size: 15px;"><?php echo formatPrice($pago->monto); ?></strong></td>
             <td>
-              <span class="badge badge-<?php 
-                echo $pago->estado === 'aprobado' ? 'success' : 
-                     ($pago->estado === 'rechazado' ? 'danger' : 'warning');
-              ?>">
+              <span class="badge badge-<?php
+    echo $pago->estado === 'aprobado'
+      ? 'success'
+      : ($pago->estado === 'rechazado' ? 'danger' : 'warning');
+    ?>">
                 <?php echo ucfirst($pago->estado); ?>
               </span>
             </td>
             <td>
               <span class="badge badge-info">
-                <?php 
+                <?php
                 $tipo = str_replace('destacado_', '', $pago->tipo);
                 echo $tipo === '15' ? '15 días' : '30 días';
                 ?>
@@ -524,6 +943,59 @@ layout('header');
           <?php endforeach; ?>
         </tbody>
       </table>
+    </div>
+    
+    <!-- Vista de cards para móvil -->
+    <div class="transactions-cards-view" style="display: none;">
+      <?php foreach (array_slice($ultimosPagos, 0, 8) as $pago): ?>
+      <div class="transaction-card">
+        <div class="transaction-card-header">
+          <code style="background: #F3F4F6; padding: 4px 8px; border-radius: 4px; font-size: 11px;">#<?php echo $pago->id; ?></code>
+          <span class="badge badge-<?php
+            echo $pago->estado === 'aprobado'
+              ? 'success'
+              : ($pago->estado === 'rechazado' ? 'danger' : 'warning');
+          ?>" style="font-size: 11px;">
+            <?php echo ucfirst($pago->estado); ?>
+          </span>
+        </div>
+        <div class="transaction-card-body">
+          <div class="transaction-card-row">
+            <span class="transaction-label">Fecha:</span>
+            <span class="transaction-value">
+              <?php echo date('d/m/Y H:i', strtotime($pago->fecha_creacion)); ?>
+            </span>
+          </div>
+          <div class="transaction-card-row">
+            <span class="transaction-label">Usuario:</span>
+            <span class="transaction-value">
+              <?php echo htmlspecialchars($pago->usuario_nombre . ' ' . $pago->usuario_apellido); ?>
+            </span>
+          </div>
+          <div class="transaction-card-row">
+            <span class="transaction-label">Email:</span>
+            <span class="transaction-value" style="font-size: 12px; color: #6B7280;">
+              <?php echo htmlspecialchars($pago->usuario_email); ?>
+            </span>
+          </div>
+          <div class="transaction-card-row">
+            <span class="transaction-label">Monto:</span>
+            <span class="transaction-value" style="font-weight: 700; color: #10B981; font-size: 16px;">
+              <?php echo formatPrice($pago->monto); ?>
+            </span>
+          </div>
+          <div class="transaction-card-row">
+            <span class="transaction-label">Tipo:</span>
+            <span class="badge badge-info" style="font-size: 11px;">
+              <?php
+              $tipo = str_replace('destacado_', '', $pago->tipo);
+              echo $tipo === '15' ? '15 días' : '30 días';
+              ?>
+            </span>
+          </div>
+        </div>
+      </div>
+      <?php endforeach; ?>
     </div>
   </div>
   <?php endif; ?>
@@ -539,6 +1011,16 @@ Chart.defaults.plugins.legend.display = true;
 Chart.defaults.plugins.legend.position = 'top';
 Chart.defaults.plugins.legend.labels.usePointStyle = true;
 Chart.defaults.plugins.legend.labels.padding = 15;
+
+// Configuración responsive para móvil
+const isMobile = window.innerWidth <= 768;
+if (isMobile) {
+    Chart.defaults.plugins.legend.labels.padding = 8;
+    Chart.defaults.plugins.legend.labels.font = { size: 11 };
+    Chart.defaults.plugins.legend.labels.boxWidth = 12;
+    Chart.defaults.plugins.legend.labels.boxHeight = 12;
+    Chart.defaults.font.size = 10;
+}
 
 // Datos
 const usuariosData = <?php echo json_encode($usuariosPorMes ?? []); ?>;
@@ -604,18 +1086,21 @@ if (funnelData) {
                     '#10B981'
                 ],
                 borderWidth: 2,
-                borderRadius: 8
+                borderRadius: isMobile ? 6 : 8
             }]
         },
         plugins: [shadow3D],
         options: {
             indexAxis: 'y',
+            layout: {
+                padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+            },
             plugins: {
                 title: {
                     display: true,
                     text: 'Funnel: De Usuario a Cliente',
-                    font: { size: 16, weight: '700' },
-                    padding: { bottom: 20 }
+                    font: { size: isMobile ? 13 : 16, weight: '700' },
+                    padding: { bottom: isMobile ? 10 : 20 }
                 },
                 legend: { display: false },
                 tooltip: {
@@ -633,12 +1118,12 @@ if (funnelData) {
             scales: {
                 x: {
                     beginAtZero: true,
-                    ticks: { font: { size: 12 } },
+                    ticks: { font: { size: isMobile ? 10 : 12 } },
                     grid: { color: '#F3F4F6' }
                 },
                 y: {
                     ticks: { 
-                        font: { size: 13, weight: '600' },
+                        font: { size: isMobile ? 11 : 13, weight: '600' },
                         autoSkip: false
                     },
                     grid: { display: false }
@@ -659,18 +1144,18 @@ new Chart(document.getElementById('usuariosChart'), {
             borderColor: '#3B82F6',
             backgroundColor: (context) => {
                 const ctx = context.chart.ctx;
-                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                const gradient = ctx.createLinearGradient(0, 0, 0, isMobile ? 200 : 300);
                 gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
                 gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
                 return gradient;
             },
             fill: true,
             tension: 0.4,
-            borderWidth: 4,
-            pointRadius: 6,
-            pointHoverRadius: 9,
+            borderWidth: isMobile ? 3 : 4,
+            pointRadius: isMobile ? 4 : 6,
+            pointHoverRadius: isMobile ? 7 : 9,
             pointBackgroundColor: '#fff',
-            pointBorderWidth: 3,
+            pointBorderWidth: isMobile ? 2 : 3,
             pointBorderColor: '#3B82F6',
             pointHoverBackgroundColor: '#3B82F6',
             pointHoverBorderColor: '#fff'
@@ -678,18 +1163,23 @@ new Chart(document.getElementById('usuariosChart'), {
     },
     plugins: [shadow3D],
     options: {
+        layout: {
+            padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+        },
         plugins: {
             title: { 
                 display: true, 
                 text: 'Nuevos Usuarios por Mes', 
-                font: { size: 16, weight: '700' },
-                padding: { bottom: 20 }
+                font: { size: isMobile ? 13 : 16, weight: '700' },
+                padding: { bottom: isMobile ? 10 : 20 }
             },
             legend: {
                 display: true,
                 labels: {
-                    font: { size: 13, weight: '600' },
-                    padding: 15
+                    font: { size: isMobile ? 11 : 13, weight: '600' },
+                    padding: isMobile ? 8 : 15,
+                    boxWidth: isMobile ? 10 : 15,
+                    boxHeight: isMobile ? 10 : 15
                 }
             },
             tooltip: {
@@ -705,12 +1195,15 @@ new Chart(document.getElementById('usuariosChart'), {
         scales: {
             y: { 
                 beginAtZero: true,
-                ticks: { precision: 0, font: { size: 12 } },
+                ticks: { 
+                    precision: 0, 
+                    font: { size: isMobile ? 10 : 12 }
+                },
                 grid: { color: '#F3F4F6' }
             },
             x: {
                 grid: { display: false },
-                ticks: { font: { size: 12 } }
+                ticks: { font: { size: isMobile ? 10 : 12 } }
             }
         }
     }
@@ -751,20 +1244,25 @@ new Chart(document.getElementById('publicacionesChart'), {
     },
     plugins: [shadow3D],
     options: {
+        layout: {
+            padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+        },
         plugins: {
             title: { 
                 display: true, 
                 text: 'Publicaciones por Categoría de Vehículo', 
-                font: { size: 16, weight: '700' },
-                padding: { bottom: 20 }
+                font: { size: isMobile ? 13 : 16, weight: '700' },
+                padding: { bottom: isMobile ? 10 : 20 }
             },
             legend: {
                 display: true,
                 position: 'top',
                 labels: {
-                    font: { size: 12, weight: '600' },
-                    padding: 12,
-                    usePointStyle: true
+                    font: { size: isMobile ? 10 : 12, weight: '600' },
+                    padding: isMobile ? 8 : 12,
+                    usePointStyle: true,
+                    boxWidth: isMobile ? 10 : 15,
+                    boxHeight: isMobile ? 10 : 15
                 }
             },
             tooltip: {
@@ -779,11 +1277,15 @@ new Chart(document.getElementById('publicacionesChart'), {
             y: { 
                 stacked: true,
                 beginAtZero: true,
-                ticks: { precision: 0 },
+                ticks: { 
+                    precision: 0,
+                    font: { size: isMobile ? 10 : 12 }
+                },
                 grid: { color: '#F3F4F6' }
             },
             x: { 
                 stacked: true,
+                ticks: { font: { size: isMobile ? 10 : 12 } },
                 grid: { display: false } 
             }
         }
@@ -801,7 +1303,7 @@ new Chart(document.getElementById('ingresosChart'), {
             backgroundColor: 'rgba(16, 185, 129, 0.8)',
             borderColor: '#10B981',
             borderWidth: 2,
-            borderRadius: 8,
+            borderRadius: isMobile ? 6 : 8,
             hoverBackgroundColor: '#059669'
         }]
     },
@@ -811,8 +1313,8 @@ new Chart(document.getElementById('ingresosChart'), {
             title: { 
                 display: true, 
                 text: 'Ingresos Mensuales', 
-                font: { size: 16, weight: '700' },
-                padding: { bottom: 20 }
+                font: { size: isMobile ? 13 : 16, weight: '700' },
+                padding: { bottom: isMobile ? 10 : 20 }
             },
             legend: {
                 display: false
@@ -832,17 +1334,24 @@ new Chart(document.getElementById('ingresosChart'), {
                 }
             }
         },
+        layout: {
+            padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+        },
         scales: {
             y: { 
                 type: 'linear',
                 position: 'left',
                 beginAtZero: true,
                 ticks: {
+                    font: { size: isMobile ? 10 : 12 },
                     callback: (value) => '$' + (value / 1000).toFixed(0) + 'k'
                 },
                 grid: { color: '#F3F4F6' }
             },
-            x: { grid: { display: false } }
+            x: { 
+                ticks: { font: { size: isMobile ? 10 : 12 } },
+                grid: { display: false } 
+            }
         }
     }
 });
@@ -865,27 +1374,30 @@ if (estadosData.length > 0) {
                 backgroundColor: estadosData.map(d => colores[d.estado] || '#6B7280'),
                 borderWidth: 3,
                 borderColor: '#fff',
-                hoverOffset: 10
+                hoverOffset: isMobile ? 6 : 10
             }]
         },
         options: {
+            layout: {
+                padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+            },
             plugins: {
                 title: { 
                     display: true, 
                     text: 'Distribución de Pagos por Estado', 
-                    font: { size: 16, weight: '700' },
-                    padding: { bottom: 20 }
+                    font: { size: isMobile ? 13 : 16, weight: '700' },
+                    padding: { bottom: isMobile ? 10 : 20 }
                 },
                 legend: {
                     display: true,
-                    position: 'right',
+                    position: isMobile ? 'bottom' : 'right',
                     labels: { 
-                        padding: 20,
-                        font: { size: 14, weight: '600' },
+                        padding: isMobile ? 10 : 20,
+                        font: { size: isMobile ? 11 : 14, weight: '600' },
                         usePointStyle: true,
                         pointStyle: 'circle',
-                        boxWidth: 15,
-                        boxHeight: 15
+                        boxWidth: isMobile ? 10 : 15,
+                        boxHeight: isMobile ? 10 : 15
                     }
                 },
                 tooltip: {
@@ -913,18 +1425,18 @@ if (estadosData.length > 0) {
 $fechas = [];
 $totales = [];
 for ($i = 6; $i >= 0; $i--) {
-    $fecha = date('Y-m-d', strtotime("-$i days"));
-    $fechas[] = date('d/m', strtotime($fecha));
-    
-    // Buscar si hay datos para esta fecha
-    $total = 0;
-    foreach ($chartData['actividad_semanal'] as $dia) {
-        if ($dia->fecha === $fecha) {
-            $total = $dia->total;
-            break;
-        }
+  $fecha = date('Y-m-d', strtotime("-$i days"));
+  $fechas[] = date('d/m', strtotime($fecha));
+
+  // Buscar si hay datos para esta fecha
+  $total = 0;
+  foreach ($chartData['actividad_semanal'] as $dia) {
+    if ($dia->fecha === $fecha) {
+      $total = $dia->total;
+      break;
     }
-    $totales[] = $total;
+  }
+  $totales[] = $total;
 }
 ?>
 
@@ -940,11 +1452,11 @@ if (ctxActividad) {
                 data: <?php echo json_encode($totales); ?>,
                 borderColor: '#E6332A',
                 backgroundColor: 'rgba(230, 51, 42, 0.1)',
-                borderWidth: 3,
+                borderWidth: isMobile ? 2 : 3,
                 fill: true,
                 tension: 0.4,
-                pointRadius: 5,
-                pointHoverRadius: 7,
+                pointRadius: isMobile ? 4 : 5,
+                pointHoverRadius: isMobile ? 6 : 7,
                 pointBackgroundColor: '#E6332A',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2
@@ -953,6 +1465,9 @@ if (ctxActividad) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+            },
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -969,11 +1484,14 @@ if (ctxActividad) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { stepSize: 1, font: { size: 12 } },
+                    ticks: { 
+                        stepSize: 1, 
+                        font: { size: isMobile ? 10 : 12 } 
+                    },
                     grid: { color: '#F3F4F6' }
                 },
                 x: {
-                    ticks: { font: { size: 12 } },
+                    ticks: { font: { size: isMobile ? 10 : 12 } },
                     grid: { display: false }
                 }
             }
@@ -997,20 +1515,25 @@ if (ctxEstados) {
                 backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
                 borderWidth: 3,
                 borderColor: '#fff',
-                hoverOffset: 10
+                hoverOffset: isMobile ? 6 : 10
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            layout: {
+                padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+            },
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        padding: 15,
-                        font: { size: 13, weight: '600' },
+                        padding: isMobile ? 10 : 15,
+                        font: { size: isMobile ? 11 : 13, weight: '600' },
                         usePointStyle: true,
-                        pointStyle: 'circle'
+                        pointStyle: 'circle',
+                        boxWidth: isMobile ? 10 : 15,
+                        boxHeight: isMobile ? 10 : 15
                     }
                 },
                 tooltip: {
@@ -1051,7 +1574,7 @@ if (ctxCategorias) {
                 backgroundColor: 'rgba(230, 51, 42, 0.8)',
                 borderColor: '#E6332A',
                 borderWidth: 2,
-                borderRadius: 8,
+                borderRadius: isMobile ? 6 : 8,
                 hoverBackgroundColor: '#C02A23'
             }]
         },
@@ -1059,6 +1582,9 @@ if (ctxCategorias) {
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
+            layout: {
+                padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+            },
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -1073,17 +1599,21 @@ if (ctxCategorias) {
             scales: {
                 x: {
                     beginAtZero: true,
-                    ticks: { stepSize: 1, font: { size: 12 } },
+                    ticks: { 
+                        stepSize: 1, 
+                        font: { size: isMobile ? 10 : 12 } 
+                    },
                     grid: { color: '#F3F4F6' }
                 },
                 y: {
-                    ticks: { font: { size: 12 } },
+                    ticks: { font: { size: isMobile ? 10 : 12 } },
                     grid: { display: false }
                 }
             }
         }
     });
 }
+
 </script>
 
 <?php layout('footer'); ?>

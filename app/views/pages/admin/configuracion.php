@@ -369,12 +369,32 @@ layout('header');
             border-radius: 4px;
             font-size: 1rem;
             transition: border-color 0.3s;
+            background: white;
+            color: #333;
         }
         
         .form-control:focus {
             outline: none;
             border-color: #007bff;
             box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+        
+        /* Forzar estilos consistentes para todos los tipos de input */
+        input[type="text"].form-control,
+        input[type="email"].form-control,
+        input[type="url"].form-control,
+        input[type="number"].form-control {
+            background: white !important;
+            color: #333 !important;
+        }
+        
+        /* Prevenir estilos de autocompletado del navegador */
+        .form-control:-webkit-autofill,
+        .form-control:-webkit-autofill:hover,
+        .form-control:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px white inset !important;
+            -webkit-text-fill-color: #333 !important;
+            box-shadow: 0 0 0 1000px white inset !important;
         }
         
         .form-text {
@@ -448,6 +468,132 @@ layout('header');
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+        }
+        
+        /* ============================================================================
+         * DARK MODE
+         * ============================================================================ */
+        
+        :root[data-theme="dark"] .config-form {
+            background: #1F2937;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        :root[data-theme="dark"] .config-section {
+            border-bottom-color: #374151;
+        }
+        
+        :root[data-theme="dark"] .config-section h2 {
+            color: #F3F4F6;
+        }
+        
+        :root[data-theme="dark"] .config-section h2 i,
+        :root[data-theme="dark"] .config-section h2 svg {
+            color: var(--cc-primary);
+        }
+        
+        :root[data-theme="dark"] .section-description {
+            color: #9CA3AF;
+        }
+        
+        :root[data-theme="dark"] .form-group label {
+            color: #D1D5DB;
+        }
+        
+        :root[data-theme="dark"] .form-group label i,
+        :root[data-theme="dark"] .form-group label svg {
+            color: var(--cc-primary);
+        }
+        
+        :root[data-theme="dark"] .form-control {
+            background: #374151 !important;
+            border-color: #4B5563;
+            color: #F3F4F6 !important;
+        }
+        
+        :root[data-theme="dark"] .form-control:focus {
+            border-color: var(--cc-primary);
+            background: #1F2937 !important;
+            box-shadow: 0 0 0 3px rgba(230, 51, 42, 0.2);
+        }
+        
+        :root[data-theme="dark"] .form-control::placeholder {
+            color: #9CA3AF;
+        }
+        
+        /* Forzar estilos consistentes en modo oscuro para todos los tipos de input */
+        :root[data-theme="dark"] input[type="text"].form-control,
+        :root[data-theme="dark"] input[type="email"].form-control,
+        :root[data-theme="dark"] input[type="url"].form-control,
+        :root[data-theme="dark"] input[type="number"].form-control {
+            background: #374151 !important;
+            color: #F3F4F6 !important;
+        }
+        
+        /* Prevenir estilos de autocompletado del navegador en modo oscuro */
+        :root[data-theme="dark"] .form-control:-webkit-autofill,
+        :root[data-theme="dark"] .form-control:-webkit-autofill:hover,
+        :root[data-theme="dark"] .form-control:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px #374151 inset !important;
+            -webkit-text-fill-color: #F3F4F6 !important;
+            box-shadow: 0 0 0 1000px #374151 inset !important;
+        }
+        
+        :root[data-theme="dark"] .form-text {
+            color: #9CA3AF;
+        }
+        
+        :root[data-theme="dark"] .sticky-actions {
+            background: #1F2937;
+            border-top-color: #374151;
+        }
+        
+        :root[data-theme="dark"] .btn {
+            background: #374151;
+            color: #F3F4F6;
+            border-color: #4B5563;
+        }
+        
+        :root[data-theme="dark"] .btn:hover {
+            background: #4B5563;
+            border-color: #6B7280;
+        }
+        
+        :root[data-theme="dark"] .btn.primary {
+            background: var(--cc-primary);
+            color: white;
+            border-color: var(--cc-primary);
+        }
+        
+        :root[data-theme="dark"] .btn.primary:hover {
+            background: var(--cc-primary-dark);
+            border-color: var(--cc-primary-dark);
+        }
+        
+        :root[data-theme="dark"] .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6EE7B7;
+            border-color: #10B981;
+        }
+        
+        :root[data-theme="dark"] .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #FCA5A5;
+            border-color: #EF4444;
+        }
+        
+        :root[data-theme="dark"] .h1,
+        :root[data-theme="dark"] h1 {
+            color: #F3F4F6;
+        }
+        
+        :root[data-theme="dark"] .meta {
+            color: #9CA3AF;
+        }
+        
+        /* Iconos en dark mode */
+        :root[data-theme="dark"] svg {
+            color: inherit;
         }
 </style>
 

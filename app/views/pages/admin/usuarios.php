@@ -131,7 +131,7 @@ layout('header');
     </form>
   </div>
 
-  <!-- Tabla de usuarios -->
+  <!-- Tabla de usuarios (Desktop) -->
   <div class="card">
     <div class="table-responsive">
       <table class="table">
@@ -317,6 +317,174 @@ layout('header');
         </tbody>
       </table>
     </div>
+    
+    <!-- Vista de Cards para Móvil -->
+    <div class="usuarios-cards-view">
+      <?php if (empty($usuarios)): ?>
+        <div style="text-align: center; padding: 48px; color: #999;">
+          <div class="h3" style="margin-bottom: 8px;">No hay usuarios</div>
+          <p class="meta">No se encontraron usuarios con los filtros seleccionados</p>
+        </div>
+      <?php else: ?>
+        <div class="usuarios-cards-container">
+          <?php foreach ($usuarios as $usuario): ?>
+            <div class="usuario-card">
+              <!-- Header del card -->
+              <div class="usuario-card-header">
+                <div class="usuario-card-avatar">
+                  <?php if ($usuario->foto_perfil): ?>
+                    <img 
+                      src="<?php echo BASE_URL . '/' . $usuario->foto_perfil; ?>" 
+                      alt="<?php echo htmlspecialchars($usuario->nombre); ?>"
+                    >
+                  <?php else: ?>
+                    <div class="usuario-card-avatar-placeholder">
+                      <?php echo strtoupper(substr($usuario->nombre, 0, 1)); ?>
+                    </div>
+                  <?php endif; ?>
+                </div>
+                <div class="usuario-card-info">
+                  <div class="usuario-card-name">
+                    <?php echo htmlspecialchars($usuario->nombre . ' ' . $usuario->apellido); ?>
+                    <?php if ($usuario->verificado): ?>
+                      <span style="color: #34C759; font-size: 14px;">✓</span>
+                    <?php endif; ?>
+                  </div>
+                  <div class="usuario-card-id">
+                    #<?php echo $usuario->id; ?> • 
+                    <span class="badge" style="
+                      background: <?php 
+                        echo $usuario->rol === 'admin' ? '#FF3B30' : 
+                             ($usuario->rol === 'vendedor' ? '#007AFF' : '#8E8E93'); 
+                      ?>; 
+                      color: white; 
+                      padding: 2px 8px; 
+                      border-radius: 8px; 
+                      font-size: 10px;
+                    ">
+                      <?php echo ucfirst($usuario->rol); ?>
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <span class="badge" style="
+                    background: <?php 
+                      echo $usuario->estado === 'activo' ? '#34C759' : 
+                           ($usuario->estado === 'suspendido' ? '#FF9500' : '#8E8E93'); 
+                    ?>; 
+                    color: white; 
+                    padding: 4px 10px; 
+                    border-radius: 10px; 
+                    font-size: 11px;
+                    font-weight: 600;
+                  ">
+                    <?php echo ucfirst($usuario->estado); ?>
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Body del card -->
+              <div class="usuario-card-body">
+                <div class="usuario-card-row">
+                  <span class="usuario-label">Email:</span>
+                  <span class="usuario-value">
+                    <a href="mailto:<?php echo htmlspecialchars($usuario->email); ?>" style="color: #0066CC; text-decoration: none;">
+                      <?php echo htmlspecialchars($usuario->email); ?>
+                    </a>
+                  </span>
+                </div>
+                
+                <?php if ($usuario->telefono): ?>
+                <div class="usuario-card-row">
+                  <span class="usuario-label">Teléfono:</span>
+                  <span class="usuario-value">
+                    <a href="tel:<?php echo htmlspecialchars($usuario->telefono); ?>" style="color: #0066CC; text-decoration: none;">
+                      <?php echo htmlspecialchars($usuario->telefono); ?>
+                    </a>
+                  </span>
+                </div>
+                <?php endif; ?>
+                
+                <div class="usuario-card-row">
+                  <span class="usuario-label">RUT:</span>
+                  <span class="usuario-value">
+                    <?php echo htmlspecialchars($usuario->rut ?? 'No registrado'); ?>
+                  </span>
+                </div>
+                
+                <div class="usuario-card-row">
+                  <span class="usuario-label">Publicaciones:</span>
+                  <span class="usuario-value">
+                    <strong><?php echo $usuario->total_publicaciones; ?></strong> total
+                    <br>
+                    <small style="color: #6B7280;"><?php echo $usuario->publicaciones_aprobadas; ?> aprobadas</small>
+                  </span>
+                </div>
+                
+                <div class="usuario-card-row">
+                  <span class="usuario-label">Registro:</span>
+                  <span class="usuario-value">
+                    <?php echo date('d/m/Y', strtotime($usuario->fecha_registro)); ?>
+                  </span>
+                </div>
+                
+                <div class="usuario-card-row">
+                  <span class="usuario-label">Última conexión:</span>
+                  <span class="usuario-value">
+                    <?php if ($usuario->ultima_conexion): ?>
+                      <?php 
+                        $dias = floor((time() - strtotime($usuario->ultima_conexion)) / 86400);
+                        if ($dias === 0) {
+                          echo 'Hoy';
+                        } elseif ($dias === 1) {
+                          echo 'Ayer';
+                        } else {
+                          echo "Hace {$dias} días";
+                        }
+                      ?>
+                    <?php else: ?>
+                      <span style="color: #9CA3AF;">Nunca</span>
+                    <?php endif; ?>
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Footer con acciones -->
+              <div class="usuario-card-actions">
+                <a 
+                  href="<?php echo BASE_URL; ?>/admin/usuarios/<?php echo $usuario->id; ?>" 
+                  class="btn btn-primary"
+                  style="display: inline-flex; align-items: center; gap: 6px;"
+                >
+                  <?php echo icon('eye', 16); ?>
+                  <span>Ver Detalle</span>
+                </a>
+                
+                <?php if ($usuario->estado === 'activo'): ?>
+                  <button 
+                    onclick="cambiarEstadoUsuario(<?php echo $usuario->id; ?>, 'suspendido', this)"
+                    class="btn btn-outline"
+                    style="display: inline-flex; align-items: center; gap: 6px; color: var(--cc-warning, #F59E0B); border-color: var(--cc-warning, #F59E0B);"
+                  >
+                    <?php echo icon('user-x', 16); ?>
+                    <span>Suspender</span>
+                  </button>
+                <?php elseif ($usuario->estado === 'suspendido'): ?>
+                  <button 
+                    onclick="cambiarEstadoUsuario(<?php echo $usuario->id; ?>, 'activo', this)"
+                    class="btn"
+                    style="display: inline-flex; align-items: center; gap: 6px; background: var(--cc-success, #10B981); border-color: var(--cc-success, #10B981); color: white;"
+                  >
+                    <?php echo icon('user-check', 16); ?>
+                    <span>Activar</span>
+                  </button>
+                <?php endif; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+    </div>
 
     <!-- Paginación -->
     <?php if ($pagination['total_pages'] > 1): ?>
@@ -479,6 +647,621 @@ layout('header');
   
   .filter-toggle.active svg {
     transform: rotate(180deg);
+  }
+  
+  /* ============================================================================
+   * RESPONSIVE DESIGN
+   * ============================================================================ */
+  
+  /* Tablets y pantallas medianas */
+  @media (max-width: 968px) {
+    .table {
+      font-size: 13px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+      padding: 10px 8px;
+    }
+  }
+  
+  /* Móviles */
+  @media (max-width: 768px) {
+    /* Container principal */
+    .admin-container {
+      padding: 16px !important;
+    }
+    
+    /* Header */
+    main > div:first-child {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 16px !important;
+    }
+    
+    main > div:first-child h1 {
+      font-size: 24px !important;
+    }
+    
+    main > div:first-child > div:last-child {
+      width: 100%;
+      flex-direction: column !important;
+    }
+    
+    main > div:first-child > div:last-child .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    /* Tabs responsive */
+    .tabs-container {
+      padding: 6px;
+    }
+    
+    .tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .tab {
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+    
+    .tab span:not(.tab-badge) {
+      display: none;
+    }
+    
+    .tab-badge {
+      min-width: 22px;
+      height: 22px;
+      font-size: 11px;
+    }
+    
+    /* Filtros */
+    .card {
+      padding: 12px 16px !important;
+    }
+    
+    #advanced-filters form {
+      grid-template-columns: 1fr !important;
+      gap: 12px !important;
+    }
+    
+    /* Ocultar tabla en móvil */
+    .table-responsive {
+      display: none !important;
+    }
+    
+    /* Paginación */
+    .card > div:last-child {
+      flex-direction: column !important;
+      gap: 12px !important;
+      padding: 16px !important;
+    }
+    
+    .card > div:last-child > div:first-child {
+      text-align: center;
+    }
+    
+    .card > div:last-child > div:last-child {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .card > div:last-child .btn {
+      padding: 8px 12px !important;
+      font-size: 12px !important;
+    }
+  }
+  
+  /* Móviles pequeños */
+  @media (max-width: 480px) {
+    .admin-container {
+      padding: 12px !important;
+    }
+    
+    main > div:first-child h1 {
+      font-size: 20px !important;
+    }
+    
+    .tab {
+      padding: 8px 12px;
+    }
+  }
+  
+  /* ============================================================================
+   * VISTA DE CARDS PARA MÓVIL
+   * ============================================================================ */
+  
+  .usuarios-cards-view {
+    display: none;
+  }
+  
+  .usuarios-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .usuario-card {
+    background: #FFFFFF;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+  
+  .usuario-card:hover {
+    border-color: var(--cc-primary, #E6332A);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .usuario-card-header {
+    padding: 16px;
+    background: #F9FAFB;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .usuario-card-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  
+  .usuario-card-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .usuario-card-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #E5E7EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #6B7280;
+    font-size: 20px;
+  }
+  
+  .usuario-card-info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .usuario-card-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #111827;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .usuario-card-id {
+    font-size: 12px;
+    color: #6B7280;
+    font-weight: 600;
+  }
+  
+  .usuario-card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .usuario-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+  }
+  
+  .usuario-label {
+    font-weight: 600;
+    color: #6B7280;
+    min-width: 100px;
+    flex-shrink: 0;
+  }
+  
+  .usuario-value {
+    font-weight: 500;
+    color: #111827;
+    text-align: right;
+    word-break: break-word;
+  }
+  
+  .usuario-card-actions {
+    padding: 12px 16px;
+    background: #F9FAFB;
+    border-top: 1px solid #E5E7EB;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .usuario-card-actions .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  /* Mostrar/ocultar vistas según tamaño de pantalla */
+  @media (min-width: 769px) {
+    .usuarios-cards-view {
+      display: none !important;
+    }
+    
+    .table-responsive {
+      display: block !important;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .table-responsive {
+      display: none !important;
+    }
+    
+    .usuarios-cards-view {
+      display: block !important;
+    }
+  }
+  
+  /* ============================================================================
+   * DARK MODE
+   * ============================================================================ */
+  
+  :root[data-theme="dark"] .usuario-card {
+    background: #1F2937;
+    border-color: #374151;
+  }
+  
+  :root[data-theme="dark"] .usuario-card:hover {
+    border-color: var(--cc-primary, #E6332A);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+  
+  :root[data-theme="dark"] .usuario-card-header {
+    background: #374151;
+    border-bottom-color: #4B5563;
+  }
+  
+  :root[data-theme="dark"] .usuario-card-avatar-placeholder {
+    background: #4B5563;
+    color: #D1D5DB;
+  }
+  
+  :root[data-theme="dark"] .usuario-card-actions {
+    background: #374151;
+    border-top-color: #4B5563;
+  }
+  
+  :root[data-theme="dark"] .usuario-card-name {
+    color: #F3F4F6 !important;
+  }
+  
+  :root[data-theme="dark"] .usuario-card-id {
+    color: #9CA3AF !important;
+  }
+  
+  /* Elementos con color hardcodeado - Dark Mode */
+  :root[data-theme="dark"] [style*="color: #999"],
+  :root[data-theme="dark"] [style*="color:#999"] {
+    color: #9CA3AF !important;
+  }
+  
+  :root[data-theme="dark"] div[style*="text-align: center"][style*="padding"] {
+    color: #D1D5DB;
+  }
+  
+  /* Tabs en Dark Mode */
+  :root[data-theme="dark"] .tabs-container {
+    background: #1F2937;
+    border-color: #374151;
+  }
+  
+  :root[data-theme="dark"] .tab {
+    color: #D1D5DB;
+  }
+  
+  :root[data-theme="dark"] .tab:hover {
+    background: #374151;
+    color: #F3F4F6;
+  }
+  
+  :root[data-theme="dark"] .tab-active {
+    background: var(--cc-primary, #E6332A);
+    color: var(--cc-white, white);
+    border-color: var(--cc-primary, #E6332A);
+  }
+  
+  :root[data-theme="dark"] .tab-badge {
+    background: #374151;
+    color: #D1D5DB;
+  }
+  
+  :root[data-theme="dark"] .tab-active .tab-badge {
+    background: rgba(255, 255, 255, 0.3);
+    color: var(--cc-white, white);
+  }
+  
+  /* Card en Dark Mode */
+  :root[data-theme="dark"] .card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+  }
+  
+  /* Cards con estilos inline - Dark Mode */
+  :root[data-theme="dark"] div.card[style],
+  :root[data-theme="dark"] .card[style] {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+  }
+  
+  /* Filter Toggle en Dark Mode */
+  :root[data-theme="dark"] .filter-toggle {
+    color: #F3F4F6;
+  }
+  
+  :root[data-theme="dark"] .filter-toggle span {
+    color: #F3F4F6 !important;
+  }
+  
+  :root[data-theme="dark"] #advanced-filters {
+    border-top-color: #374151;
+  }
+  
+  /* Botones outline en Dark Mode */
+  :root[data-theme="dark"] .btn.outline {
+    background: #374151 !important;
+    color: #F3F4F6 !important;
+    border-color: #4B5563 !important;
+  }
+  
+  :root[data-theme="dark"] .btn.outline:hover {
+    background: #4B5563 !important;
+    border-color: #6B7280 !important;
+  }
+  
+  /* Inputs y selects en filtros - Dark Mode */
+  :root[data-theme="dark"] .input,
+  :root[data-theme="dark"] select.input {
+    background: #374151 !important;
+    border-color: #4B5563 !important;
+    color: #F3F4F6 !important;
+  }
+  
+  :root[data-theme="dark"] .input::placeholder {
+    color: #9CA3AF !important;
+  }
+  
+  :root[data-theme="dark"] .label {
+    color: #D1D5DB !important;
+  }
+  
+  /* Tabla en Dark Mode */
+  :root[data-theme="dark"] .table thead {
+    background: #111827;
+  }
+  
+  :root[data-theme="dark"] .table th {
+    color: #F3F4F6;
+    border-bottom-color: #374151;
+  }
+  
+  :root[data-theme="dark"] .table td {
+    color: #D1D5DB;
+    border-bottom-color: #374151;
+  }
+  
+  :root[data-theme="dark"] .table tbody tr:hover {
+    background: #374151;
+  }
+  
+  /* Textos en Dark Mode */
+  :root[data-theme="dark"] .usuario-card-name,
+  :root[data-theme="dark"] .usuario-value {
+    color: #F3F4F6 !important;
+  }
+  
+  :root[data-theme="dark"] .usuario-card-id,
+  :root[data-theme="dark"] .usuario-label {
+    color: #9CA3AF !important;
+  }
+  
+  /* Avatar placeholder en tabla */
+  :root[data-theme="dark"] div[style*="background: #E5E7EB"] {
+    background: #374151 !important;
+    color: #9CA3AF !important;
+  }
+  
+  /* Enlaces en Dark Mode */
+  :root[data-theme="dark"] a[href^="mailto"],
+  :root[data-theme="dark"] a[href^="tel"] {
+    color: #60A5FA !important;
+  }
+  
+  /* Paginación en Dark Mode */
+  :root[data-theme="dark"] .card > div:last-child {
+    border-top-color: #374151;
+  }
+  
+  /* Modal en Dark Mode */
+  :root[data-theme="dark"] #modalCambiarEstado .card {
+    background: #1F2937;
+    border-color: #374151;
+  }
+  
+  :root[data-theme="dark"] #modalCambiarEstado .h3 {
+    color: #F3F4F6;
+  }
+  
+  /* Badges con estilos inline - Dark Mode */
+  :root[data-theme="dark"] .badge[style*="background: #FF3B30"],
+  :root[data-theme="dark"] .badge[style*="background: #007AFF"],
+  :root[data-theme="dark"] .badge[style*="background: #8E8E93"],
+  :root[data-theme="dark"] .badge[style*="background: #34C759"],
+  :root[data-theme="dark"] .badge[style*="background: #FF9500"] {
+    /* Mantener colores de badges ya que son distintivos */
+  }
+  
+  /* Textos con color inline - Dark Mode */
+  :root[data-theme="dark"] div[style*="color: #111827"],
+  :root[data-theme="dark"] strong[style*="color: #111827"] {
+    color: #F3F4F6 !important;
+  }
+  
+  :root[data-theme="dark"] div[style*="color: #6B7280"],
+  :root[data-theme="dark"] small[style*="color: #6B7280"] {
+    color: #9CA3AF !important;
+  }
+  
+  :root[data-theme="dark"] span[style*="color: #9CA3AF"] {
+    color: #9CA3AF !important;
+  }
+  
+  /* Botones en header - Dark Mode */
+  :root[data-theme="dark"] main > div:first-child .btn {
+    color: #F3F4F6 !important;
+  }
+  
+  :root[data-theme="dark"] main > div:first-child .btn.primary {
+    background: var(--cc-primary) !important;
+    color: #FFFFFF !important;
+  }
+  
+  /* Tabs números - Dark Mode */
+  :root[data-theme="dark"] .tab span:not(.tab-badge) {
+    color: inherit !important;
+  }
+  
+  /* Usuario card body - Dark Mode */
+  :root[data-theme="dark"] .usuario-card-body {
+    background: #1F2937;
+  }
+  
+  /* Mejorar contraste de textos en cards */
+  :root[data-theme="dark"] .usuario-value strong {
+    color: #F3F4F6 !important;
+  }
+  
+  :root[data-theme="dark"] .usuario-value small {
+    color: #9CA3AF !important;
+  }
+  
+  /* Botones de acción en cards - Dark Mode */
+  :root[data-theme="dark"] .usuario-card-actions .btn-primary {
+    background: var(--cc-primary) !important;
+    color: #FFFFFF !important;
+  }
+  
+  :root[data-theme="dark"] .usuario-card-actions .btn-outline {
+    background: transparent !important;
+    color: #F59E0B !important;
+    border-color: #F59E0B !important;
+  }
+  
+  /* Select y opciones - Dark Mode */
+  :root[data-theme="dark"] select.input option {
+    background: #374151;
+    color: #F3F4F6;
+  }
+  
+  /* Paginación meta text - Dark Mode */
+  :root[data-theme="dark"] .card > div:last-child .meta {
+    color: #9CA3AF !important;
+  }
+  
+  /* Botones de paginación - Dark Mode */
+  :root[data-theme="dark"] .card > div:last-child .btn.outline {
+    background: #374151 !important;
+    color: #F3F4F6 !important;
+    border-color: #4B5563 !important;
+  }
+  
+  :root[data-theme="dark"] .card > div:last-child .btn.primary {
+    background: var(--cc-primary) !important;
+    color: #FFFFFF !important;
+  }
+  
+  /* Filtros avanzados - Dark Mode */
+  :root[data-theme="dark"] #advanced-filters form {
+    background: transparent !important;
+  }
+  
+  :root[data-theme="dark"] #advanced-filters form > div {
+    background: transparent !important;
+  }
+  
+  /* Labels en filtros - Dark Mode */
+  :root[data-theme="dark"] #advanced-filters .label,
+  :root[data-theme="dark"] .card .label {
+    color: #D1D5DB !important;
+  }
+  
+  /* Texto "Búsqueda" - Dark Mode */
+  :root[data-theme="dark"] .card form label,
+  :root[data-theme="dark"] .card label {
+    color: #D1D5DB !important;
+  }
+  
+  /* Divs con estilos inline - Dark Mode */
+  :root[data-theme="dark"] .card > div[style*="padding"],
+  :root[data-theme="dark"] .card > div[style*="margin"] {
+    background: transparent !important;
+  }
+  
+  /* Usuario cards container - Dark Mode */
+  :root[data-theme="dark"] .usuarios-cards-container {
+    background: transparent !important;
+  }
+  
+  /* Asegurar que todos los divs dentro de cards sean oscuros */
+  :root[data-theme="dark"] .card > div,
+  :root[data-theme="dark"] .card > form,
+  :root[data-theme="dark"] .card > form > div {
+    background: transparent !important;
+  }
+  
+  /* Table responsive container - Dark Mode */
+  :root[data-theme="dark"] .table-responsive {
+    background: transparent !important;
+  }
+  
+  /* Sobrescribir cualquier background white inline */
+  :root[data-theme="dark"] [style*="background: white"],
+  :root[data-theme="dark"] [style*="background: #FFFFFF"],
+  :root[data-theme="dark"] [style*="background: #FFF"],
+  :root[data-theme="dark"] [style*="background:#FFFFFF"],
+  :root[data-theme="dark"] [style*="background:#FFF"] {
+    background: #1F2937 !important;
+  }
+  
+  /* Sobrescribir background-color white inline */
+  :root[data-theme="dark"] [style*="background-color: white"],
+  :root[data-theme="dark"] [style*="background-color: #FFFFFF"],
+  :root[data-theme="dark"] [style*="background-color: #FFF"],
+  :root[data-theme="dark"] [style*="background-color:#FFFFFF"],
+  :root[data-theme="dark"] [style*="background-color:#FFF"] {
+    background-color: #1F2937 !important;
   }
 </style>
 

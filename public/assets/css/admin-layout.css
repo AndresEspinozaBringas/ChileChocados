@@ -448,3 +448,91 @@ main.container * {
 main.container {
     overflow-x: hidden;
 }
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+/* Títulos principales */
+:root[data-theme="dark"] .admin-container h1,
+:root[data-theme="dark"] main.container h1,
+:root[data-theme="dark"] .h1 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .admin-container h2,
+:root[data-theme="dark"] main.container h2,
+:root[data-theme="dark"] .h2 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .admin-container h3,
+:root[data-theme="dark"] main.container h3,
+:root[data-theme="dark"] .h3 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .admin-container h4,
+:root[data-theme="dark"] main.container h4 {
+    color: #F3F4F6 !important;
+}
+
+/* Texto meta/secundario */
+:root[data-theme="dark"] .meta,
+:root[data-theme="dark"] .text-muted,
+:root[data-theme="dark"] .admin-container .meta,
+:root[data-theme="dark"] main.container .meta {
+    color: #9CA3AF !important;
+}
+
+/* Texto normal */
+:root[data-theme="dark"] .admin-container p,
+:root[data-theme="dark"] main.container p {
+    color: #D1D5DB !important;
+}
+
+/* Títulos de sección */
+:root[data-theme="dark"] .admin-section-title {
+    color: #F3F4F6 !important;
+}
+
+/* Títulos de gráficos */
+:root[data-theme="dark"] .chart-title {
+    color: #F3F4F6 !important;
+}
+
+/* Alertas */
+:root[data-theme="dark"] .alert-title {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .alert-description {
+    color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .alert-meta {
+    color: #9CA3AF !important;
+}
+
+/* Quick actions */
+:root[data-theme="dark"] .quick-action-card h4 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .quick-action-card p {
+    color: #9CA3AF !important;
+}
+
+/* Modal */
+:root[data-theme="dark"] .modal-title {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .modal-body {
+    color: #D1D5DB !important;
+}
+
+/* Form labels */
+:root[data-theme="dark"] .form-label {
+    color: #D1D5DB !important;
+}

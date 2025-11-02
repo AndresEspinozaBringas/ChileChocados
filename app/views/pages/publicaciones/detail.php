@@ -519,6 +519,233 @@ document.querySelectorAll('.thumbnail-item').forEach(thumbnail => {
 });
 </script>
 
+<style>
+/* ============================================================================
+ * DARK MODE - Detalle de Publicación
+ * ============================================================================ */
+
+:root[data-theme="dark"] main {
+    background: transparent;
+}
+
+:root[data-theme="dark"] .container {
+    background: transparent;
+}
+
+/* Breadcrumbs */
+:root[data-theme="dark"] .breadcrumbs a {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .breadcrumbs a:hover {
+    color: var(--cc-primary) !important;
+}
+
+/* Cards generales */
+:root[data-theme="dark"] .card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Títulos y textos */
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] .h3,
+:root[data-theme="dark"] div[class*="h2"],
+:root[data-theme="dark"] div[class*="h3"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .meta,
+:root[data-theme="dark"] div[class*="meta"] {
+    color: #9CA3AF !important;
+}
+
+/* Galería de imágenes */
+:root[data-theme="dark"] div[style*="height: 400px"] {
+    background: #374151 !important;
+}
+
+:root[data-theme="dark"] .thumbnail-item {
+    background: #374151 !important;
+}
+
+/* Sidebar de información */
+:root[data-theme="dark"] aside.card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] aside.card .h2 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] aside.card .meta {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] aside.card .h3 {
+    color: var(--cc-primary) !important;
+}
+
+/* Badge */
+:root[data-theme="dark"] .badge {
+    background: #374151 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Botones */
+:root[data-theme="dark"] .btn {
+    background: #374151 !important;
+    color: #F3F4F6 !important;
+    border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .btn:hover {
+    background: #4B5563 !important;
+    border-color: #6B7280 !important;
+}
+
+:root[data-theme="dark"] .btn.primary {
+    background: var(--cc-primary) !important;
+    color: white !important;
+    border-color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .btn.primary:hover {
+    background: #C72A22 !important;
+    border-color: #C72A22 !important;
+}
+
+:root[data-theme="dark"] .btn.activo {
+    background: rgba(230, 51, 42, 0.2) !important;
+    border-color: var(--cc-primary) !important;
+    color: var(--cc-primary) !important;
+}
+
+/* Descripción y vendedor */
+:root[data-theme="dark"] .card div[style*="line-height: 1.6"] {
+    color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .card strong {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .card div[style*="font-weight: 600"] {
+    color: #F3F4F6 !important;
+}
+
+/* Publicaciones similares */
+:root[data-theme="dark"] section .card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] section .card:hover {
+    border-color: var(--cc-primary) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+}
+
+:root[data-theme="dark"] section .card .h3 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] section .card .price-row {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] section .card div[style*="aspect-ratio: 4/3"] {
+    background: #374151 !important;
+}
+
+/* SVG icons */
+:root[data-theme="dark"] svg {
+    color: inherit;
+}
+
+/* Asegurar que todos los divs con estilos inline tengan buen contraste */
+:root[data-theme="dark"] .card > div {
+    color: inherit;
+}
+
+:root[data-theme="dark"] .card > div * {
+    color: inherit;
+}
+
+/* Forzar que no haya fondos blancos */
+:root[data-theme="dark"] div[style*="background: var(--bg-secondary)"] {
+    background: #374151 !important;
+}
+
+/* Badge de VENDIDO */
+:root[data-theme="dark"] span[style*="background: #10B981"] {
+    background: #10B981 !important;
+    color: white !important;
+}
+
+/* Asegurar que el body tenga el fondo correcto */
+:root[data-theme="dark"] body {
+    background: #111827;
+}
+
+/* Grid de publicaciones similares */
+:root[data-theme="dark"] .grid a.card {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+/* Forzar colores en elementos específicos */
+:root[data-theme="dark"] aside div[style*="display: flex"] {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] aside div[style*="display: flex"] span {
+    color: inherit !important;
+}
+
+/* Botón favorito específico */
+:root[data-theme="dark"] #btnFavorito {
+    background: #374151 !important;
+    color: #F3F4F6 !important;
+    border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] #btnFavorito:hover {
+    background: #4B5563 !important;
+}
+
+:root[data-theme="dark"] #btnFavorito.activo {
+    background: rgba(230, 51, 42, 0.2) !important;
+    border-color: var(--cc-primary) !important;
+    color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] #btnFavorito svg {
+    stroke: currentColor !important;
+}
+
+/* Estilos del botón favorito */
+:root[data-theme="dark"] .btn-favorito {
+    background: #374151 !important;
+    border-color: #4B5563 !important;
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .btn-favorito:hover {
+    background: #4B5563 !important;
+    border-color: var(--cc-primary) !important;
+    color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .btn-favorito.activo {
+    background: rgba(230, 51, 42, 0.2) !important;
+    border-color: var(--cc-primary) !important;
+    color: var(--cc-primary) !important;
+}
+</style>
+
 <?php layout('footer'); ?>
 
 <script>

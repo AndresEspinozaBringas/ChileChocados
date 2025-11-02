@@ -242,25 +242,31 @@ layout('header');
     
     <div class="card" style="padding: 24px;">
       <div class="grid cols-3" style="gap: 24px;">
-        <div style="text-align: center; padding: 16px;">
-          <?php echo icon('check-circle', 32); ?>
-          <div class="h2" style="color: var(--cc-success, #10B981); margin: 8px 0 4px;">
+        <div class="resumen-item" style="text-align: center; padding: 16px;">
+          <div style="color: var(--cc-success, #10B981);">
+            <?php echo icon('check-circle', 32); ?>
+          </div>
+          <div class="h2 resumen-value" style="color: var(--cc-success, #10B981); margin: 8px 0 4px;">
             <?php echo number_format($metricas['publicaciones_activas']); ?>
           </div>
           <div class="meta">Publicaciones Aprobadas</div>
         </div>
 
-        <div style="text-align: center; padding: 16px;">
-          <?php echo icon('x-circle', 32); ?>
-          <div class="h2" style="color: var(--cc-danger, #EF4444); margin: 8px 0 4px;">
+        <div class="resumen-item" style="text-align: center; padding: 16px;">
+          <div style="color: var(--cc-danger, #EF4444);">
+            <?php echo icon('x-circle', 32); ?>
+          </div>
+          <div class="h2 resumen-value" style="color: var(--cc-danger, #EF4444); margin: 8px 0 4px;">
             <?php echo number_format($metricas['publicaciones_rechazadas']); ?>
           </div>
           <div class="meta">Publicaciones Rechazadas</div>
         </div>
 
-        <div style="text-align: center; padding: 16px;">
-          <?php echo icon('user-check', 32); ?>
-          <div class="h2" style="color: var(--cc-info, #3B82F6); margin: 8px 0 4px;">
+        <div class="resumen-item" style="text-align: center; padding: 16px;">
+          <div style="color: var(--cc-info, #3B82F6);">
+            <?php echo icon('user-check', 32); ?>
+          </div>
+          <div class="h2 resumen-value" style="color: var(--cc-info, #3B82F6); margin: 8px 0 4px;">
             <?php echo number_format($metricas['usuarios_activos']); ?>
           </div>
           <div class="meta">Usuarios Activos</div>
@@ -501,13 +507,181 @@ layout('header');
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================================
+ * DARK MODE - TODOS LOS COMPONENTES
+ * ============================================================================ */
+
+/* Alert Cards - Dark Mode */
+:root[data-theme="dark"] .alert-card.alert-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #F59E0B;
+}
+
+:root[data-theme="dark"] .alert-card.alert-info {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3B82F6;
+}
+
+:root[data-theme="dark"] .alert-card.alert-warning .alert-title {
+  color: #FCD34D;
+}
+
+:root[data-theme="dark"] .alert-card.alert-info .alert-title {
+  color: #93C5FD;
+}
+
+:root[data-theme="dark"] .alert-description {
+  color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .alert-meta {
+  color: #9CA3AF;
+}
+
+/* Metric Cards - Dark Mode */
+:root[data-theme="dark"] .metric-card {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .metric-card:hover {
+  border-color: var(--cc-primary, #E6332A);
+  box-shadow: 0 4px 12px rgba(230, 51, 42, 0.3);
+}
+
+:root[data-theme="dark"] .metric-card.metric-card-warning {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: #F59E0B;
+}
+
+:root[data-theme="dark"] .metric-card.metric-card-warning:hover {
+  border-color: #FBBF24;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+:root[data-theme="dark"] .metric-label {
+  color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .metric-value {
+  color: #F9FAFB;
+}
+
+:root[data-theme="dark"] .metric-description {
+  color: #9CA3AF;
+}
+
+/* Quick Access Cards - Dark Mode */
+:root[data-theme="dark"] .quick-access-card {
+  background: #1F2937;
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .quick-access-card:hover {
+  border-color: var(--cc-primary, #E6332A);
+  box-shadow: 0 4px 12px rgba(230, 51, 42, 0.3);
+}
+
+:root[data-theme="dark"] .quick-access-title {
+  color: #F9FAFB;
+}
+
+:root[data-theme="dark"] .quick-access-description {
+  color: #9CA3AF;
+}
+
+/* Card genérico - Dark Mode (para "Resumen del Sistema") */
+:root[data-theme="dark"] .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Grid items dentro de cards - Dark Mode */
+:root[data-theme="dark"] .card .grid > div {
+  border-color: #374151;
+}
+
+:root[data-theme="dark"] .card .grid > div .h2 {
+  color: inherit !important;
+}
+
+/* Meta text - Dark Mode */
+:root[data-theme="dark"] .meta {
+  color: #9CA3AF !important;
+}
+
+/* Headings - Dark Mode */
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] .h3 {
+  color: #F9FAFB !important;
+}
+
+/* Iconos en dark mode */
+:root[data-theme="dark"] svg {
+  color: inherit;
+}
+
+/* Divs con iconos y texto centrado */
+:root[data-theme="dark"] div[style*="text-align: center"] svg {
+  color: #9CA3AF;
+}
+
+/* Canvas de gráficos - Light Mode */
+canvas {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.card canvas {
+  background: transparent;
+}
+
+/* Canvas de gráficos - Dark Mode */
+:root[data-theme="dark"] canvas {
+  background: transparent !important;
+  border-radius: 8px;
+}
+
+:root[data-theme="dark"] .card canvas {
+  background: transparent !important;
+}
+
+/* Elementos con color hardcodeado - Dark Mode */
+:root[data-theme="dark"] [style*="color: #999"],
+:root[data-theme="dark"] [style*="color:#999"] {
+  color: #9CA3AF !important;
+}
+
+/* Divs con padding que puedan tener texto */
+:root[data-theme="dark"] div[style*="text-align: center"][style*="padding"] {
+  color: #D1D5DB;
+}
+
+/* Resumen items - mantener colores en dark mode */
+:root[data-theme="dark"] .resumen-item .resumen-value {
+  color: inherit !important;
+}
+
+:root[data-theme="dark"] .resumen-item svg {
+  color: inherit !important;
+}
+
+/* Títulos de secciones con iconos */
+:root[data-theme="dark"] h2[style*="display: flex"] svg,
+:root[data-theme="dark"] h3[style*="display: flex"] svg {
+  color: #9CA3AF;
+}
 </style>
 
 <script>
 // Configuración global de Chart.js
 Chart.defaults.font.family = 'Inter, system-ui, -apple-system, sans-serif';
-Chart.defaults.color = '#666666';
-Chart.defaults.borderColor = '#E5E7EB';
+
+// Detectar tema y configurar colores
+const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+Chart.defaults.color = isDarkMode ? '#D1D5DB' : '#666666';
+Chart.defaults.borderColor = isDarkMode ? '#374151' : '#E5E7EB';
 
 // Colores del design system
 const colors = {
@@ -601,14 +775,15 @@ if (ctxActividad) {
             }
           },
           grid: {
-            color: '#F3F4F6'
+            color: isDarkMode ? '#374151' : '#F3F4F6'
           }
         },
         x: {
           ticks: {
             font: {
               size: 12
-            }
+            },
+            color: isDarkMode ? '#9CA3AF' : '#666666'
           },
           grid: {
             display: false
@@ -753,7 +928,7 @@ if (ctxCategorias) {
             }
           },
           grid: {
-            color: '#F3F4F6'
+            color: isDarkMode ? '#374151' : '#F3F4F6'
           }
         },
         y: {
@@ -761,7 +936,8 @@ if (ctxCategorias) {
             font: {
               size: 13,
               weight: '600'
-            }
+            },
+            color: isDarkMode ? '#9CA3AF' : '#666666'
           },
           grid: {
             display: false
@@ -771,6 +947,7 @@ if (ctxCategorias) {
     }
   });
 }
+
 </script>
 
 <?php layout('footer'); ?>
