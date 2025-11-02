@@ -134,6 +134,49 @@ require_once APP_PATH . '/views/layouts/header.php';
   margin-top: 8px !important;
   width: auto !important;
 }
+
+/* Responsive para móvil */
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  .gallery label {
+    padding: 16px 12px !important;
+    min-height: 100px !important;
+  }
+  
+  .gallery label span {
+    font-size: 12px !important;
+  }
+  
+  .gallery label button {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+  
+  /* Ajustar grid de datos del vehículo */
+  .container form > .card > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Ajustar kit de radio buttons */
+  .kit {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  
+  .kit label.tag {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery {
+    grid-template-columns: 1fr !important;
+  }
+}
 </style>
 
 <main class="container">
