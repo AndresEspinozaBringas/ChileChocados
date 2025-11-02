@@ -309,6 +309,19 @@ if (!empty($url[0]) && $url[0] === 'admin') {
         exit;
     }
     
+    // /admin/configuracion - Configuración del sistema
+    if ($url[1] === 'configuracion') {
+        if (count($url) === 2) {
+            // GET /admin/configuracion - Ver configuración
+            $controller->configuracion();
+            exit;
+        } elseif (count($url) === 3 && $url[2] === 'guardar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            // POST /admin/configuracion/guardar - Guardar configuración
+            $controller->guardarConfiguracion();
+            exit;
+        }
+    }
+    
     // /admin/export - Exportación de datos
     if ($url[1] === 'export') {
         require_once APP_PATH . '/controllers/ExportController.php';

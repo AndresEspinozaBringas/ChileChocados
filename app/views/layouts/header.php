@@ -296,6 +296,14 @@
                                         <span class="menu-badge"><?php echo $adminNotifications['mensajes_sin_leer']; ?></span>
                                     <?php endif; ?>
                                 </a>
+                                <a href="<?php echo BASE_URL; ?>/admin/reportes" class="user-menu-item admin-link">
+                                    <?php echo icon('bar-chart', 18); ?>
+                                    <span>Reportes</span>
+                                </a>
+                                <a href="<?php echo BASE_URL; ?>/admin/configuracion" class="user-menu-item admin-link">
+                                    <?php echo icon('settings', 18); ?>
+                                    <span>Configuración</span>
+                                </a>
                                 
                                 <div class="user-menu-divider"></div>
                                 <div class="user-menu-section-title">Mi Cuenta</div>
@@ -306,10 +314,6 @@
                                 <a href="<?php echo BASE_URL; ?>/mis-publicaciones" class="user-menu-item">
                                     <?php echo icon('list', 18); ?>
                                     <span>Mis Publicaciones</span>
-                                </a>
-                                <a href="<?php echo BASE_URL; ?>/configuracion" class="user-menu-item">
-                                    <?php echo icon('settings', 18); ?>
-                                    <span>Configuración</span>
                                 </a>
                                 
                                 <div class="user-menu-divider"></div>
@@ -331,10 +335,6 @@
                                 <a href="<?php echo BASE_URL; ?>/favoritos" class="user-menu-item">
                                     <?php echo icon('heart', 18); ?>
                                     <span>Favoritos</span>
-                                </a>
-                                <a href="<?php echo BASE_URL; ?>/configuracion" class="user-menu-item">
-                                    <?php echo icon('settings', 18); ?>
-                                    <span>Configuración</span>
                                 </a>
                             <?php endif; ?>
                             

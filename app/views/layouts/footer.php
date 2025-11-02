@@ -3,6 +3,11 @@
     <!-- ======================================================================
          FOOTER
          ====================================================================== -->
+    <?php
+    // Cargar configuraciones para el footer
+    require_once APP_PATH . '/models/Configuracion.php';
+    $footerConfig = \App\Models\Configuracion::getAllWithDefaults();
+    ?>
     <footer class="site-footer">
         <div class="footer-main">
             <div class="footer-container">
@@ -22,18 +27,29 @@
                         Conectamos compradores y vendedores de manera segura y transparente.
                     </p>
                     <div class="footer-social">
-                        <a href="https://facebook.com/chilechocados" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
+                        <?php if (!empty($footerConfig['facebook_url'])): ?>
+                        <a href="<?php echo htmlspecialchars($footerConfig['facebook_url']); ?>" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
                             <?php echo icon('facebook', 24); ?>
                         </a>
-                        <a href="https://instagram.com/chilechocados" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($footerConfig['instagram_url'])): ?>
+                        <a href="<?php echo htmlspecialchars($footerConfig['instagram_url']); ?>" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
                             <?php echo icon('instagram', 24); ?>
                         </a>
-                        <a href="https://twitter.com/chilechocados" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($footerConfig['twitter_url'])): ?>
+                        <a href="<?php echo htmlspecialchars($footerConfig['twitter_url']); ?>" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
                             <?php echo icon('twitter', 24); ?>
                         </a>
-                        <a href="https://youtube.com/chilechocados" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube">
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($footerConfig['youtube_url'])): ?>
+                        <a href="<?php echo htmlspecialchars($footerConfig['youtube_url']); ?>" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube">
                             <?php echo icon('youtube', 24); ?>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -150,23 +166,34 @@
                             <?php echo icon('mail', 18); ?>
                             <div>
                                 <div class="contact-label">Email</div>
-                                <a href="mailto:info@chilechocados.cl" class="contact-value">info@chilechocados.cl</a>
+                                <a href="mailto:<?php echo htmlspecialchars($footerConfig['sitio_email']); ?>" class="contact-value">
+                                    <?php echo htmlspecialchars($footerConfig['sitio_email']); ?>
+                                </a>
                             </div>
                         </li>
                         <li>
                             <?php echo icon('phone', 18); ?>
                             <div>
                                 <div class="contact-label">Teléfono</div>
-                                <a href="tel:+56912345678" class="contact-value">+56 9 1234 5678</a>
+                                <a href="tel:<?php echo str_replace(' ', '', $footerConfig['sitio_telefono']); ?>" class="contact-value">
+                                    <?php echo htmlspecialchars($footerConfig['sitio_telefono']); ?>
+                                </a>
                             </div>
                         </li>
+                        <?php if (!empty($footerConfig['whatsapp_numero'])): ?>
                         <li>
-                            <?php echo icon('map-pin', 18); ?>
+                            <?php echo icon('message-circle', 18); ?>
                             <div>
-                                <div class="contact-label">Dirección</div>
-                                <span class="contact-value">Santiago, Chile</span>
+                                <div class="contact-label">WhatsApp</div>
+                                <a href="https://wa.me/<?php echo str_replace(['+', ' ', '-'], '', $footerConfig['whatsapp_numero']); ?>" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   class="contact-value">
+                                    <?php echo htmlspecialchars($footerConfig['whatsapp_numero']); ?>
+                                </a>
                             </div>
                         </li>
+                        <?php endif; ?>
                     </ul>
                     
                     <!-- Newsletter -->
@@ -195,7 +222,7 @@
         <div class="footer-bottom">
             <div class="footer-bottom-content">
                 <div class="footer-copyright">
-                    <p>&copy; <?php echo date('Y'); ?> ChileChocados. Todos los derechos reservados.</p>
+                    <p>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($footerConfig['sitio_nombre']); ?>. Todos los derechos reservados.</p>
                     <p class="footer-made-by">
                         Desarrollado con <?php echo icon('heart', 14, 'heart-icon'); ?> por 
                         <a href="https://torodigital.cl" target="_blank" rel="noopener noreferrer">ToroDigital</a>

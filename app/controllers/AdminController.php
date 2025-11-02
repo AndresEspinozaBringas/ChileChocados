@@ -1242,4 +1242,208 @@ class AdminController
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     
+    /**
+     * Página de configuración del sistema
+     * Ruta: GET /admin/configuracion
+     */
+    public function configuracion()
+    {
+        $this->requireAdmin();
+        
+        // Obtener todas las configuraciones
+        $config = $this->obtenerConfiguraciones();
+        
+        // Cargar vista
+        require_once APP_PATH . '/views/pages/admin/configuracion.php';
+    }
+    
+    /**
+     * Guardar configuraciones del sistema
+     * Ruta: POST /admin/configuracion/guardar
+     */
+    public function guardarConfiguracion()
+    {
+        $this->requireAdmin();
+        
+        // Validar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            Session::flash('error', 'Token de seguridad inválido');
+            header('Location: /admin/configuracion');
+            exit;
+        }
+        
+        // Validar datos
+        $errores = [];
+        
+        // Validar precios
+        $precio_15 = (int)($_POST['precio_destacado_15_dias'] ?? 0);
+        $precio_30 = (int)($_POST['precio_destacado_30_dias'] ?? 0);
+        
+        if ($precio_15 < 0) {
+            $errores[] = 'El precio de destacado 15 días debe ser mayor o igual a 0';
+        }
+        
+        if ($precio_30 < 0) {
+            $errores[] = 'El precio de destacado 30 días debe ser mayor o igual a 0';
+        }
+        
+        // Validar límites de fotos
+        $minimo_fotos = (int)($_POST['minimo_fotos'] ?? 1);
+        $maximo_fotos = (int)($_POST['maximo_fotos'] ?? 6);
+        
+        if ($minimo_fotos < 1 || $minimo_fotos > 10) {
+            $errores[] = 'El mínimo de fotos debe estar entre 1 y 10';
+        }
+        
+        if ($maximo_fotos < 1 || $maximo_fotos > 20) {
+            $errores[] = 'El máximo de fotos debe estar entre 1 y 20';
+        }
+        
+        if ($minimo_fotos > $maximo_fotos) {
+            $errores[] = 'El mínimo de fotos no puede ser mayor al máximo';
+        }
+        
+        // Validar tamaños de archivos
+        $tamano_imagen = (float)($_POST['tamano_maximo_imagen_mb'] ?? 5);
+        $tamano_adjunto = (float)($_POST['tamano_maximo_adjunto_mb'] ?? 10);
+        
+        if ($tamano_imagen < 1 || $tamano_imagen > 50) {
+            $errores[] = 'El tamaño máximo de imagen debe estar entre 1 y 50 MB';
+        }
+        
+        if ($tamano_adjunto < 1 || $tamano_adjunto > 100) {
+            $errores[] = 'El tamaño máximo de adjunto debe estar entre 1 y 100 MB';
+        }
+        
+        // Si hay errores, redirigir con mensaje
+        if (!empty($errores)) {
+            Session::flash('error', implode('<br>', $errores));
+            header('Location: /admin/configuracion');
+            exit;
+        }
+        
+        // Guardar configuraciones
+        $configuraciones = [
+            // Información de la empresa
+            'sitio_nombre' => sanitize($_POST['sitio_nombre'] ?? 'ChileChocados'),
+            'sitio_email' => sanitize($_POST['sitio_email'] ?? 'contacto@chilechocados.cl'),
+            'sitio_telefono' => sanitize($_POST['sitio_telefono'] ?? '+56 9 1234 5678'),
+            'whatsapp_numero' => sanitize($_POST['whatsapp_numero'] ?? '+56912345678'),
+            
+            // Redes sociales
+            'facebook_url' => sanitize($_POST['facebook_url'] ?? ''),
+            'instagram_url' => sanitize($_POST['instagram_url'] ?? ''),
+            'youtube_url' => sanitize($_POST['youtube_url'] ?? ''),
+            'twitter_url' => sanitize($_POST['twitter_url'] ?? ''),
+            
+            // Precios
+            'precio_destacado_15_dias' => $precio_15,
+            'precio_destacado_30_dias' => $precio_30,
+            
+            // Límites de fotos
+            'minimo_fotos' => $minimo_fotos,
+            'maximo_fotos' => $maximo_fotos,
+            
+            // Tamaños de archivos
+            'tamano_maximo_imagen_mb' => $tamano_imagen,
+            'tamano_maximo_adjunto_mb' => $tamano_adjunto
+        ];
+        
+        foreach ($configuraciones as $clave => $valor) {
+            $this->guardarConfiguracionItem($clave, $valor);
+        }
+        
+        // Registrar en auditoría
+        $stmt = $this->db->prepare("
+            INSERT INTO auditoria (usuario_id, tabla, registro_id, accion, datos_nuevos, ip)
+            VALUES (?, 'configuraciones', 0, 'actualizar', ?, ?)
+        ");
+        $stmt->execute([
+            Auth::id(),
+            json_encode($configuraciones),
+            $_SERVER['REMOTE_ADDR'] ?? null
+        ]);
+        
+        Session::flash('success', 'Configuración guardada exitosamente');
+        header('Location: /admin/configuracion');
+        exit;
+    }
+    
+    /**
+     * Obtener todas las configuraciones del sistema
+     */
+    private function obtenerConfiguraciones()
+    {
+        $stmt = $this->db->query("SELECT clave, valor FROM configuraciones");
+        $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
+        
+        $config = [];
+        foreach ($rows as $row) {
+            $config[$row->clave] = $row->valor;
+        }
+        
+        // Valores por defecto si no existen
+        $defaults = [
+            // Información de la empresa
+            'sitio_nombre' => 'ChileChocados',
+            'sitio_email' => 'contacto@chilechocados.cl',
+            'sitio_telefono' => '+56 9 1234 5678',
+            'whatsapp_numero' => '+56912345678',
+            
+            // Redes sociales
+            'facebook_url' => 'https://facebook.com/chilechocados',
+            'instagram_url' => 'https://instagram.com/chilechocados',
+            'youtube_url' => '',
+            'twitter_url' => '',
+            
+            // Precios
+            'precio_destacado_15_dias' => '15000',
+            'precio_destacado_30_dias' => '25000',
+            
+            // Límites de fotos
+            'minimo_fotos' => '1',
+            'maximo_fotos' => '6',
+            
+            // Tamaños de archivos
+            'tamano_maximo_imagen_mb' => '5',
+            'tamano_maximo_adjunto_mb' => '10'
+        ];
+        
+        foreach ($defaults as $key => $value) {
+            if (!isset($config[$key])) {
+                $config[$key] = $value;
+            }
+        }
+        
+        return $config;
+    }
+    
+    /**
+     * Guardar o actualizar un item de configuración
+     */
+    private function guardarConfiguracionItem($clave, $valor)
+    {
+        // Verificar si existe
+        $stmt = $this->db->prepare("SELECT id FROM configuraciones WHERE clave = ?");
+        $stmt->execute([$clave]);
+        $existe = $stmt->fetch(PDO::FETCH_OBJ);
+        
+        if ($existe) {
+            // Actualizar
+            $stmt = $this->db->prepare("
+                UPDATE configuraciones 
+                SET valor = ?, fecha_actualizacion = NOW() 
+                WHERE clave = ?
+            ");
+            $stmt->execute([$valor, $clave]);
+        } else {
+            // Insertar
+            $stmt = $this->db->prepare("
+                INSERT INTO configuraciones (clave, valor, tipo, descripcion) 
+                VALUES (?, ?, 'string', '')
+            ");
+            $stmt->execute([$clave, $valor]);
+        }
+    }
+    
 }

@@ -539,6 +539,11 @@ class PublicacionController
     private function validarDatosPublicacion($datos, $esEdicion = false)
     {
         $errores = [];
+        
+        // Cargar configuraciones del sistema
+        require_once APP_PATH . '/models/Configuracion.php';
+        $limitesFotos = \App\Models\Configuracion::getLimitesFotos();
+        $tamanosMaximos = \App\Models\Configuracion::getTamanosMaximos();
 
         // Validar tipificación
         if (empty($datos['tipificacion'])) {
@@ -605,9 +610,30 @@ class PublicacionController
             $errores['descripcion'] = 'La descripción no puede exceder 2000 caracteres';
         }
 
-        // Validar que haya al menos una foto (solo en creación, no en edición)
-        if (!$esEdicion && empty($_FILES['fotos']['name'][0])) {
-            $errores['fotos'] = 'Debes subir al menos una foto del vehículo';
+        // Validar fotos según configuración
+        if (!$esEdicion && !empty($_FILES['fotos']['name'][0])) {
+            $cantidad_fotos = count(array_filter($_FILES['fotos']['name']));
+            
+            // Validar cantidad mínima
+            if ($cantidad_fotos < $limitesFotos['minimo']) {
+                $errores['fotos'] = "Debes subir al menos {$limitesFotos['minimo']} foto(s)";
+            }
+            
+            // Validar cantidad máxima
+            if ($cantidad_fotos > $limitesFotos['maximo']) {
+                $errores['fotos'] = "No puedes subir más de {$limitesFotos['maximo']} fotos";
+            }
+            
+            // Validar tamaño de cada foto
+            $tamano_max_bytes = $tamanosMaximos['imagen_mb'] * 1024 * 1024;
+            foreach ($_FILES['fotos']['size'] as $index => $size) {
+                if (!empty($_FILES['fotos']['name'][$index]) && $size > $tamano_max_bytes) {
+                    $errores['fotos'] = "Cada imagen no puede superar {$tamanosMaximos['imagen_mb']} MB";
+                    break;
+                }
+            }
+        } elseif (!$esEdicion && empty($_FILES['fotos']['name'][0])) {
+            $errores['fotos'] = "Debes subir al menos {$limitesFotos['minimo']} foto(s) del vehículo";
         }
 
         return $errores;
@@ -624,6 +650,10 @@ class PublicacionController
         file_put_contents($logFile, "Foto principal index: $foto_principal_index\n", FILE_APPEND);
         file_put_contents($logFile, "Archivos completos: " . print_r($archivos, true) . "\n", FILE_APPEND);
 
+        // Cargar configuración de límites
+        require_once APP_PATH . '/models/Configuracion.php';
+        $limitesFotos = \App\Models\Configuracion::getLimitesFotos();
+        
         $total_imagenes = count($archivos['name']);
         $foto_principal_url = null;
 
@@ -635,10 +665,10 @@ class PublicacionController
             return;
         }
 
-        // Validar cantidad (máximo 6 imágenes)
-        if ($total_imagenes > 6) {
-            $_SESSION['warning'] = 'Solo se procesaron las primeras 6 imágenes';
-            $total_imagenes = 6;
+        // Validar cantidad según configuración
+        if ($total_imagenes > $limitesFotos['maximo']) {
+            $_SESSION['warning'] = "Solo se procesaron las primeras {$limitesFotos['maximo']} imágenes";
+            $total_imagenes = $limitesFotos['maximo'];
         }
 
         for ($i = 0; $i < $total_imagenes; $i++) {
@@ -734,8 +764,12 @@ class PublicacionController
      */
     private function validarImagen($archivo)
     {
-        // Validar tamaño (máximo 5MB)
-        $max_size = 5 * 1024 * 1024;  // 5MB
+        // Cargar configuración de tamaño máximo
+        require_once APP_PATH . '/models/Configuracion.php';
+        $tamanosMaximos = \App\Models\Configuracion::getTamanosMaximos();
+        
+        // Validar tamaño según configuración
+        $max_size = $tamanosMaximos['imagen_mb'] * 1024 * 1024;
         if ($archivo['size'] > $max_size) {
             return false;
         }
