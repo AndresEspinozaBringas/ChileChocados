@@ -792,4 +792,97 @@ class PublicacionController
             echo json_encode(['error' => 'Error al obtener comunas', 'comunas' => []]);
         }
     }
+    
+    /**
+     * Marcar publicación como vendida
+     * Ruta: POST /publicaciones/{id}/marcar-vendido
+     */
+    public function marcarVendido($id)
+    {
+        Auth::require();
+        
+        // Validar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Token de seguridad inválido';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Obtener publicación
+        $publicacion = $this->publicacionModel->find($id);
+        
+        // Verificar que la publicación existe y pertenece al usuario
+        if (!$publicacion || $publicacion->usuario_id != $_SESSION['user_id']) {
+            $_SESSION['error'] = 'No tienes permiso para modificar esta publicación';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Verificar que está aprobada
+        if ($publicacion->estado !== 'aprobada') {
+            $_SESSION['error'] = 'Solo puedes marcar como vendidas las publicaciones aprobadas';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Actualizar estado a vendida
+        $db = getDB();
+        $stmt = $db->prepare("UPDATE publicaciones SET estado = 'vendida' WHERE id = ?");
+        $stmt->execute([$id]);
+        
+        // Registrar en auditoría
+        $stmt = $db->prepare("
+            INSERT INTO auditoria (usuario_id, tabla, registro_id, accion, datos_nuevos, ip)
+            VALUES (?, 'publicaciones', ?, 'actualizar', ?, ?)
+        ");
+        $stmt->execute([
+            $_SESSION['user_id'],
+            $id,
+            json_encode(['estado' => 'vendida']),
+            $_SERVER['REMOTE_ADDR'] ?? null
+        ]);
+        
+        $_SESSION['success'] = '¡Felicitaciones! Tu publicación ha sido marcada como vendida';
+        header('Location: ' . BASE_URL . '/mis-publicaciones');
+        exit;
+    }
+    
+    /**
+     * Eliminar publicación
+     * Ruta: POST /publicaciones/{id}/eliminar
+     */
+    public function eliminar($id)
+    {
+        Auth::require();
+        
+        // Validar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Token de seguridad inválido';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Obtener publicación
+        $publicacion = $this->publicacionModel->find($id);
+        
+        // Verificar que la publicación existe y pertenece al usuario
+        if (!$publicacion || $publicacion->usuario_id != $_SESSION['user_id']) {
+            $_SESSION['error'] = 'No tienes permiso para eliminar esta publicación';
+            header('Location: ' . BASE_URL . '/mis-publicaciones');
+            exit;
+        }
+        
+        // Eliminar publicación
+        $db = getDB();
+        $stmt = $db->prepare("DELETE FROM publicaciones WHERE id = ?");
+        $stmt->execute([$id]);
+        
+        // Eliminar fotos asociadas
+        $stmt = $db->prepare("DELETE FROM publicacion_fotos WHERE publicacion_id = ?");
+        $stmt->execute([$id]);
+        
+        $_SESSION['success'] = 'Publicación eliminada exitosamente';
+        header('Location: ' . BASE_URL . '/mis-publicaciones');
+        exit;
+    }
 }

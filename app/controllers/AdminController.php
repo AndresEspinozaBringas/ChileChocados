@@ -92,12 +92,22 @@ class AdminController
         
         // Publicaciones destacadas
         $stmt = $this->db->query("
-            SELECT COUNT(*) as total
+            SELECT 
+                COUNT(*) as total,
+                SUM(visitas) as visitas_destacadas
             FROM publicaciones
             WHERE es_destacada = 1 
             AND fecha_destacada_fin >= NOW()
         ");
         $statsDestacadas = $stmt->fetch(\PDO::FETCH_OBJ);
+        
+        // Visitas totales
+        $stmt = $this->db->query("
+            SELECT SUM(visitas) as total_visitas
+            FROM publicaciones
+            WHERE estado = 'aprobada'
+        ");
+        $statsVisitas = $stmt->fetch(\PDO::FETCH_OBJ);
         
         // Actividad de los últimos 7 días (excluyendo borradores)
         $stmt = $this->db->query("
@@ -146,7 +156,9 @@ class AdminController
             'usuarios_activos' => $statsUsuarios->activos ?? 0,
             'usuarios_nuevos_semana' => $statsUsuarios->nuevos_semana ?? 0,
             'mensajes_sin_leer' => $statsMensajes->total ?? 0,
-            'destacadas_activas' => $statsDestacadas->total ?? 0
+            'destacadas_activas' => $statsDestacadas->total ?? 0,
+            'visitas_totales' => $statsVisitas->total_visitas ?? 0,
+            'visitas_destacadas' => $statsDestacadas->visitas_destacadas ?? 0
         ];
         
         // Preparar datos para gráficos
@@ -897,6 +909,337 @@ class AdminController
         } else {
             return date('d/m/Y', $timestamp);
         }
+    }
+    
+    /**
+     * Página de reportes y estadísticas
+     * Ruta: GET /admin/reportes
+     */
+    public function reportes()
+    {
+        $this->requireAdmin();
+        
+        // Obtener estadísticas de pagos Flow
+        $estadisticasPagos = $this->obtenerEstadisticasPagos();
+        
+        // Obtener últimos pagos
+        $ultimosPagos = $this->obtenerUltimosPagos(10);
+        
+        // Obtener pagos por estado
+        $pagosPorEstado = $this->obtenerPagosPorEstado();
+        
+        // Obtener ingresos por período
+        $ingresosMensuales = $this->obtenerIngresosMensuales();
+        
+        // Obtener estadísticas por mes para gráficos
+        $usuariosPorMes = $this->obtenerUsuariosPorMes();
+        $publicacionesPorMes = $this->obtenerPublicacionesPorMes();
+        $mensajesPorMes = $this->obtenerMensajesPorMes();
+        
+        // Obtener datos para storytelling
+        $funnelConversion = $this->obtenerFunnelConversion();
+        $relacionDestacadas = $this->obtenerRelacionDestacadas();
+        
+        // Obtener estadísticas de visitas
+        $visitasTotales = $this->obtenerVisitasTotales();
+        $visitasDestacadas = $this->obtenerVisitasDestacadas();
+        $destacadasActivas = $this->obtenerDestacadasActivas();
+        
+        // Obtener datos para gráficos de admin
+        $actividadSemanal = $this->obtenerActividadSemanal();
+        $distribucionEstados = $this->obtenerDistribucionEstados();
+        $publicacionesPorCategoria = $this->obtenerPublicacionesPorCategoria();
+        
+        // Preparar datos para gráficos
+        $chartData = [
+            'actividad_semanal' => $actividadSemanal,
+            'por_categoria' => $publicacionesPorCategoria,
+            'distribucion_estados' => $distribucionEstados
+        ];
+        
+        // Cargar vista
+        require_once APP_PATH . '/views/pages/admin/reportes.php';
+    }
+    
+    /**
+     * Obtener estadísticas generales de pagos
+     */
+    private function obtenerEstadisticasPagos()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                COUNT(*) as total_pagos,
+                SUM(CASE WHEN estado = 'aprobado' THEN 1 ELSE 0 END) as pagos_aprobados,
+                SUM(CASE WHEN estado = 'rechazado' THEN 1 ELSE 0 END) as pagos_rechazados,
+                SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pagos_pendientes,
+                SUM(CASE WHEN estado = 'aprobado' THEN monto ELSE 0 END) as total_recaudado,
+                AVG(CASE WHEN estado = 'aprobado' THEN monto ELSE NULL END) as ticket_promedio
+            FROM pagos_flow
+        ");
+        
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener últimos pagos
+     */
+    private function obtenerUltimosPagos($limit = 10)
+    {
+        $stmt = $this->db->prepare("
+            SELECT 
+                pf.*,
+                p.titulo as publicacion_titulo,
+                u.nombre as usuario_nombre,
+                u.apellido as usuario_apellido,
+                u.email as usuario_email
+            FROM pagos_flow pf
+            INNER JOIN publicaciones p ON pf.publicacion_id = p.id
+            INNER JOIN usuarios u ON pf.usuario_id = u.id
+            ORDER BY pf.fecha_creacion DESC
+            LIMIT ?
+        ");
+        $stmt->execute([$limit]);
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener conteo de pagos por estado
+     */
+    private function obtenerPagosPorEstado()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                estado,
+                COUNT(*) as cantidad,
+                SUM(monto) as monto_total
+            FROM pagos_flow
+            GROUP BY estado
+            ORDER BY cantidad DESC
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener ingresos mensuales (últimos 6 meses)
+     */
+    private function obtenerIngresosMensuales()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                DATE_FORMAT(fecha_pago, '%Y-%m') as mes,
+                COUNT(*) as cantidad_pagos,
+                SUM(monto) as total_ingresos
+            FROM pagos_flow
+            WHERE estado = 'aprobado'
+                AND fecha_pago >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            GROUP BY DATE_FORMAT(fecha_pago, '%Y-%m')
+            ORDER BY mes ASC
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener estadísticas de usuarios por mes
+     */
+    private function obtenerUsuariosPorMes()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                DATE_FORMAT(fecha_registro, '%Y-%m') as mes,
+                COUNT(*) as cantidad
+            FROM usuarios
+            WHERE fecha_registro >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            GROUP BY DATE_FORMAT(fecha_registro, '%Y-%m')
+            ORDER BY mes ASC
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener estadísticas de publicaciones por mes y categoría
+     */
+    private function obtenerPublicacionesPorMes()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                DATE_FORMAT(p.fecha_publicacion, '%Y-%m') as mes,
+                cp.nombre as categoria,
+                COUNT(*) as cantidad
+            FROM publicaciones p
+            LEFT JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+            WHERE p.fecha_publicacion >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                AND p.estado != 'archivada'
+            GROUP BY DATE_FORMAT(p.fecha_publicacion, '%Y-%m'), cp.nombre
+            ORDER BY mes ASC, cantidad DESC
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener funnel de conversión (storytelling)
+     */
+    private function obtenerFunnelConversion()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                (SELECT COUNT(*) FROM usuarios) as total_usuarios,
+                (SELECT COUNT(DISTINCT usuario_id) FROM publicaciones WHERE estado != 'archivada') as usuarios_publicaron,
+                (SELECT COUNT(DISTINCT usuario_id) FROM pagos_flow) as usuarios_pagaron,
+                (SELECT COUNT(DISTINCT usuario_id) FROM pagos_flow WHERE estado = 'aprobado') as usuarios_convirtieron
+        ");
+        
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener relación publicaciones destacadas vs normales
+     */
+    private function obtenerRelacionDestacadas()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                SUM(CASE WHEN es_destacada = 1 THEN 1 ELSE 0 END) as destacadas,
+                SUM(CASE WHEN es_destacada = 0 THEN 1 ELSE 0 END) as normales,
+                COUNT(*) as total
+            FROM publicaciones
+            WHERE estado = 'aprobada'
+        ");
+        
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener estadísticas de mensajes por mes
+     */
+    private function obtenerMensajesPorMes()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                DATE_FORMAT(fecha_envio, '%Y-%m') as mes,
+                COUNT(*) as cantidad
+            FROM mensajes
+            WHERE fecha_envio >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            GROUP BY DATE_FORMAT(fecha_envio, '%Y-%m')
+            ORDER BY mes ASC
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener total de visitas en publicaciones activas
+     */
+    private function obtenerVisitasTotales()
+    {
+        $stmt = $this->db->query("
+            SELECT SUM(visitas) as total
+            FROM publicaciones
+            WHERE estado = 'aprobada'
+        ");
+        
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        return $result->total ?? 0;
+    }
+    
+    /**
+     * Obtener visitas de publicaciones destacadas
+     */
+    private function obtenerVisitasDestacadas()
+    {
+        $stmt = $this->db->query("
+            SELECT SUM(visitas) as total
+            FROM publicaciones
+            WHERE es_destacada = 1 
+            AND fecha_destacada_fin >= NOW()
+            AND estado = 'aprobada'
+        ");
+        
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        return $result->total ?? 0;
+    }
+    
+    /**
+     * Obtener cantidad de publicaciones destacadas activas
+     */
+    private function obtenerDestacadasActivas()
+    {
+        $stmt = $this->db->query("
+            SELECT COUNT(*) as total
+            FROM publicaciones
+            WHERE es_destacada = 1 
+            AND fecha_destacada_fin >= NOW()
+            AND estado = 'aprobada'
+        ");
+        
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        return $result->total ?? 0;
+    }
+    
+    /**
+     * Obtener actividad semanal de publicaciones
+     */
+    private function obtenerActividadSemanal()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                DATE(fecha_creacion) as fecha,
+                COUNT(*) as total
+            FROM publicaciones
+            WHERE fecha_creacion >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            AND estado != 'borrador'
+            GROUP BY DATE(fecha_creacion)
+            ORDER BY fecha ASC
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener distribución de estados
+     */
+    private function obtenerDistribucionEstados()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                SUM(CASE WHEN estado = 'aprobada' THEN 1 ELSE 0 END) as aprobadas,
+                SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
+                SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas
+            FROM publicaciones
+            WHERE estado != 'borrador'
+        ");
+        
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        
+        return [
+            'aprobadas' => $result->aprobadas ?? 0,
+            'pendientes' => $result->pendientes ?? 0,
+            'rechazadas' => $result->rechazadas ?? 0
+        ];
+    }
+    
+    /**
+     * Obtener publicaciones por categoría (top 5)
+     */
+    private function obtenerPublicacionesPorCategoria()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                cp.nombre as categoria,
+                COUNT(p.id) as total
+            FROM publicaciones p
+            INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+            WHERE p.estado = 'aprobada'
+            GROUP BY cp.id, cp.nombre
+            ORDER BY total DESC
+            LIMIT 5
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
     
 }

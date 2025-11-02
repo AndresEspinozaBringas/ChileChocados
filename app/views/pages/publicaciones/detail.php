@@ -66,7 +66,14 @@ layout('header');
     
     <!-- Sidebar: Información principal -->
     <aside class="card">
-      <div class="h2"><?php echo e($publicacion->titulo); ?></div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div class="h2" style="margin: 0;"><?php echo e($publicacion->titulo); ?></div>
+        <?php if (isset($publicacion->estado) && $publicacion->estado === 'vendida'): ?>
+        <span style="background: #10B981; color: white; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+          ✓ VENDIDO
+        </span>
+        <?php endif; ?>
+      </div>
       
       <div class="meta" style="margin-top: 8px;">
         <?php echo icon('tag', 16); ?>

@@ -359,7 +359,7 @@ require_once APP_PATH . '/views/layouts/header.php';
 
     <div class="sticky-actions">
       <button type="button" class="btn" onclick="guardarBorrador()">Guardar borrador</button>
-      <button type="submit" class="btn primary" id="btn-enviar">
+      <button type="button" class="btn primary" id="btn-enviar" onclick="enviarFormulario()">
         <?php echo $modoEdicion ? 'Actualizar publicación' : 'Enviar a revisión'; ?>
       </button>
     </div>
@@ -608,22 +608,45 @@ function guardarBorrador() {
   form.submit();
 }
 
-// Agregar event listener al formulario para limpiar campo borrador en submit normal
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('form-publicar');
-  const btnEnviar = document.getElementById('btn-enviar');
+// Función para enviar el formulario con validación
+function enviarFormulario() {
+  console.log('=== ENVIAR FORMULARIO ===');
   
-  if (form && btnEnviar) {
-    // Cuando se hace click en el botón de enviar (no borrador)
-    btnEnviar.addEventListener('click', function(e) {
-      const borradorInput = form.querySelector('input[name="guardar_borrador"]');
-      if (borradorInput) {
-        borradorInput.remove();
-        console.log('Campo guardar_borrador eliminado antes de enviar');
-      }
-    });
+  const form = document.getElementById('form-publicar');
+  if (!form) {
+    console.error('Formulario no encontrado');
+    alert('Error: No se encontró el formulario');
+    return;
   }
-});
+  
+  // Validar formulario
+  const errores = validarFormulario(false);
+  console.log('Errores encontrados:', errores.length);
+  console.log('Lista de errores:', errores);
+  
+  if (errores.length > 0) {
+    console.log('Mostrando modal de validación');
+    mostrarModalValidacion(errores);
+    return;
+  }
+  
+  // Si no hay errores, limpiar campo borrador y enviar
+  const borradorInput = form.querySelector('input[name="guardar_borrador"]');
+  if (borradorInput) {
+    borradorInput.remove();
+    console.log('Campo guardar_borrador eliminado');
+  }
+  
+  // Bloquear botón y mostrar loader
+  const btnEnviar = document.getElementById('btn-enviar');
+  if (btnEnviar) {
+    btnEnviar.disabled = true;
+    btnEnviar.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Enviando...</span>';
+  }
+  
+  console.log('Enviando formulario...');
+  form.submit();
+}
 
 // ============================================================================
 // MODO EDICIÓN: Cargar subcategoría y comuna seleccionadas
@@ -743,32 +766,8 @@ function cerrarModalValidacion() {
   document.getElementById('modalValidacion').style.display = 'none';
 }
 
-// Validar antes de enviar el formulario - Esperar a que el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('form-publicar');
-  
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      const errores = validarFormulario(false);
-      
-      if (errores.length > 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        mostrarModalValidacion(errores);
-        return false;
-      }
-      
-      // Bloquear botón y mostrar loader
-      const btnEnviar = document.getElementById('btn-enviar');
-      if (btnEnviar) {
-        btnEnviar.disabled = true;
-        btnEnviar.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Enviando...</span>';
-      }
-      
-      // El formulario se enviará normalmente
-    });
-  }
-});
+// Nota: La validación se maneja en el click del botón "Enviar a revisión"
+// Ver código más abajo en el event listener del btnEnviar
 
 // Cerrar modal al hacer clic fuera
 window.addEventListener('click', function(event) {

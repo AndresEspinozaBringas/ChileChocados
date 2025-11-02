@@ -35,15 +35,15 @@ class HomeController {
         try {
             $publicacionModel = new Publicacion();
             
-            // Obtener publicaciones destacadas activas
+            // Obtener publicaciones destacadas activas (incluyendo vendidas)
             $publicacionesDestacadas = $publicacionModel->getDestacadas(8);
             
-            // Obtener publicaciones recientes aprobadas (excluyendo las destacadas si las hay)
+            // Obtener publicaciones recientes aprobadas (incluyendo vendidas)
             $sql = "SELECT p.*, cp.nombre as categoria_nombre, r.nombre as region_nombre
                     FROM publicaciones p
                     INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
                     INNER JOIN regiones r ON p.region_id = r.id
-                    WHERE p.estado = 'aprobada'
+                    WHERE p.estado IN ('aprobada', 'vendida')
                     ORDER BY p.fecha_publicacion DESC
                     LIMIT 12";
             $publicacionesRecientes = $publicacionModel->query($sql);

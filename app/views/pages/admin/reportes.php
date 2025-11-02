@@ -1,0 +1,1089 @@
+<?php
+/**
+ * Dashboard de Reportes - Diseño UX/UI Optimizado
+ * Enfoque: Insights accionables y toma de decisiones
+ */
+layout('header');
+?>
+
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/admin.css">
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/admin-layout.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+/* Variables de diseño */
+:root {
+    --color-primary: #E6332A;
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-danger: #EF4444;
+    --color-info: #3B82F6;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+/* Layout mejorado */
+.dashboard-grid {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* KPI Cards con insights */
+.kpi-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-color);
+}
+
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.kpi-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.kpi-value {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+    color: #111827;
+}
+
+.kpi-label {
+    font-size: 14px;
+    color: #6B7280;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.kpi-insight {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.insight-positive {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.insight-negative {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.insight-neutral {
+    background: #F3F4F6;
+    color: #374151;
+}
+
+/* Chart containers mejorados */
+.chart-section {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 24px;
+}
+
+.chart-header {
+    margin-bottom: 24px;
+}
+
+.chart-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chart-subtitle {
+    font-size: 14px;
+    color: #6B7280;
+    line-height: 1.5;
+}
+
+.chart-container {
+    position: relative;
+    height: 320px;
+}
+
+/* Tabla mejorada */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.data-table thead th {
+    background: #F9FAFB;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #E5E7EB;
+}
+
+.data-table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid #F3F4F6;
+    font-size: 14px;
+}
+
+.data-table tbody tr:hover {
+    background: #F9FAFB;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .dashboard-grid.cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-grid.cols-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .kpi-value {
+        font-size: 28px;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+}
+
+/* Animaciones */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.kpi-card {
+    animation: slideUp 0.4s ease-out;
+}
+
+.kpi-card:nth-child(1) { animation-delay: 0.1s; }
+.kpi-card:nth-child(2) { animation-delay: 0.2s; }
+.kpi-card:nth-child(3) { animation-delay: 0.3s; }
+.kpi-card:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<main class="container admin-container">
+
+  <!-- Header con contexto -->
+  <div style="margin-bottom: 32px;">
+    <h1 class="h1" style="margin-bottom: 8px; display: flex; align-items: center; gap: 12px;">
+      <?php echo icon('bar-chart-2', 32); ?>
+      Dashboard de Reportes
+    </h1>
+    <p class="meta" style="font-size: 15px;">
+      Métricas clave para la toma de decisiones • Actualizado: <?php echo date('d/m/Y H:i'); ?>
+    </p>
+  </div>
+
+  <!-- KPIs Principales con Insights -->
+  <div class="dashboard-grid cols-4" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    
+    <?php
+    // Calcular insights
+    $totalUsuarios = $this->db->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
+    $usuariosUltimoMes = $this->db->query("SELECT COUNT(*) FROM usuarios WHERE fecha_registro >= DATE_SUB(NOW(), INTERVAL 1 MONTH)")->fetchColumn();
+    $crecimientoUsuarios = $totalUsuarios > 0 ? round(($usuariosUltimoMes / $totalUsuarios) * 100, 1) : 0;
+    
+    $totalPublicaciones = $this->db->query("SELECT COUNT(*) FROM publicaciones WHERE estado != 'archivada'")->fetchColumn();
+    $publicacionesActivas = $this->db->query("SELECT COUNT(*) FROM publicaciones WHERE estado = 'aprobada'")->fetchColumn();
+    $tasaAprobacion = $totalPublicaciones > 0 ? round(($publicacionesActivas / $totalPublicaciones) * 100, 1) : 0;
+    
+    $totalMensajes = $this->db->query("SELECT COUNT(*) FROM mensajes")->fetchColumn();
+    $mensajesHoy = $this->db->query("SELECT COUNT(*) FROM mensajes WHERE DATE(fecha_envio) = CURDATE()")->fetchColumn();
+    
+    $totalRecaudado = $estadisticasPagos->total_recaudado ?? 0;
+    $pagosAprobados = $estadisticasPagos->pagos_aprobados ?? 0;
+    $tasaConversion = ($estadisticasPagos->total_pagos ?? 0) > 0 ? round(($pagosAprobados / $estadisticasPagos->total_pagos) * 100, 1) : 0;
+    ?>
+    
+    <!-- KPI: Usuarios -->
+    <div class="kpi-card" style="--accent-color: #3B82F6;">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Total Usuarios</div>
+          <div class="kpi-value"><?php echo number_format($totalUsuarios); ?></div>
+        </div>
+        <div class="kpi-icon" style="background: #DBEAFE; color: #3B82F6;">
+          <?php echo icon('users', 32); ?>
+        </div>
+      </div>
+      <div class="kpi-insight <?php echo $usuariosUltimoMes > 0 ? 'insight-positive' : 'insight-neutral'; ?>">
+        <?php if ($usuariosUltimoMes > 0): ?>
+          <?php echo icon('trending-up', 14); ?> +<?php echo $usuariosUltimoMes; ?> nuevos este mes
+        <?php else: ?>
+          <?php echo icon('minus', 14); ?> Sin nuevos registros este mes
+        <?php endif; ?>
+      </div>
+    </div>
+
+    <!-- KPI: Publicaciones -->
+    <div class="kpi-card" style="--accent-color: #10B981;">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Publicaciones Activas</div>
+          <div class="kpi-value"><?php echo number_format($publicacionesActivas); ?></div>
+        </div>
+        <div class="kpi-icon" style="background: #D1FAE5; color: #10B981;">
+          <?php echo icon('file-text', 32); ?>
+        </div>
+      </div>
+      <div class="kpi-insight <?php echo $tasaAprobacion >= 70 ? 'insight-positive' : 'insight-neutral'; ?>">
+        <?php echo icon('check-circle', 14); ?> <?php echo $tasaAprobacion; ?>% tasa de aprobación
+      </div>
+    </div>
+
+    <!-- KPI: Mensajes -->
+    <div class="kpi-card" style="--accent-color: #F59E0B;">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Total Mensajes</div>
+          <div class="kpi-value"><?php echo number_format($totalMensajes); ?></div>
+        </div>
+        <div class="kpi-icon" style="background: #FEF3C7; color: #F59E0B;">
+          <?php echo icon('message-circle', 32); ?>
+        </div>
+      </div>
+      <div class="kpi-insight insight-neutral">
+        <?php echo icon('clock', 14); ?> <?php echo $mensajesHoy; ?> mensajes hoy
+      </div>
+    </div>
+
+    <!-- KPI: Ingresos -->
+    <div class="kpi-card" style="--accent-color: #10B981;">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Ingresos Totales</div>
+          <div class="kpi-value" style="font-size: 28px;"><?php echo formatPrice($totalRecaudado); ?></div>
+        </div>
+        <div class="kpi-icon" style="background: #D1FAE5; color: #10B981;">
+          <?php echo icon('dollar-sign', 32); ?>
+        </div>
+      </div>
+      <div class="kpi-insight <?php echo $tasaConversion >= 80 ? 'insight-positive' : ($tasaConversion >= 50 ? 'insight-neutral' : 'insight-negative'); ?>">
+        <?php if ($tasaConversion >= 80): ?>
+          <?php echo icon('trending-up', 14); ?> <?php echo $tasaConversion; ?>% conversión (Excelente)
+        <?php elseif ($tasaConversion >= 50): ?>
+          <?php echo icon('minus', 14); ?> <?php echo $tasaConversion; ?>% conversión (Normal)
+        <?php else: ?>
+          <?php echo icon('trending-down', 14); ?> <?php echo $tasaConversion; ?>% conversión (Mejorable)
+        <?php endif; ?>
+      </div>
+    </div>
+    
+    <!-- KPI: Visitas Totales -->
+    <div class="kpi-card" style="--accent-color: #8B5CF6;">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Visitas Totales</div>
+          <div class="kpi-value"><?php echo number_format($visitasTotales); ?></div>
+        </div>
+        <div class="kpi-icon" style="background: #EDE9FE; color: #8B5CF6;">
+          <?php echo icon('eye', 32); ?>
+        </div>
+      </div>
+      <div class="kpi-insight insight-neutral">
+        <?php echo icon('activity', 14); ?> En publicaciones activas
+      </div>
+    </div>
+    
+    <!-- KPI: Destacadas Activas -->
+    <div class="kpi-card" style="--accent-color: #F59E0B;">
+      <div class="kpi-header">
+        <div>
+          <div class="kpi-label">Destacadas Activas</div>
+          <div class="kpi-value"><?php echo number_format($destacadasActivas); ?></div>
+        </div>
+        <div class="kpi-icon" style="background: #FEF3C7; color: #F59E0B;">
+          <?php echo icon('star', 32); ?>
+        </div>
+      </div>
+      <div class="kpi-insight insight-neutral">
+        <?php echo icon('eye', 14); ?> <?php echo number_format($visitasDestacadas); ?> visitas
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos de Actividad (desde /admin) -->
+  <div style="margin-bottom: 32px;">
+    <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <?php echo icon('trending-up', 24); ?> Actividad y Estadísticas
+    </h2>
+    
+    <div class="grid cols-2" style="gap: 16px;">
+      <!-- Gráfico de Actividad Semanal -->
+      <div class="chart-section" style="margin-bottom: 0;">
+        <div class="chart-header">
+          <h3 class="chart-title" style="font-size: 18px;">
+            <?php echo icon('activity', 20); ?>
+            Publicaciones (Últimos 7 días)
+          </h3>
+        </div>
+        <div class="chart-container" style="height: 250px;">
+          <canvas id="chartActividadSemanal"></canvas>
+        </div>
+      </div>
+      
+      <!-- Gráfico de Distribución de Estados -->
+      <div class="chart-section" style="margin-bottom: 0;">
+        <div class="chart-header">
+          <h3 class="chart-title" style="font-size: 18px;">
+            <?php echo icon('pie-chart', 20); ?>
+            Distribución por Estado
+          </h3>
+        </div>
+        <div class="chart-container" style="height: 250px;">
+          <canvas id="chartDistribucionEstados"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Gráfico de Categorías (desde /admin) -->
+  <div style="margin-bottom: 32px;">
+    <div class="chart-section">
+      <div class="chart-header">
+        <h3 class="chart-title">
+          <?php echo icon('bar-chart-2', 20); ?>
+          Top 5 Categorías Más Populares
+        </h3>
+      </div>
+      <div class="chart-container" style="height: 300px;">
+        <canvas id="chartPorCategoria"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección: Funnel de Conversión (Storytelling) -->
+  <div class="chart-section">
+    <div class="chart-header">
+      <h2 class="chart-title">
+        <?php echo icon('filter', 20); ?> Funnel de Conversión
+      </h2>
+      <p class="chart-subtitle">
+        <strong>Historia:</strong> De cada 100 usuarios, ¿cuántos publican y cuántos pagan por destacar?
+      </p>
+    </div>
+    <div class="chart-container" style="height: 400px;">
+      <canvas id="funnelChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Sección: Análisis de Crecimiento -->
+  <div class="chart-section">
+    <div class="chart-header">
+      <h2 class="chart-title">
+        <?php echo icon('trending-up', 20); ?> Análisis de Crecimiento
+      </h2>
+      <p class="chart-subtitle">
+        <strong>Insight:</strong> Monitorea el crecimiento de usuarios y publicaciones para identificar tendencias.
+      </p>
+    </div>
+    <div class="dashboard-grid cols-2" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+      <div class="chart-container">
+        <canvas id="usuariosChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="publicacionesChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección: Análisis de Ingresos -->
+  <div class="chart-section">
+    <div class="chart-header">
+      <h2 class="chart-title">
+        <?php echo icon('dollar-sign', 20); ?> Análisis de Ingresos
+      </h2>
+      <p class="chart-subtitle">
+        <strong>Insight:</strong> Identifica patrones de ingresos y optimiza estrategias de monetización.
+        <?php if ($pagosAprobados > 0): ?>
+          Ticket promedio: <strong><?php echo formatPrice($estadisticasPagos->ticket_promedio ?? 0); ?></strong>
+        <?php endif; ?>
+      </p>
+    </div>
+    <div class="dashboard-grid cols-2" style="grid-template-columns: 2fr 1fr;">
+      <div class="chart-container">
+        <canvas id="ingresosChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="estadosChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Últimas Transacciones -->
+  <?php if (!empty($ultimosPagos)): ?>
+  <div class="chart-section">
+    <div class="chart-header">
+      <h2 class="chart-title">
+        <?php echo icon('list', 20); ?> Últimas Transacciones
+      </h2>
+      <p class="chart-subtitle">
+        Monitorea las transacciones más recientes para detectar anomalías o patrones.
+      </p>
+    </div>
+    <div style="overflow-x: auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Tipo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach (array_slice($ultimosPagos, 0, 8) as $pago): ?>
+          <tr>
+            <td><code style="background: #F3F4F6; padding: 4px 8px; border-radius: 4px;">#<?php echo $pago->id; ?></code></td>
+            <td>
+              <div style="font-weight: 600;"><?php echo date('d/m/Y', strtotime($pago->fecha_creacion)); ?></div>
+              <small style="color: #9CA3AF;"><?php echo date('H:i', strtotime($pago->fecha_creacion)); ?></small>
+            </td>
+            <td>
+              <div style="font-weight: 500;"><?php echo htmlspecialchars($pago->usuario_nombre . ' ' . $pago->usuario_apellido); ?></div>
+              <small style="color: #9CA3AF;"><?php echo htmlspecialchars($pago->usuario_email); ?></small>
+            </td>
+            <td><strong style="font-size: 15px;"><?php echo formatPrice($pago->monto); ?></strong></td>
+            <td>
+              <span class="badge badge-<?php 
+                echo $pago->estado === 'aprobado' ? 'success' : 
+                     ($pago->estado === 'rechazado' ? 'danger' : 'warning');
+              ?>">
+                <?php echo ucfirst($pago->estado); ?>
+              </span>
+            </td>
+            <td>
+              <span class="badge badge-info">
+                <?php 
+                $tipo = str_replace('destacado_', '', $pago->tipo);
+                echo $tipo === '15' ? '15 días' : '30 días';
+                ?>
+              </span>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <?php endif; ?>
+
+</main>
+
+<script>
+// Configuración global optimizada
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.plugins.legend.display = true;
+Chart.defaults.plugins.legend.position = 'top';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 15;
+
+// Datos
+const usuariosData = <?php echo json_encode($usuariosPorMes ?? []); ?>;
+const publicacionesData = <?php echo json_encode($publicacionesPorMes ?? []); ?>;
+const ingresosData = <?php echo json_encode($ingresosMensuales ?? []); ?>;
+const estadosData = <?php echo json_encode($pagosPorEstado ?? []); ?>;
+const funnelData = <?php echo json_encode($funnelConversion ?? null); ?>;
+const relacionData = <?php echo json_encode($relacionDestacadas ?? null); ?>;
+
+// Formatear mes
+function formatMes(mesStr) {
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const [year, month] = mesStr.split('-');
+    return meses[parseInt(month) - 1];
+}
+
+// Efecto 3D para gráficos
+const shadow3D = {
+    id: 'shadow3D',
+    beforeDatasetsDraw(chart) {
+        const { ctx } = chart;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 4;
+    }
+};
+
+// Gráfico: Funnel de Conversión (Storytelling)
+if (funnelData) {
+    const totalUsuarios = funnelData.total_usuarios;
+    const usuariosPublicaron = funnelData.usuarios_publicaron;
+    const usuariosPagaron = funnelData.usuarios_pagaron;
+    const usuariosConvirtieron = funnelData.usuarios_convirtieron;
+    
+    // Calcular porcentajes
+    const pctPublicaron = ((usuariosPublicaron / totalUsuarios) * 100).toFixed(1);
+    const pctPagaron = ((usuariosPagaron / totalUsuarios) * 100).toFixed(1);
+    const pctConvirtieron = ((usuariosConvirtieron / totalUsuarios) * 100).toFixed(1);
+    
+    new Chart(document.getElementById('funnelChart'), {
+        type: 'bar',
+        data: {
+            labels: [
+                `1. Usuarios Registrados\n(${totalUsuarios})`,
+                `2. Publicaron\n(${usuariosPublicaron} - ${pctPublicaron}%)`,
+                `3. Intentaron Pagar\n(${usuariosPagaron} - ${pctPagaron}%)`,
+                `4. Pagaron Exitosamente\n(${usuariosConvirtieron} - ${pctConvirtieron}%)`
+            ],
+            datasets: [{
+                label: 'Usuarios en cada etapa',
+                data: [totalUsuarios, usuariosPublicaron, usuariosPagaron, usuariosConvirtieron],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(16, 185, 129, 0.9)'
+                ],
+                borderColor: [
+                    '#3B82F6',
+                    '#10B981',
+                    '#F59E0B',
+                    '#10B981'
+                ],
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        plugins: [shadow3D],
+        options: {
+            indexAxis: 'y',
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Funnel: De Usuario a Cliente',
+                    font: { size: 16, weight: '700' },
+                    padding: { bottom: 20 }
+                },
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#111827',
+                    padding: 12,
+                    callbacks: {
+                        label: (context) => {
+                            const value = context.parsed.x;
+                            const pct = ((value / totalUsuarios) * 100).toFixed(1);
+                            return ` ${value} usuarios (${pct}%)`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { font: { size: 12 } },
+                    grid: { color: '#F3F4F6' }
+                },
+                y: {
+                    ticks: { 
+                        font: { size: 13, weight: '600' },
+                        autoSkip: false
+                    },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico: Usuarios (Área con gradiente y 3D)
+new Chart(document.getElementById('usuariosChart'), {
+    type: 'line',
+    data: {
+        labels: usuariosData.map(d => formatMes(d.mes)),
+        datasets: [{
+            label: 'Nuevos Usuarios',
+            data: usuariosData.map(d => d.cantidad),
+            borderColor: '#3B82F6',
+            backgroundColor: (context) => {
+                const ctx = context.chart.ctx;
+                const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+                gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                return gradient;
+            },
+            fill: true,
+            tension: 0.4,
+            borderWidth: 4,
+            pointRadius: 6,
+            pointHoverRadius: 9,
+            pointBackgroundColor: '#fff',
+            pointBorderWidth: 3,
+            pointBorderColor: '#3B82F6',
+            pointHoverBackgroundColor: '#3B82F6',
+            pointHoverBorderColor: '#fff'
+        }]
+    },
+    plugins: [shadow3D],
+    options: {
+        plugins: {
+            title: { 
+                display: true, 
+                text: 'Nuevos Usuarios por Mes', 
+                font: { size: 16, weight: '700' },
+                padding: { bottom: 20 }
+            },
+            legend: {
+                display: true,
+                labels: {
+                    font: { size: 13, weight: '600' },
+                    padding: 15
+                }
+            },
+            tooltip: {
+                backgroundColor: '#111827',
+                padding: 12,
+                titleFont: { size: 13 },
+                bodyFont: { size: 14, weight: '600' },
+                callbacks: {
+                    label: (context) => ' ' + context.parsed.y + ' usuarios'
+                }
+            }
+        },
+        scales: {
+            y: { 
+                beginAtZero: true,
+                ticks: { precision: 0, font: { size: 12 } },
+                grid: { color: '#F3F4F6' }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { font: { size: 12 } }
+            }
+        }
+    }
+});
+
+// Gráfico: Publicaciones por Categoría (Stacked con 3D)
+// Agrupar datos por mes y categoría
+const mesesUnicos = [...new Set(publicacionesData.map(d => d.mes))];
+const categoriasUnicas = [...new Set(publicacionesData.map(d => d.categoria || 'Sin categoría'))];
+
+const coloresCategorias = [
+    'rgba(59, 130, 246, 0.8)',
+    'rgba(16, 185, 129, 0.8)',
+    'rgba(245, 158, 11, 0.8)',
+    'rgba(239, 68, 68, 0.8)',
+    'rgba(139, 92, 246, 0.8)'
+];
+
+const datasets = categoriasUnicas.map((categoria, index) => {
+    return {
+        label: categoria,
+        data: mesesUnicos.map(mes => {
+            const item = publicacionesData.find(d => d.mes === mes && (d.categoria || 'Sin categoría') === categoria);
+            return item ? item.cantidad : 0;
+        }),
+        backgroundColor: coloresCategorias[index % coloresCategorias.length],
+        borderColor: coloresCategorias[index % coloresCategorias.length].replace('0.8', '1'),
+        borderWidth: 2,
+        borderRadius: 6
+    };
+});
+
+new Chart(document.getElementById('publicacionesChart'), {
+    type: 'bar',
+    data: {
+        labels: mesesUnicos.map(m => formatMes(m)),
+        datasets: datasets
+    },
+    plugins: [shadow3D],
+    options: {
+        plugins: {
+            title: { 
+                display: true, 
+                text: 'Publicaciones por Categoría de Vehículo', 
+                font: { size: 16, weight: '700' },
+                padding: { bottom: 20 }
+            },
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    font: { size: 12, weight: '600' },
+                    padding: 12,
+                    usePointStyle: true
+                }
+            },
+            tooltip: {
+                backgroundColor: '#111827',
+                padding: 12,
+                callbacks: {
+                    label: (context) => ` ${context.dataset.label}: ${context.parsed.y}`
+                }
+            }
+        },
+        scales: {
+            y: { 
+                stacked: true,
+                beginAtZero: true,
+                ticks: { precision: 0 },
+                grid: { color: '#F3F4F6' }
+            },
+            x: { 
+                stacked: true,
+                grid: { display: false } 
+            }
+        }
+    }
+});
+
+// Gráfico: Ingresos con relación a pagos (Barras con 3D)
+new Chart(document.getElementById('ingresosChart'), {
+    type: 'bar',
+    data: {
+        labels: ingresosData.map(d => formatMes(d.mes)),
+        datasets: [{
+            label: 'Ingresos Totales',
+            data: ingresosData.map(d => d.total_ingresos),
+            backgroundColor: 'rgba(16, 185, 129, 0.8)',
+            borderColor: '#10B981',
+            borderWidth: 2,
+            borderRadius: 8,
+            hoverBackgroundColor: '#059669'
+        }]
+    },
+    plugins: [shadow3D],
+    options: {
+        plugins: {
+            title: { 
+                display: true, 
+                text: 'Ingresos Mensuales', 
+                font: { size: 16, weight: '700' },
+                padding: { bottom: 20 }
+            },
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: '#111827',
+                padding: 12,
+                callbacks: {
+                    label: (context) => {
+                        if (context.datasetIndex === 0) {
+                            return ` Ingresos: $${context.parsed.y.toLocaleString('es-CL')}`;
+                        } else {
+                            const cantidad = Math.round(context.parsed.y / 5000);
+                            return ` Pagos: ${cantidad} transacciones`;
+                        }
+                    }
+                }
+            }
+        },
+        scales: {
+            y: { 
+                type: 'linear',
+                position: 'left',
+                beginAtZero: true,
+                ticks: {
+                    callback: (value) => '$' + (value / 1000).toFixed(0) + 'k'
+                },
+                grid: { color: '#F3F4F6' }
+            },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+// Gráfico: Estados (Dona mejorada)
+if (estadosData.length > 0) {
+    const colores = {
+        'aprobado': '#10B981',
+        'rechazado': '#EF4444',
+        'pendiente': '#F59E0B',
+        'expirado': '#6B7280'
+    };
+    
+    new Chart(document.getElementById('estadosChart'), {
+        type: 'doughnut',
+        data: {
+            labels: estadosData.map(d => d.estado.charAt(0).toUpperCase() + d.estado.slice(1)),
+            datasets: [{
+                data: estadosData.map(d => d.cantidad),
+                backgroundColor: estadosData.map(d => colores[d.estado] || '#6B7280'),
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            plugins: {
+                title: { 
+                    display: true, 
+                    text: 'Distribución de Pagos por Estado', 
+                    font: { size: 16, weight: '700' },
+                    padding: { bottom: 20 }
+                },
+                legend: {
+                    display: true,
+                    position: 'right',
+                    labels: { 
+                        padding: 20,
+                        font: { size: 14, weight: '600' },
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 15,
+                        boxHeight: 15
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#111827',
+                    padding: 12,
+                    callbacks: {
+                        label: (context) => {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ============================================================================
+// GRÁFICOS DE ADMIN (Actividad, Estados, Categorías)
+// ============================================================================
+
+// Preparar datos de actividad semanal (últimos 7 días)
+<?php
+$fechas = [];
+$totales = [];
+for ($i = 6; $i >= 0; $i--) {
+    $fecha = date('Y-m-d', strtotime("-$i days"));
+    $fechas[] = date('d/m', strtotime($fecha));
+    
+    // Buscar si hay datos para esta fecha
+    $total = 0;
+    foreach ($chartData['actividad_semanal'] as $dia) {
+        if ($dia->fecha === $fecha) {
+            $total = $dia->total;
+            break;
+        }
+    }
+    $totales[] = $total;
+}
+?>
+
+// Gráfico: Actividad Semanal
+const ctxActividad = document.getElementById('chartActividadSemanal');
+if (ctxActividad) {
+    new Chart(ctxActividad, {
+        type: 'line',
+        data: {
+            labels: <?php echo json_encode($fechas); ?>,
+            datasets: [{
+                label: 'Publicaciones',
+                data: <?php echo json_encode($totales); ?>,
+                borderColor: '#E6332A',
+                backgroundColor: 'rgba(230, 51, 42, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: '#E6332A',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1A1A1A',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 14, weight: '700' },
+                    callbacks: {
+                        label: (context) => context.parsed.y + ' publicaciones'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, font: { size: 12 } },
+                    grid: { color: '#F3F4F6' }
+                },
+                x: {
+                    ticks: { font: { size: 12 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico: Distribución de Estados (Dona)
+const ctxEstados = document.getElementById('chartDistribucionEstados');
+if (ctxEstados) {
+    new Chart(ctxEstados, {
+        type: 'doughnut',
+        data: {
+            labels: ['Aprobadas', 'Pendientes', 'Rechazadas'],
+            datasets: [{
+                data: [
+                    <?php echo $chartData['distribucion_estados']['aprobadas']; ?>,
+                    <?php echo $chartData['distribucion_estados']['pendientes']; ?>,
+                    <?php echo $chartData['distribucion_estados']['rechazadas']; ?>
+                ],
+                backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                borderWidth: 3,
+                borderColor: '#fff',
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: { size: 13, weight: '600' },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#1A1A1A',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: (context) => {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico: Top 5 Categorías
+const ctxCategorias = document.getElementById('chartPorCategoria');
+if (ctxCategorias) {
+    new Chart(ctxCategorias, {
+        type: 'bar',
+        data: {
+            labels: [
+                <?php foreach ($chartData['por_categoria'] as $cat): ?>
+                    '<?php echo addslashes($cat->categoria); ?>',
+                <?php endforeach; ?>
+            ],
+            datasets: [{
+                label: 'Publicaciones',
+                data: [
+                    <?php foreach ($chartData['por_categoria'] as $cat): ?>
+                        <?php echo $cat->total; ?>,
+                    <?php endforeach; ?>
+                ],
+                backgroundColor: 'rgba(230, 51, 42, 0.8)',
+                borderColor: '#E6332A',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: '#C02A23'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1A1A1A',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: (context) => context.parsed.x + ' publicaciones'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1, font: { size: 12 } },
+                    grid: { color: '#F3F4F6' }
+                },
+                y: {
+                    ticks: { font: { size: 12 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+</script>
+
+<?php layout('footer'); ?>

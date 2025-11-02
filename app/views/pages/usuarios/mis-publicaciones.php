@@ -228,6 +228,13 @@ require_once __DIR__ . '/../../layouts/header.php';
                             <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub['id']; ?>" class="btn" style="white-space: nowrap;">
                                 <?php echo icon('eye', 16); ?> Ver
                             </a>
+                            
+                            <?php if ($pub['estado'] === 'aprobada'): ?>
+                                <button onclick="marcarComoVendido(<?php echo $pub['id']; ?>, '<?php echo htmlspecialchars($pub['titulo']); ?>')" class="btn" style="white-space: nowrap; background: #d1fae5; color: #065f46; border-color: #a7f3d0;">
+                                    <?php echo icon('check-circle', 16); ?> Marcar Vendido
+                                </button>
+                            <?php endif; ?>
+                            
                             <a href="<?php echo BASE_URL; ?>/publicaciones/<?php echo $pub['id']; ?>/editar" class="btn" style="white-space: nowrap;">
                                 <?php echo icon('edit', 16); ?> Editar
                             </a>
@@ -280,26 +287,203 @@ function limpiarFiltros() {
 filterEstado?.addEventListener('change', aplicarFiltros);
 filterBuscar?.addEventListener('input', aplicarFiltros);
 
+// Función para marcar como vendido
+function marcarComoVendido(id, titulo) {
+    document.getElementById('modalVendidoTitulo').textContent = titulo;
+    document.getElementById('formVendido').action = '<?php echo BASE_URL; ?>/publicaciones/' + id + '/marcar-vendido';
+    document.getElementById('modalVendido').style.display = 'flex';
+}
+
 // Función para eliminar publicación
 function eliminarPublicacion(id, titulo) {
-    if (confirm(`¿Estás seguro de que deseas eliminar la publicación "${titulo}"?\n\nEsta acción no se puede deshacer.`)) {
-        // Crear formulario dinámico
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '<?php echo BASE_URL; ?>/publicaciones/' + id + '/eliminar';
-        
-        // Agregar token CSRF
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = 'csrf_token';
-        csrfInput.value = '<?php echo generateCsrfToken(); ?>';
-        form.appendChild(csrfInput);
-        
-        // Agregar al body y enviar
-        document.body.appendChild(form);
-        form.submit();
+    // Mostrar modal de confirmación
+    document.getElementById('modalEliminarTitulo').textContent = titulo;
+    document.getElementById('formEliminar').action = '<?php echo BASE_URL; ?>/publicaciones/' + id + '/eliminar';
+    document.getElementById('modalEliminar').style.display = 'flex';
+}
+
+// Cerrar modal
+function cerrarModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Cerrar modales al hacer clic fuera
+document.getElementById('modalVendido')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModal('modalVendido');
+    }
+});
+
+document.getElementById('modalEliminar')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModal('modalEliminar');
+    }
+});
+
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        cerrarModal('modalVendido');
+        cerrarModal('modalEliminar');
+    }
+});
+</script>
+
+<!-- Modal: Marcar como Vendido -->
+<div id="modalVendido" class="admin-modal" style="display: none;">
+    <div class="admin-modal-content admin-modal-small">
+        <div class="admin-modal-header">
+            <h2 class="h2" style="margin: 0;">Marcar como Vendido</h2>
+        </div>
+        <div class="admin-modal-body">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 16px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <p class="meta" style="margin-bottom: 16px; line-height: 1.6; text-align: center;">
+                ¿Confirmas que has vendido la publicación:
+            </p>
+            <p style="font-weight: 700; color: var(--cc-text-primary); margin-bottom: 24px; text-align: center;">
+                "<span id="modalVendidoTitulo"></span>"
+            </p>
+            <p class="meta" style="margin-bottom: 24px; color: #065f46; text-align: center;">
+                La publicación se marcará como vendida y dejará de aparecer en las búsquedas.
+            </p>
+            
+            <form id="formVendido" method="POST" action="">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" onclick="cerrarModal('modalVendido')" class="btn outline">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn" style="background: #10B981; color: white; border-color: #10B981;">
+                        Sí, marcar como vendido
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Eliminar publicación -->
+<div id="modalEliminar" class="admin-modal" style="display: none;">
+    <div class="admin-modal-content admin-modal-small">
+        <div class="admin-modal-header">
+            <h2 class="h2" style="margin: 0;">Eliminar Publicación</h2>
+        </div>
+        <div class="admin-modal-body">
+            <p class="meta" style="margin-bottom: 16px; line-height: 1.6;">
+                ¿Estás seguro de que deseas eliminar la publicación:
+            </p>
+            <p style="font-weight: 700; color: var(--cc-text-primary); margin-bottom: 24px;">
+                "<span id="modalEliminarTitulo"></span>"
+            </p>
+            <p class="meta" style="margin-bottom: 24px; color: var(--cc-danger);">
+                Esta acción no se puede deshacer.
+            </p>
+            
+            <form id="formEliminar" method="POST" action="">
+                <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" onclick="cerrarModal('modalEliminar')" class="btn outline">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn" style="background: var(--cc-danger); color: white; border-color: var(--cc-danger);">
+                        Sí, eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modal overlay */
+.admin-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Modal content container */
+.admin-modal-content {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: adminModalFadeIn 0.3s ease-out;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-modal-small {
+    max-width: 500px;
+    width: 95%;
+}
+
+/* Modal header */
+.admin-modal-header {
+    padding: 24px 32px;
+    border-bottom: 2px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Modal body */
+.admin-modal-body {
+    padding: 32px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+@keyframes adminModalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
-</script>
+
+/* Scrollbar personalizado para el modal */
+.admin-modal-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-track {
+    background: #F3F4F6;
+    border-radius: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb {
+    background: #9CA3AF;
+    border-radius: 10px;
+}
+
+.admin-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #6B7280;
+}
+</style>
 
 <?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

@@ -167,18 +167,42 @@ require_once __DIR__ . '/../../layouts/header.php';
     gap: 12px;
 }
 
+/* Avatares con colores únicos por usuario */
 .mensaje-avatar {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: var(--cc-primary-pale, #FFF5F4);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--cc-primary, #E6332A);
+    font-size: 16px;
+    font-weight: 700;
     flex-shrink: 0;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.mensaje-avatar:hover {
+    transform: scale(1.1);
+}
+
+/* Colores únicos por usuario (basado en ID) */
+.mensaje-avatar[data-user-id="1"] { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.mensaje-avatar[data-user-id="2"] { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+.mensaje-avatar[data-user-id="3"] { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+.mensaje-avatar[data-user-id="4"] { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; }
+.mensaje-avatar[data-user-id="5"] { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+.mensaje-avatar[data-user-id="6"] { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; }
+.mensaje-avatar[data-user-id="7"] { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
+.mensaje-avatar[data-user-id="8"] { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #333; }
+.mensaje-avatar[data-user-id="9"] { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; }
+.mensaje-avatar[data-user-id="10"] { background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%); color: white; }
+
+/* Color por defecto para otros usuarios */
+.mensaje-avatar:not([data-user-id]) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
 
 .mensaje-contenido {
@@ -189,30 +213,79 @@ require_once __DIR__ . '/../../layouts/header.php';
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .mensaje-autor {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     color: var(--cc-text-primary, #2E2E2E);
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.03);
 }
+
+/* Colores de nombre según usuario */
+.mensaje-item[data-user-id="1"] .mensaje-autor { color: #667eea; background: rgba(102, 126, 234, 0.1); }
+.mensaje-item[data-user-id="2"] .mensaje-autor { color: #f5576c; background: rgba(245, 87, 108, 0.1); }
+.mensaje-item[data-user-id="3"] .mensaje-autor { color: #00a8e8; background: rgba(0, 168, 232, 0.1); }
+.mensaje-item[data-user-id="4"] .mensaje-autor { color: #00d084; background: rgba(0, 208, 132, 0.1); }
+.mensaje-item[data-user-id="5"] .mensaje-autor { color: #fa709a; background: rgba(250, 112, 154, 0.1); }
+.mensaje-item[data-user-id="6"] .mensaje-autor { color: #30cfd0; background: rgba(48, 207, 208, 0.1); }
+.mensaje-item[data-user-id="7"] .mensaje-autor { color: #38b2ac; background: rgba(56, 178, 172, 0.1); }
+.mensaje-item[data-user-id="8"] .mensaje-autor { color: #ff9a9e; background: rgba(255, 154, 158, 0.1); }
+.mensaje-item[data-user-id="9"] .mensaje-autor { color: #fcb69f; background: rgba(252, 182, 159, 0.1); }
+.mensaje-item[data-user-id="10"] .mensaje-autor { color: #ff6e7f; background: rgba(255, 110, 127, 0.1); }
 
 .mensaje-fecha {
     font-size: 11px;
     color: var(--cc-text-tertiary, #999);
+    font-weight: 500;
 }
 
 .mensaje-texto {
     padding: 12px 16px;
     border-radius: 12px;
     background: var(--cc-white, #FFFFFF);
-    border: 1px solid var(--cc-border-default, #E5E5E5);
+    border: 2px solid var(--cc-border-default, #E5E5E5);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     margin: 0;
     word-wrap: break-word;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s;
 }
+
+.mensaje-texto:hover {
+    border-color: var(--cc-primary, #E6332A);
+    box-shadow: 0 2px 8px rgba(230, 51, 42, 0.1);
+}
+
+.mensaje-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.mensaje-item:hover {
+    background: rgba(0,0,0,0.02);
+    transform: translateX(4px);
+}
+
+/* Borde lateral según usuario */
+.mensaje-item[data-user-id="1"] { border-left: 4px solid #667eea; }
+.mensaje-item[data-user-id="2"] { border-left: 4px solid #f5576c; }
+.mensaje-item[data-user-id="3"] { border-left: 4px solid #00a8e8; }
+.mensaje-item[data-user-id="4"] { border-left: 4px solid #00d084; }
+.mensaje-item[data-user-id="5"] { border-left: 4px solid #fa709a; }
+.mensaje-item[data-user-id="6"] { border-left: 4px solid #30cfd0; }
+.mensaje-item[data-user-id="7"] { border-left: 4px solid #38b2ac; }
+.mensaje-item[data-user-id="8"] { border-left: 4px solid #ff9a9e; }
+.mensaje-item[data-user-id="9"] { border-left: 4px solid #fcb69f; }
+.mensaje-item[data-user-id="10"] { border-left: 4px solid #ff6e7f; }
 
 .mensaje-vacio {
     text-align: center;
@@ -221,12 +294,15 @@ require_once __DIR__ . '/../../layouts/header.php';
 }
 
 .badge-admin {
-    background: var(--cc-primary, #E6332A);
+    background: linear-gradient(135deg, #E6332A 0%, #c72a22 100%);
     color: white;
     font-size: 10px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(230, 51, 42, 0.3);
 }
 
 /* Responsive */
@@ -368,8 +444,8 @@ require_once __DIR__ . '/../../layouts/header.php';
                         </div>
                     <?php else: ?>
                         <?php foreach ($mensajes as $msg): ?>
-                            <div class="mensaje">
-                                <div class="mensaje-avatar">
+                            <div class="mensaje-item" data-user-id="<?php echo $msg->remitente_id; ?>">
+                                <div class="mensaje-avatar" data-user-id="<?php echo $msg->remitente_id; ?>">
                                     <?php echo strtoupper(substr($msg->remitente_nombre, 0, 1)); ?>
                                 </div>
                                 <div class="mensaje-contenido">
@@ -377,9 +453,12 @@ require_once __DIR__ . '/../../layouts/header.php';
                                         <span class="mensaje-autor">
                                             <?php echo htmlspecialchars($msg->remitente_nombre . ' ' . $msg->remitente_apellido); ?>
                                         </span>
+                                        <?php if (isset($msg->remitente_rol) && $msg->remitente_rol === 'admin'): ?>
+                                            <span class="badge-admin">ADMIN</span>
+                                        <?php endif; ?>
                                         <span class="mensaje-fecha"><?php echo $msg->fecha_formateada; ?></span>
                                         <?php if (!$msg->leido): ?>
-                                            <span style="color: var(--cc-primary); font-size: 11px;">● No leído</span>
+                                            <span style="color: var(--cc-primary); font-size: 11px; font-weight: 600;">● Nuevo</span>
                                         <?php endif; ?>
                                     </div>
                                     <div class="mensaje-texto">

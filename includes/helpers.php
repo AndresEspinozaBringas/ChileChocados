@@ -414,3 +414,36 @@ function getAdminNotifications() {
         ];
     }
 }
+
+/**
+ * Formatear fecha de forma relativa (hace X tiempo)
+ * 
+ * @param string $fecha Fecha en formato MySQL (Y-m-d H:i:s)
+ * @return string Fecha formateada de forma relativa
+ */
+function timeAgo($fecha) {
+    if (!$fecha) return '';
+    
+    $timestamp = strtotime($fecha);
+    $diff = time() - $timestamp;
+    
+    if ($diff < 60) {
+        return 'Justo ahora';
+    } elseif ($diff < 3600) {
+        $mins = floor($diff / 60);
+        return 'Hace ' . $mins . ' ' . ($mins == 1 ? 'minuto' : 'minutos');
+    } elseif ($diff < 86400) {
+        $hours = floor($diff / 3600);
+        return 'Hace ' . $hours . ' ' . ($hours == 1 ? 'hora' : 'horas');
+    } elseif ($diff < 604800) {
+        $days = floor($diff / 86400);
+        return 'Hace ' . $days . ' ' . ($days == 1 ? 'día' : 'días');
+    } elseif ($diff < 2592000) {
+        $weeks = floor($diff / 604800);
+        return 'Hace ' . $weeks . ' ' . ($weeks == 1 ? 'semana' : 'semanas');
+    } else {
+        return date('d/m/Y', $timestamp);
+    }
+}
+
+

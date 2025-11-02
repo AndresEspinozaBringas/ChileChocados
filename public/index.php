@@ -254,6 +254,20 @@ if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numer
     $params = [$url[1]];  // ID de la publicación
 }
 
+// Ruta: /publicaciones/{id}/marcar-vendido
+if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numeric($url[1]) && isset($url[2]) && $url[2] === 'marcar-vendido' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $controllerName = 'PublicacionController';
+    $method = 'marcarVendido';
+    $params = [$url[1]];
+}
+
+// Ruta: /publicaciones/{id}/eliminar
+if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numeric($url[1]) && isset($url[2]) && $url[2] === 'eliminar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $controllerName = 'PublicacionController';
+    $method = 'eliminar';
+    $params = [$url[1]];
+}
+
 // ====================================
 // RUTAS ADMIN - SISTEMA DE MODERACIÓN
 // MODIFICADO: /admin/login redirige a /login
@@ -286,6 +300,12 @@ if (!empty($url[0]) && $url[0] === 'admin') {
     // /admin/mensajes - Sistema de mensajería (vista admin)
     if ($url[1] === 'mensajes') {
         $controller->mensajes();
+        exit;
+    }
+    
+    // /admin/reportes - Reportes y estadísticas
+    if ($url[1] === 'reportes') {
+        $controller->reportes();
         exit;
     }
     
@@ -490,6 +510,16 @@ if (!empty($url[0]) && $url[0] === 'pago') {
         error_log("Ruta: POST /pago/reintentar");
         $method = 'reintentar';
         $params = [];
+    } elseif ($url[1] === 'retomar' && !empty($url[2])) {
+        // GET /pago/retomar/{id} - Retomar un pago pendiente
+        error_log("Ruta: /pago/retomar/{$url[2]}");
+        $method = 'retomar';
+        $params = [$url[2]];
+    } elseif ($url[1] === 'cancelar' && !empty($url[2]) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        // POST /pago/cancelar/{id} - Cancelar un pago pendiente
+        error_log("Ruta: POST /pago/cancelar/{$url[2]}");
+        $method = 'cancelar';
+        $params = [$url[2]];
     } elseif ($url[1] === 'simulador') {
         if (empty($url[2])) {
             // GET /pago/simulador - Mostrar simulador de Flow
@@ -505,6 +535,15 @@ if (!empty($url[0]) && $url[0] === 'pago') {
     }
     
     error_log("Controller: $controllerName, Method: $method");
+}
+
+// ====================================
+// RUTA: MIS PAGOS PENDIENTES
+// ====================================
+if (!empty($url[0]) && $url[0] === 'mis-pagos-pendientes') {
+    $controllerName = 'PagoController';
+    $method = 'pendientes';
+    $params = [];
 }
 
 // ====================================

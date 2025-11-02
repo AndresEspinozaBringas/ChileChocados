@@ -25,9 +25,8 @@ class UsuarioController
     public function __construct()
     {
         $this->db = getDB();
-        // TODO: Inicializar modelos cuando estén conectados a BD
-        // $this->usuarioModel = new \App\Models\Usuario();
-        // $this->publicacionModel = new \App\Models\Publicacion();
+        $this->usuarioModel = new \App\Models\Usuario();
+        $this->publicacionModel = new \App\Models\Publicacion();
     }
 
     /**
@@ -36,62 +35,63 @@ class UsuarioController
     public function perfil()
     {
         // Verificar autenticación
-        if (!isAuthenticated()) {
-            setFlash('error', 'Debes iniciar sesión para ver tu perfil');
-            redirect('login');
-        }
+        Auth::require();
 
         $userId = $_SESSION['user_id'];
 
-        // TODO: Conectar con BD en futuras etapas
-        // Datos mock del usuario (como array)
-        $usuario = [
-            'id' => $userId,
-            'nombre' => $_SESSION['user_nombre'] ?? 'Usuario',
-            'apellido' => $_SESSION['user_apellido'] ?? 'Demo',
-            'email' => $_SESSION['user_email'] ?? 'usuario@example.com',
-            'telefono' => '+56 9 1234 5678',
-            'rut' => '12.345.678-9',
-            'rol' => $_SESSION['user_role'] ?? 'vendedor',
-            'foto_perfil' => null,
-            'fecha_registro' => '2024-10-01',
-            'verificado' => 1
-        ];
+        // Obtener datos del usuario desde la BD
+        $stmt = $this->db->prepare("SELECT * FROM usuarios WHERE id = ?");
+        $stmt->execute([$userId]);
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        if (!$usuario) {
+            $_SESSION['error'] = 'Usuario no encontrado';
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
 
-        // Publicaciones activas mock (como arrays)
-        $publicacionesActivas = [
-            [
-                'id' => 1,
-                'titulo' => 'Ford Territory 2022 - Chocado Frontal',
-                'precio' => 8500000,
-                'foto_principal' => 'ford-territory.jpg',
-                'estado' => 'aprobada',
-                'visitas' => 245,
-                'fecha_publicacion' => '2024-10-20'
-            ],
-            [
-                'id' => 2,
-                'titulo' => 'Kia Cerato 2020 - Choque Lateral',
-                'precio' => 6200000,
-                'foto_principal' => 'kia-cerato.jpg',
-                'estado' => 'aprobada',
-                'visitas' => 189,
-                'fecha_publicacion' => '2024-10-18'
-            ]
-        ];
+        // Obtener estadísticas reales del usuario
+        $stmt = $this->db->prepare("
+            SELECT 
+                COUNT(*) as total_publicaciones,
+                SUM(CASE WHEN estado = 'aprobada' THEN 1 ELSE 0 END) as publicaciones_activas,
+                SUM(CASE WHEN estado = 'vendida' THEN 1 ELSE 0 END) as ventas_realizadas,
+                SUM(COALESCE(visitas, 0)) as total_visitas
+            FROM publicaciones 
+            WHERE usuario_id = ?
+        ");
+        $stmt->execute([$userId]);
+        $estadisticas = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Publicaciones archivadas mock
-        $publicacionesArchivadas = [];
+        // Obtener publicaciones activas (aprobadas)
+        $stmt = $this->db->prepare("
+            SELECT p.*, 
+                   COALESCE(
+                       (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id AND es_principal = 1 LIMIT 1),
+                       p.foto_principal
+                   ) as foto_principal
+            FROM publicaciones p
+            WHERE p.usuario_id = ? AND p.estado = 'aprobada'
+            ORDER BY p.fecha_publicacion DESC
+            LIMIT 10
+        ");
+        $stmt->execute([$userId]);
+        $publicacionesActivas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Estadísticas mock
-        $estadisticas = [
-            'total_publicaciones' => 2,
-            'publicaciones_activas' => 2,
-            'publicaciones_pendientes' => 0,
-            'ventas_realizadas' => 0,
-            'total_visitas' => 434
-        ];
+        // Obtener publicaciones vendidas
+        $stmt = $this->db->prepare("
+            SELECT p.*,
+                   COALESCE(
+                       (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id AND es_principal = 1 LIMIT 1),
+                       p.foto_principal
+                   ) as foto_principal
+            FROM publicaciones p
+            WHERE p.usuario_id = ? AND p.estado = 'vendida'
+            ORDER BY p.fecha_actualizacion DESC
+            LIMIT 10
+        ");
+        $stmt->execute([$userId]);
+        $publicacionesVendidas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Cargar vista
         require_once __DIR__ . '/../views/pages/usuarios/profile.php';
@@ -103,21 +103,20 @@ class UsuarioController
     public function actualizarPerfil()
     {
         // Verificar autenticación
-        if (!isAuthenticated()) {
-            echo json_encode(['success' => false, 'message' => 'No autenticado']);
-            exit;
-        }
+        Auth::require();
 
         // Verificar método POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            setFlash('error', 'Método no permitido');
-            redirect('perfil');
+            $_SESSION['error'] = 'Método no permitido';
+            header('Location: ' . BASE_URL . '/perfil');
+            exit;
         }
 
         // Verificar token CSRF
-        if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
-            setFlash('error', 'Token de seguridad inválido');
-            redirect('perfil');
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Token de seguridad inválido';
+            header('Location: ' . BASE_URL . '/perfil');
+            exit;
         }
 
         $userId = $_SESSION['user_id'];
@@ -126,8 +125,9 @@ class UsuarioController
         // Validar datos
         $nombre = trim($_POST['nombre'] ?? '');
         $apellido = trim($_POST['apellido'] ?? '');
+        $email = trim($_POST['email'] ?? '');
         $telefono = trim($_POST['telefono'] ?? '');
-        $redes_sociales = trim($_POST['redes_sociales'] ?? '');
+        $rut = trim($_POST['rut'] ?? '');
 
         // Validaciones
         if (empty($nombre)) {
@@ -142,77 +142,82 @@ class UsuarioController
             $errors[] = 'El apellido debe tener entre 2 y 100 caracteres';
         }
 
+        // Validar email
+        if (empty($email)) {
+            $errors[] = 'El email es obligatorio';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'El email no es válido';
+        } else {
+            // Verificar que el email no esté en uso por otro usuario
+            $stmt = $this->db->prepare("SELECT id FROM usuarios WHERE email = ? AND id != ?");
+            $stmt->execute([$email, $userId]);
+            if ($stmt->fetch()) {
+                $errors[] = 'El email ya está registrado por otro usuario';
+            }
+        }
+
+        // Validar teléfono chileno
         if (!empty($telefono)) {
-            // Validar formato teléfono chileno
             $telefonoLimpio = preg_replace('/[^0-9]/', '', $telefono);
-            if (strlen($telefonoLimpio) < 8 || strlen($telefonoLimpio) > 15) {
-                $errors[] = 'El teléfono debe tener entre 8 y 15 dígitos';
+            if (strlen($telefonoLimpio) < 8 || strlen($telefonoLimpio) > 11) {
+                $errors[] = 'El teléfono debe tener entre 8 y 11 dígitos';
+            } elseif (!preg_match('/^(\+?56)?9\d{8}$/', $telefonoLimpio)) {
+                $errors[] = 'El teléfono debe ser un número chileno válido (ej: +56912345678 o 912345678)';
+            }
+        }
+
+        // Validar RUT chileno
+        if (!empty($rut)) {
+            if (!validateRut($rut)) {
+                $errors[] = 'El RUT no es válido';
             }
         }
 
         // Si hay errores, regresar
         if (!empty($errors)) {
-            setFlashMessage(implode('<br>', $errors), 'error');
-            redirect('perfil');
-        }
-
-        // Preparar datos para actualizar
-        $datosActualizar = [
-            'nombre' => $nombre,
-            'apellido' => $apellido,
-            'telefono' => $telefono ?: null,
-            'fecha_actualizacion' => date('Y-m-d H:i:s')
-        ];
-
-        // Procesar redes sociales (JSON)
-        if (!empty($redes_sociales)) {
-            // Si es una URL completa, extraer el usuario
-            $redesArray = [];
-            $lineas = explode("\n", $redes_sociales);
-            
-            foreach ($lineas as $linea) {
-                $linea = trim($linea);
-                if (empty($linea)) continue;
-                
-                // Detectar tipo de red social
-                if (strpos($linea, 'facebook.com') !== false || strpos($linea, 'fb.com') !== false) {
-                    $redesArray['facebook'] = $linea;
-                } elseif (strpos($linea, 'instagram.com') !== false) {
-                    $redesArray['instagram'] = $linea;
-                } elseif (strpos($linea, 'twitter.com') !== false || strpos($linea, 'x.com') !== false) {
-                    $redesArray['twitter'] = $linea;
-                } elseif (strpos($linea, 'whatsapp') !== false || strpos($linea, 'wa.me') !== false) {
-                    $redesArray['whatsapp'] = $linea;
-                } else {
-                    // Si no se detecta, guardar como "otro"
-                    $redesArray['otro'] = $linea;
-                }
-            }
-            
-            $datosActualizar['redes_sociales'] = !empty($redesArray) ? json_encode($redesArray) : null;
-        } else {
-            $datosActualizar['redes_sociales'] = null;
+            $_SESSION['error'] = implode('<br>', $errors);
+            header('Location: ' . BASE_URL . '/perfil');
+            exit;
         }
 
         // Actualizar en base de datos
         try {
-            $resultado = $this->usuarioModel->update($userId, $datosActualizar);
+            $stmt = $this->db->prepare("
+                UPDATE usuarios 
+                SET nombre = ?, 
+                    apellido = ?, 
+                    email = ?,
+                    telefono = ?, 
+                    rut = ?,
+                    fecha_actualizacion = NOW()
+                WHERE id = ?
+            ");
+            $resultado = $stmt->execute([
+                $nombre,
+                $apellido,
+                $email,
+                $telefono ?: null,
+                $rut ?: null,
+                $userId
+            ]);
             
             if ($resultado) {
                 // Actualizar datos en sesión
                 $_SESSION['user_nombre'] = $nombre;
                 $_SESSION['user_apellido'] = $apellido;
+                $_SESSION['user_email'] = $email;
                 
-                setFlash('success', 'Perfil actualizado correctamente');
+                $_SESSION['success'] = 'Perfil actualizado correctamente';
             } else {
-                setFlash('error', 'No se pudo actualizar el perfil');
+                $_SESSION['error'] = 'No se pudo actualizar el perfil';
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("Error al actualizar perfil: " . $e->getMessage());
-            setFlash('error', 'Error al actualizar el perfil. Por favor intenta nuevamente.');
+            $_SESSION['error'] = 'Error al actualizar el perfil. Por favor intenta nuevamente.';
         }
 
-        redirect('perfil');
+        header('Location: ' . BASE_URL . '/perfil');
+        exit;
     }
 
     /**
@@ -459,6 +464,9 @@ class UsuarioController
         // Obtener publicaciones del usuario desde la BD (incluyendo borradores y motivo de rechazo)
         $stmt = $this->db->prepare("
             SELECT p.*,
+                   p.visitas,
+                   p.fecha_creacion,
+                   p.fecha_publicacion,
                    p.motivo_rechazo,
                    COALESCE(
                        (SELECT ruta FROM publicacion_fotos WHERE publicacion_id = p.id AND es_principal = 1 LIMIT 1),

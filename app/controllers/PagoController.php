@@ -193,7 +193,7 @@ class PagoController
         if (!$response || !isset($response['token'])) {
             // Error al crear orden
             error_log("ERROR: No se recibió token de Flow");
-            $stmt = $db->prepare("UPDATE pagos_flow SET estado = 'error' WHERE id = ?");
+            $stmt = $db->prepare("UPDATE pagos_flow SET estado = 'rechazado' WHERE id = ?");
             $stmt->execute([$pagoId]);
 
             $_SESSION['error'] = 'Error al iniciar el pago. Por favor, intenta nuevamente.';
@@ -416,6 +416,197 @@ class PagoController
         $_POST['tipo_destacado'] = $pago->tipo;
         
         $this->iniciar();
+    }
+
+    /**
+     * Ver pagos pendientes del usuario
+     * Ruta: GET /mis-pagos-pendientes
+     */
+    public function pendientes()
+    {
+        Auth::require();
+
+        $db = getDB();
+        
+        // Obtener pagos pendientes o en proceso del usuario
+        $stmt = $db->prepare("
+            SELECT 
+                pf.*,
+                p.titulo as publicacion_titulo,
+                p.foto_principal,
+                p.id as publicacion_id
+            FROM pagos_flow pf
+            INNER JOIN publicaciones p ON pf.publicacion_id = p.id
+            WHERE pf.usuario_id = ?
+            AND pf.estado IN ('pendiente', 'en_proceso')
+            ORDER BY pf.fecha_creacion DESC
+        ");
+        $stmt->execute([$_SESSION['user_id']]);
+        $pagosPendientes = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        $data = [
+            'pagosPendientes' => $pagosPendientes,
+            'title' => 'Mis Pagos Pendientes - ChileChocados'
+        ];
+
+        require_once __DIR__ . '/../views/pages/pagos/pendientes.php';
+    }
+
+    /**
+     * Retomar un pago pendiente
+     * Ruta: GET /pago/retomar/{id}
+     */
+    public function retomar($pagoId)
+    {
+        Auth::require();
+
+        $db = getDB();
+        
+        // Obtener el pago
+        $stmt = $db->prepare("
+            SELECT * FROM pagos_flow 
+            WHERE id = ? 
+            AND usuario_id = ? 
+            AND estado IN ('pendiente', 'en_proceso')
+        ");
+        $stmt->execute([$pagoId, $_SESSION['user_id']]);
+        $pago = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if (!$pago) {
+            $_SESSION['error'] = 'Pago no encontrado o no se puede retomar';
+            header('Location: ' . BASE_URL . '/mis-pagos-pendientes');
+            exit;
+        }
+
+        // Verificar si ha expirado
+        $fechaExpiracion = $pago->fecha_expiracion 
+            ? strtotime($pago->fecha_expiracion) 
+            : strtotime('+48 hours', strtotime($pago->fecha_creacion));
+        
+        if (time() > $fechaExpiracion) {
+            // Marcar como expirado
+            $stmt = $db->prepare("UPDATE pagos_flow SET estado = 'expirado' WHERE id = ?");
+            $stmt->execute([$pagoId]);
+            
+            $_SESSION['error'] = 'Este pago ha expirado. Por favor, crea uno nuevo.';
+            header('Location: ' . BASE_URL . '/mis-pagos-pendientes');
+            exit;
+        }
+
+        // Incrementar contador de intentos
+        $stmt = $db->prepare("
+            UPDATE pagos_flow 
+            SET intentos = intentos + 1, 
+                estado = 'en_proceso' 
+            WHERE id = ?
+        ");
+        $stmt->execute([$pagoId]);
+
+        // Si ya tiene token de Flow, redirigir directamente
+        if ($pago->flow_token) {
+            $urlPago = $this->flowHelper->obtenerUrlPago($pago->flow_token);
+            header('Location: ' . $urlPago);
+            exit;
+        }
+
+        // Si no tiene token, crear uno nuevo
+        $dias = FlowHelper::obtenerDiasDestacado($pago->tipo);
+        
+        $params = [
+            'commerceOrder' => $pago->flow_orden,
+            'subject' => "Publicación Destacada - {$dias} días",
+            'amount' => $pago->monto,
+            'email' => $_SESSION['user_email'] ?? 'usuario@chilechocados.cl',
+            'urlConfirmation' => BASE_URL . '/pago/confirmar',
+            'urlReturn' => BASE_URL . '/pago/retorno?pago_id=' . $pagoId,
+            'optional' => json_encode([
+                'pago_id' => $pagoId,
+                'publicacion_id' => $pago->publicacion_id,
+                'tipo_destacado' => $pago->tipo
+            ])
+        ];
+
+        $response = $this->flowHelper->crearOrden($params);
+
+        if (!$response || !isset($response['token'])) {
+            // Incrementar intentos fallidos
+            $stmt = $db->prepare("
+                UPDATE pagos_flow 
+                SET estado = 'error',
+                    notas = CONCAT(COALESCE(notas, ''), '\nError al retomar: ', NOW())
+                WHERE id = ?
+            ");
+            $stmt->execute([$pagoId]);
+
+            $_SESSION['error'] = 'Error al retomar el pago. Por favor, intenta nuevamente.';
+            header('Location: ' . BASE_URL . '/mis-pagos-pendientes');
+            exit;
+        }
+
+        // Guardar nuevo token
+        $stmt = $db->prepare("
+            UPDATE pagos_flow 
+            SET flow_token = ?, 
+                respuesta_flow = ? 
+            WHERE id = ?
+        ");
+        $stmt->execute([
+            $response['token'],
+            json_encode($response),
+            $pagoId
+        ]);
+
+        // Redirigir a Flow
+        $urlPago = $this->flowHelper->obtenerUrlPago($response['token']);
+        header('Location: ' . $urlPago);
+        exit;
+    }
+
+    /**
+     * Cancelar un pago pendiente
+     * Ruta: POST /pago/cancelar/{id}
+     */
+    public function cancelar($pagoId)
+    {
+        Auth::require();
+
+        // Validar CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Token de seguridad inválido';
+            header('Location: ' . BASE_URL . '/mis-pagos-pendientes');
+            exit;
+        }
+
+        $db = getDB();
+        
+        // Verificar que el pago existe y pertenece al usuario
+        $stmt = $db->prepare("
+            SELECT * FROM pagos_flow 
+            WHERE id = ? 
+            AND usuario_id = ? 
+            AND estado IN ('pendiente', 'en_proceso')
+        ");
+        $stmt->execute([$pagoId, $_SESSION['user_id']]);
+        $pago = $stmt->fetch(PDO::FETCH_OBJ);
+
+        if (!$pago) {
+            $_SESSION['error'] = 'Pago no encontrado o no se puede cancelar';
+            header('Location: ' . BASE_URL . '/mis-pagos-pendientes');
+            exit;
+        }
+
+        // Marcar como cancelado
+        $stmt = $db->prepare("
+            UPDATE pagos_flow 
+            SET estado = 'cancelado',
+                notas = CONCAT(COALESCE(notas, ''), '\nCancelado por usuario: ', NOW())
+            WHERE id = ?
+        ");
+        $stmt->execute([$pagoId]);
+
+        $_SESSION['success'] = 'Pago cancelado exitosamente';
+        header('Location: ' . BASE_URL . '/mis-pagos-pendientes');
+        exit;
     }
 
     /**

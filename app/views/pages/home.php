@@ -104,7 +104,7 @@ require_once APP_PATH . '/views/layouts/nav.php';
                     <?php if (!empty($pub->foto_principal)): ?>
                         <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo htmlspecialchars($pub->foto_principal); ?>" 
                              alt="<?php echo htmlspecialchars($pub->titulo); ?>"
-                             style="width: 100%; height: 100%; object-fit: cover;">
+                             style="width: 100%; height: 100%; object-fit: cover; <?php echo (isset($pub->estado) && $pub->estado === 'vendida') ? 'opacity: 0.6;' : ''; ?>">
                     <?php else: ?>
                         <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -115,17 +115,10 @@ require_once APP_PATH . '/views/layouts/nav.php';
                         </div>
                     <?php endif; ?>
                     
-                    <!-- Badge de estado -->
-                    <?php if (!empty($pub->tipificacion)): ?>
-                    <span class="badge" style="position: absolute; top: 12px; left: 12px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                        <?php echo strtoupper($pub->tipificacion); ?>
-                    </span>
-                    <?php endif; ?>
-                    
-                    <!-- Badge de destacado -->
-                    <?php if (!empty($pub->es_destacada)): ?>
-                    <span class="badge" style="position: absolute; top: 12px; right: 12px; background: #FFB800; color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                        ⭐ DESTACADO
+                    <!-- Badge de vendido en esquina superior izquierda -->
+                    <?php if (isset($pub->estado) && $pub->estado === 'vendida'): ?>
+                    <span style="position: absolute; top: 12px; left: 12px; background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; z-index: 10;">
+                        ✓ VENDIDO
                     </span>
                     <?php endif; ?>
                 </div>
@@ -188,7 +181,7 @@ require_once APP_PATH . '/views/layouts/nav.php';
                     <?php if (!empty($pub->foto_principal)): ?>
                         <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo htmlspecialchars($pub->foto_principal); ?>" 
                              alt="<?php echo htmlspecialchars($pub->titulo); ?>"
-                             style="width: 100%; height: 100%; object-fit: cover;">
+                             style="width: 100%; height: 100%; object-fit: cover; <?php echo (isset($pub->estado) && $pub->estado === 'vendida') ? 'opacity: 0.6;' : ''; ?>">
                     <?php else: ?>
                         <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -199,10 +192,10 @@ require_once APP_PATH . '/views/layouts/nav.php';
                         </div>
                     <?php endif; ?>
                     
-                    <!-- Badge de estado -->
-                    <?php if (!empty($pub->tipificacion)): ?>
-                    <span class="badge" style="position: absolute; top: 12px; left: 12px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">
-                        <?php echo strtoupper($pub->tipificacion); ?>
+                    <!-- Badge de vendido en esquina superior izquierda -->
+                    <?php if (isset($pub->estado) && $pub->estado === 'vendida'): ?>
+                    <span style="position: absolute; top: 12px; left: 12px; background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; z-index: 10;">
+                        ✓ VENDIDO
                     </span>
                     <?php endif; ?>
                 </div>

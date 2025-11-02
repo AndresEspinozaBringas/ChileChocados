@@ -83,7 +83,7 @@ layout('header');
       <?php echo icon('trending-up', 24); ?> Métricas Clave
     </h2>
     
-    <div class="grid cols-4" style="gap: 16px;">
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
       <!-- Publicaciones Activas -->
       <a href="<?php echo BASE_URL; ?>/admin/publicaciones?estado=aprobada" 
          class="metric-card" style="text-decoration: none;">
@@ -141,6 +141,17 @@ layout('header');
               <?php echo icon('check-circle', 14); ?> Todo al día
             <?php endif; ?>
           </div>
+        </div>
+      </a>
+      
+      <!-- Visitas Totales -->
+      <a href="<?php echo BASE_URL; ?>/admin/reportes" 
+         class="metric-card" style="text-decoration: none;">
+        <div class="metric-icon"><?php echo icon('eye', 36); ?></div>
+        <div class="metric-content">
+          <div class="metric-label">Visitas Totales</div>
+          <div class="metric-value"><?php echo number_format($metricas['visitas_totales']); ?></div>
+          <div class="metric-description">En publicaciones activas</div>
         </div>
       </a>
     </div>

@@ -212,12 +212,12 @@ class Publicacion extends Model
                 INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
                 INNER JOIN regiones r ON p.region_id = r.id
                 WHERE p.es_destacada = 1
-                AND p.estado = ?
+                AND p.estado IN ('aprobada', 'vendida')
                 AND p.fecha_destacada_fin > NOW()
                 ORDER BY p.fecha_destacada_inicio DESC
                 LIMIT {$limit}";
         
-        return $this->query($sql, [self::ESTADO_APROBADA]);
+        return $this->query($sql);
     }
     
     /**
