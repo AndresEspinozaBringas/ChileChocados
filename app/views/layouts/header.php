@@ -195,7 +195,7 @@
             
             <!-- Buscador (desktop) -->
             <div class="header-search">
-                <form action="<?php echo BASE_URL; ?>/buscar" method="GET" class="search-form">
+                <form action="<?php echo BASE_URL; ?>/listado" method="GET" class="search-form">
                     <div class="search-input-group">
                         <?php echo icon('search', 20, 'search-icon'); ?>
                         <input 
@@ -204,9 +204,10 @@
                             class="search-input" 
                             placeholder="Buscar vehículos, marcas, modelos..."
                             value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>"
+                            style="border: none; outline: none;"
                         >
-                        <button type="button" class="search-filter-btn" aria-label="Filtros">
-                            <?php echo icon('filter', 18); ?>
+                        <button type="submit" class="search-filter-btn" aria-label="Buscar">
+                            <?php echo icon('search', 18); ?>
                         </button>
                     </div>
                 </form>
@@ -376,7 +377,7 @@
         
         <!-- Buscador móvil -->
         <div class="mobile-search">
-            <form action="<?php echo BASE_URL; ?>/buscar" method="GET" class="search-form">
+            <form action="<?php echo BASE_URL; ?>/listado" method="GET" class="search-form">
                 <div class="search-input-group">
                     <?php echo icon('search', 18, 'search-icon'); ?>
                     <input 
@@ -385,6 +386,7 @@
                         class="search-input" 
                         placeholder="Buscar..."
                         value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>"
+                        style="border: none; outline: none;"
                     >
                 </div>
             </form>

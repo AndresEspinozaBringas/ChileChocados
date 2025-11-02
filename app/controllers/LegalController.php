@@ -4,6 +4,8 @@
  * Maneja las páginas legales: Términos y Condiciones, Política de Privacidad
  */
 
+namespace App\Controllers;
+
 class LegalController {
     
     /**

@@ -157,6 +157,12 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(230, 51, 42, 0.1) !important;
 }
 
+.search-input-group .search-input {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* ============================================================================
  * NAVEGACIÓN
  * ============================================================================ */

@@ -288,6 +288,24 @@ $data['regiones'] = $data['regiones'] ?? [
             </label>
           </div>
 
+          <!-- Filtros activos -->
+          <?php
+          $filtros_activos = 0;
+          if (!empty($filtros['categoria_id'])) $filtros_activos++;
+          if (!empty($filtros['region_id'])) $filtros_activos++;
+          if (!empty($filtros['estado'])) $filtros_activos++;
+          if (!empty($filtros['buscar'])) $filtros_activos++;
+          if (!empty($filtros['precio_min']) || !empty($filtros['precio_max'])) $filtros_activos++;
+          ?>
+          
+          <?php if ($filtros_activos > 0): ?>
+            <div style="margin-top: 16px; padding: 12px; background: #e3f2fd; border-radius: 8px;">
+              <div style="font-size: 13px; font-weight: 600; color: #0066CC;">
+                <?php echo $filtros_activos; ?> filtro(s) aplicado(s)
+              </div>
+            </div>
+          <?php endif; ?>
+
           <!-- Botones -->
           <div style="margin-top: 16px; display: flex; gap: 8px;">
             <button type="submit" class="btn primary" style="flex: 1;">
@@ -298,24 +316,6 @@ $data['regiones'] = $data['regiones'] ?? [
             </a>
           </div>
         </div>
-
-        <!-- Filtros activos -->
-        <?php
-        $filtros_activos = 0;
-        if (!empty($filtros['categoria_id'])) $filtros_activos++;
-        if (!empty($filtros['region_id'])) $filtros_activos++;
-        if (!empty($filtros['estado'])) $filtros_activos++;
-        if (!empty($filtros['buscar'])) $filtros_activos++;
-        if (!empty($filtros['precio_min']) || !empty($filtros['precio_max'])) $filtros_activos++;
-        ?>
-        
-        <?php if ($filtros_activos > 0): ?>
-          <div class="card" style="margin-top: 12px; background: #e3f2fd;">
-            <div style="font-size: 14px; font-weight: 600; color: #0066CC;">
-              <?php echo $filtros_activos; ?> filtro(s) aplicado(s)
-            </div>
-          </div>
-        <?php endif; ?>
       </form>
     </aside>
 

@@ -81,6 +81,10 @@
   max-width: 600px;
 }
 
+.mobile-search {
+  display: none;
+}
+
 .search-form {
   width: 100%;
 }

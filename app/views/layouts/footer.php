@@ -81,12 +81,6 @@
                                 <span>Preguntas Frecuentes</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>/blog">
-                                <?php echo icon('file', 16); ?>
-                                <span>Blog</span>
-                            </a>
-                        </li>
                     </ul>
                 </div>
                 
@@ -116,12 +110,6 @@
                             <a href="<?php echo BASE_URL; ?>/seguridad">
                                 <?php echo icon('shield', 16); ?>
                                 <span>Consejos de Seguridad</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>/reportar">
-                                <?php echo icon('alert-triangle', 16); ?>
-                                <span>Reportar Problema</span>
                             </a>
                         </li>
                     </ul>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ChileChocados - Front Controller
  * Enrutamiento principal de la aplicación
@@ -17,8 +18,8 @@ require_once APP_PATH . '/helpers/Auth.php';
 $logFile = __DIR__ . '/../logs/post_debug.log';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     file_put_contents($logFile, "\n\n=== POST REQUEST ===\n", FILE_APPEND);
-    file_put_contents($logFile, "Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-    file_put_contents($logFile, "GET url param: " . ($_GET['url'] ?? 'NO URL') . "\n", FILE_APPEND);
+    file_put_contents($logFile, 'Time: ' . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+    file_put_contents($logFile, 'GET url param: ' . ($_GET['url'] ?? 'NO URL') . "\n", FILE_APPEND);
 }
 
 // Obtener la URL solicitada
@@ -29,7 +30,7 @@ $url = explode('/', $url);
 
 // DEBUG: Log de la URL parseada
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    file_put_contents($logFile, "URL array: " . print_r($url, true) . "\n", FILE_APPEND);
+    file_put_contents($logFile, 'URL array: ' . print_r($url, true) . "\n", FILE_APPEND);
 }
 
 // Determinar controlador y acción
@@ -54,12 +55,16 @@ $specialRoutes = [
     'privacidad' => ['controller' => 'LegalController', 'method' => 'privacidad'],
     'cookies' => ['controller' => 'LegalController', 'method' => 'cookies'],
     'denuncias' => ['controller' => 'LegalController', 'method' => 'denuncias'],
+    // Rutas de información
+    'como-funciona' => ['controller' => 'InfoController', 'method' => 'comoFunciona'],
+    'preguntas-frecuentes' => ['controller' => 'InfoController', 'method' => 'preguntasFrecuentes'],
+    'guia-comprador' => ['controller' => 'InfoController', 'method' => 'guiaComprador'],
+    'guia-vendedor' => ['controller' => 'InfoController', 'method' => 'guiaVendedor'],
+    'seguridad' => ['controller' => 'InfoController', 'method' => 'seguridad'],
     // Ruta de contacto
     'contacto' => ['controller' => 'ContactoController', 'method' => 'index'],
-    
     // Rutas API
     'api' => ['controller' => 'ApiController', 'method' => 'index'],
-    
     // ====================================
     // NUEVAS RUTAS - PUBLICACIONES
     // ====================================
@@ -74,24 +79,20 @@ $specialRoutes = [
     // ====================================
     'categorias' => ['controller' => 'CategoriaController', 'method' => 'index'],
     'categoria' => ['controller' => 'CategoriaController', 'method' => 'show'],
-    
     // ====================================
     // RUTAS ADMIN
     // ====================================
     'admin' => ['controller' => 'AdminController', 'method' => 'index'],
-    
     // ====================================
     // RUTAS DE PERFIL DE USUARIO
     // ====================================
     'perfil' => ['controller' => 'UsuarioController', 'method' => 'perfil'],
     'mis-publicaciones' => ['controller' => 'UsuarioController', 'method' => 'misPublicaciones'],
     'usuario' => ['controller' => 'UsuarioController', 'method' => 'verPerfil'],
-    
     // ====================================
     // RUTAS DE FAVORITOS
     // ====================================
     'favoritos' => ['controller' => 'FavoritoController', 'method' => 'index'],
-    
     // ====================================
     // RUTAS DE PAGOS CON FLOW
     // ====================================
@@ -114,17 +115,17 @@ if (!empty($url[0]) && $url[0] === 'api') {
         $method = 'getComunas';
         $params = [];
     }
-    
+
     // API Admin - Notificaciones
     if (!empty($url[1]) && $url[1] === 'admin') {
         require_once APP_PATH . '/controllers/ApiController.php';
         $apiController = new App\Controllers\ApiController();
-        
+
         if (!empty($url[2]) && $url[2] === 'notifications') {
             $apiController->getAdminNotifications();
             exit;
         }
-        
+
         if (!empty($url[2]) && $url[2] === 'stats') {
             $apiController->getAdminStats();
             exit;
@@ -140,7 +141,7 @@ if (!empty($url[0]) && $url[0] === 'api') {
 // Maneja el sistema de mensajería interna
 if (!empty($url[0]) && $url[0] === 'mensajes') {
     $controllerName = 'MensajeController';
-    
+
     // Subrutas de mensajería
     if (isset($url[1])) {
         switch ($url[1]) {
@@ -149,19 +150,19 @@ if (!empty($url[0]) && $url[0] === 'mensajes') {
                 $method = 'enviar';
                 $params = [];
                 break;
-                
+
             case 'marcar-leido':
                 // POST /mensajes/marcar-leido - Marcar conversación como leída
                 $method = 'marcarLeido';
                 $params = [];
                 break;
-                
+
             case 'obtener-nuevos':
                 // GET /mensajes/obtener-nuevos - Obtener nuevos mensajes (polling)
                 $method = 'obtenerNuevos';
                 $params = [];
                 break;
-                
+
             default:
                 // GET /mensajes - Vista principal
                 $method = 'index';
@@ -180,7 +181,6 @@ if (!empty($url[0]) && $url[0] === 'mensajes') {
 // - GET  /mensajes?conversacion=5           → Ver conversación específica
 // - POST /mensajes/enviar                   → Enviar mensaje (AJAX)
 // - POST /mensajes/marcar-leido             → Marcar como leído (AJAX)
-
 
 // ====================================
 // MANEJO DE MÉTODOS POST ESPECÍFICOS
@@ -206,8 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
         $controllerName = 'PublicacionController';
         $method = 'store';
         $params = [];
-    }
-    elseif ($url[0] === 'publicaciones' && isset($url[1])) {
+    } elseif ($url[0] === 'publicaciones' && isset($url[1])) {
         $controllerName = 'PublicacionController';
         if ($url[1] === 'store') {
             $method = 'store';
@@ -275,40 +274,39 @@ if (!empty($url[0]) && $url[0] === 'publicaciones' && isset($url[1]) && is_numer
 
 // Rutas específicas para administración que deben manejarse antes del routing genérico
 if (!empty($url[0]) && $url[0] === 'admin') {
-    
     // CRÍTICO: Redirigir /admin/login a /login (login unificado)
     if (!empty($url[1]) && $url[1] === 'login') {
         header('Location: /login');
         exit;
     }
-    
+
     require_once APP_PATH . '/controllers/AdminController.php';
     $controller = new App\Controllers\AdminController();
-    
+
     // /admin - Dashboard principal (redirige a publicaciones)
     if (count($url) === 1) {
         $controller->index();
         exit;
     }
-    
+
     // /admin/logout - Cerrar sesión
     if ($url[1] === 'logout') {
         $controller->logout();
         exit;
     }
-    
+
     // /admin/mensajes - Sistema de mensajería (vista admin)
     if ($url[1] === 'mensajes') {
         $controller->mensajes();
         exit;
     }
-    
+
     // /admin/reportes - Reportes y estadísticas
     if ($url[1] === 'reportes') {
         $controller->reportes();
         exit;
     }
-    
+
     // /admin/configuracion - Configuración del sistema
     if ($url[1] === 'configuracion') {
         if (count($url) === 2) {
@@ -321,34 +319,34 @@ if (!empty($url[0]) && $url[0] === 'admin') {
             exit;
         }
     }
-    
+
     // /admin/export - Exportación de datos
     if ($url[1] === 'export') {
         require_once APP_PATH . '/controllers/ExportController.php';
         $exportController = new App\Controllers\ExportController();
-        
+
         if (!empty($url[2]) && $url[2] === 'publicaciones') {
             $exportController->exportarPublicaciones();
             exit;
         }
-        
+
         if (!empty($url[2]) && $url[2] === 'usuarios') {
             $exportController->exportarUsuarios();
             exit;
         }
     }
-    
+
     // /admin/usuarios - Gestión de usuarios
     if ($url[1] === 'usuarios') {
         require_once APP_PATH . '/controllers/UsuarioController.php';
         $usuarioController = new App\Controllers\UsuarioController();
-        
+
         // /admin/usuarios - Lista de usuarios
         if (count($url) === 2) {
             $usuarioController->adminListar();
             exit;
         }
-        
+
         // /admin/usuarios/{id} - Ver detalle de usuario
         if (count($url) === 3 && is_numeric($url[2])) {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -356,7 +354,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
                 exit;
             }
         }
-        
+
         // /admin/usuarios/{id}/actualizar - Actualizar usuario
         if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'actualizar') {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -364,7 +362,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
                 exit;
             }
         }
-        
+
         // /admin/usuarios/{id}/cambiar-estado - Cambiar estado de usuario
         if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'cambiar-estado') {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -372,7 +370,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
                 exit;
             }
         }
-        
+
         // /admin/usuarios/{id}/eliminar - Eliminar usuario
         if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'eliminar') {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -380,7 +378,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
                 exit;
             }
         }
-        
+
         // /admin/usuarios/{id}/historial - Ver historial de usuario
         if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'historial') {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -389,13 +387,13 @@ if (!empty($url[0]) && $url[0] === 'admin') {
             }
         }
     }
-    
+
     // /admin/publicaciones - Lista de publicaciones
     if ($url[1] === 'publicaciones' && count($url) === 2) {
         $controller->publicaciones();
         exit;
     }
-    
+
     // /admin/publicaciones/{id} - Ver detalle de publicación
     if ($url[1] === 'publicaciones' && count($url) === 3 && is_numeric($url[2])) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -403,7 +401,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
             exit;
         }
     }
-    
+
     // /admin/publicaciones/{id}/aprobar
     if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'aprobar') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -411,7 +409,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
             exit;
         }
     }
-    
+
     // /admin/publicaciones/{id}/rechazar
     if ($url[1] === 'publicaciones' && count($url) === 4 && is_numeric($url[2]) && $url[3] === 'rechazar') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -419,7 +417,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
             exit;
         }
     }
-    
+
     // /admin/mensajes - Sistema de mensajería
     if ($url[1] === 'mensajes') {
         $controller->mensajes();
@@ -432,7 +430,7 @@ if (!empty($url[0]) && $url[0] === 'admin') {
 // ====================================
 if (!empty($url[0]) && $url[0] === 'contacto') {
     $controllerName = 'ContactoController';
-    
+
     if (empty($url[1])) {
         // GET /contacto - Ver formulario
         $method = 'index';
@@ -449,7 +447,7 @@ if (!empty($url[0]) && $url[0] === 'contacto') {
 // ====================================
 if (!empty($url[0]) && $url[0] === 'favoritos') {
     $controllerName = 'FavoritoController';
-    
+
     if (empty($url[1])) {
         // GET /favoritos - Ver lista de favoritos
         $method = 'index';
@@ -477,50 +475,50 @@ if (!empty($url[0]) && $url[0] === 'favoritos') {
 // RUTAS DE PAGOS CON FLOW
 // ====================================
 if (!empty($url[0]) && $url[0] === 'pago') {
-    error_log("=== ROUTING PAGO ===");
-    error_log("URL: " . print_r($url, true));
-    error_log("Method: " . $_SERVER['REQUEST_METHOD']);
-    
+    error_log('=== ROUTING PAGO ===');
+    error_log('URL: ' . print_r($url, true));
+    error_log('Method: ' . $_SERVER['REQUEST_METHOD']);
+
     $controllerName = 'PagoController';
-    
+
     if (empty($url[1])) {
         // GET /pago - Redirigir a mis publicaciones
         header('Location: ' . BASE_URL . '/mis-publicaciones');
         exit;
     } elseif ($url[1] === 'preparar') {
         // GET /pago/preparar - Pantalla de confirmación antes de pagar
-        error_log("Ruta: /pago/preparar");
+        error_log('Ruta: /pago/preparar');
         $method = 'preparar';
         $params = [];
     } elseif ($url[1] === 'iniciar') {
         // POST /pago/iniciar - Iniciar proceso de pago con Flow
-        error_log("=== RUTA /pago/iniciar DETECTADA ===");
-        error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
-        error_log("Expected: POST");
-        
+        error_log('=== RUTA /pago/iniciar DETECTADA ===');
+        error_log('Request Method: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('Expected: POST');
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            error_log("✅ Método POST correcto - Ejecutando PagoController::iniciar()");
+            error_log('✅ Método POST correcto - Ejecutando PagoController::iniciar()');
             $method = 'iniciar';
             $params = [];
         } else {
-            error_log("❌ Método incorrecto: " . $_SERVER['REQUEST_METHOD']);
-            error_log("Redirigiendo a /pago/preparar");
+            error_log('❌ Método incorrecto: ' . $_SERVER['REQUEST_METHOD']);
+            error_log('Redirigiendo a /pago/preparar');
             header('Location: ' . BASE_URL . '/pago/preparar');
             exit;
         }
     } elseif ($url[1] === 'confirmar') {
         // POST /pago/confirmar - Callback de Flow (confirmación del pago)
-        error_log("Ruta: /pago/confirmar");
+        error_log('Ruta: /pago/confirmar');
         $method = 'confirmar';
         $params = [];
     } elseif ($url[1] === 'retorno') {
         // GET /pago/retorno - Página de retorno después del pago
-        error_log("Ruta: /pago/retorno");
+        error_log('Ruta: /pago/retorno');
         $method = 'retorno';
         $params = [];
     } elseif ($url[1] === 'reintentar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         // POST /pago/reintentar - Reintentar un pago rechazado
-        error_log("Ruta: POST /pago/reintentar");
+        error_log('Ruta: POST /pago/reintentar');
         $method = 'reintentar';
         $params = [];
     } elseif ($url[1] === 'retomar' && !empty($url[2])) {
@@ -536,17 +534,17 @@ if (!empty($url[0]) && $url[0] === 'pago') {
     } elseif ($url[1] === 'simulador') {
         if (empty($url[2])) {
             // GET /pago/simulador - Mostrar simulador de Flow
-            error_log("Ruta: /pago/simulador");
+            error_log('Ruta: /pago/simulador');
             $method = 'simulador';
             $params = [];
         } elseif ($url[2] === 'procesar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             // POST /pago/simulador/procesar - Procesar resultado del simulador
-            error_log("Ruta: POST /pago/simulador/procesar");
+            error_log('Ruta: POST /pago/simulador/procesar');
             $method = 'simularProcesar';
             $params = [];
         }
     }
-    
+
     error_log("Controller: $controllerName, Method: $method");
 }
 
@@ -566,13 +564,13 @@ if (!empty($url[0]) && $url[0] === 'mis-pagos-pendientes') {
 if (!empty($url[0]) && $url[0] === 'admin' && !empty($url[1]) && $url[1] === 'usuarios') {
     require_once APP_PATH . '/controllers/AdminController.php';
     $controller = new App\Controllers\AdminController();
-    
+
     // /admin/usuarios - Listado de usuarios
     if (count($url) === 2) {
         $controller->usuarios();
         exit;
     }
-    
+
     // /admin/usuarios/{id} - Ver detalle de usuario
     if (count($url) === 3 && is_numeric($url[2])) {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -580,7 +578,7 @@ if (!empty($url[0]) && $url[0] === 'admin' && !empty($url[1]) && $url[1] === 'us
             exit;
         }
     }
-    
+
     // /admin/usuarios/{id}/actualizar - Actualizar datos de usuario
     if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'actualizar') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -588,7 +586,7 @@ if (!empty($url[0]) && $url[0] === 'admin' && !empty($url[1]) && $url[1] === 'us
             exit;
         }
     }
-    
+
     // /admin/usuarios/{id}/cambiar-estado - Cambiar estado (activar/suspender)
     if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'cambiar-estado') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -596,7 +594,7 @@ if (!empty($url[0]) && $url[0] === 'admin' && !empty($url[1]) && $url[1] === 'us
             exit;
         }
     }
-    
+
     // /admin/usuarios/{id}/eliminar - Eliminar usuario (soft delete)
     if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'eliminar') {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -604,7 +602,7 @@ if (!empty($url[0]) && $url[0] === 'admin' && !empty($url[1]) && $url[1] === 'us
             exit;
         }
     }
-    
+
     // /admin/usuarios/{id}/historial - Ver historial completo
     if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'historial') {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -613,7 +611,6 @@ if (!empty($url[0]) && $url[0] === 'admin' && !empty($url[1]) && $url[1] === 'us
         }
     }
 }
-
 
 // ====================================
 // CARGA ESTÁNDAR DE CONTROLADOR
@@ -624,7 +621,7 @@ $controllerFile = APP_PATH . '/controllers/' . $controllerName . '.php';
 
 if (!file_exists($controllerFile)) {
     http_response_code(404);
-    echo "404 - Página no encontrada";
+    echo '404 - Página no encontrada';
     exit;
 }
 
@@ -635,7 +632,7 @@ $controllerClass = 'App\\Controllers\\' . $controllerName;
 
 if (!class_exists($controllerClass)) {
     http_response_code(500);
-    echo "Error: Controlador no encontrado";
+    echo 'Error: Controlador no encontrado';
     exit;
 }
 
@@ -644,7 +641,7 @@ $controller = new $controllerClass();
 // Ejecutar método
 if (!method_exists($controller, $method)) {
     http_response_code(404);
-    echo "404 - Método no encontrado";
+    echo '404 - Método no encontrado';
     exit;
 }
 
