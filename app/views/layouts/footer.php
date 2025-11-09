@@ -16,16 +16,21 @@
                 <div class="footer-col footer-col-brand">
                     <div class="footer-logo">
                         <a href="<?php echo BASE_URL; ?>/">
-                            <?php echo icon('car', 32, 'footer-logo-icon'); ?>
-                            <span class="footer-logo-text">
-                                <span class="logo-primary">Chile</span><span class="logo-accent">Chocados</span>
-                            </span>
+                            <img src="<?php echo BASE_URL; ?>/assets/logo-chch.svg" alt="ChileChocados" style="height: 36px; width: auto;">
                         </a>
                     </div>
                     <p class="footer-description">
                         El marketplace líder en Chile para la compra y venta de vehículos siniestrados. 
                         Conectamos compradores y vendedores de manera segura y transparente.
                     </p>
+                    <?php 
+                    // Solo mostrar redes sociales si hay al menos una configurada
+                    $hasSocialMedia = !empty($footerConfig['facebook_url']) || 
+                                     !empty($footerConfig['instagram_url']) || 
+                                     !empty($footerConfig['twitter_url']) || 
+                                     !empty($footerConfig['youtube_url']);
+                    ?>
+                    <?php if ($hasSocialMedia): ?>
                     <div class="footer-social">
                         <?php if (!empty($footerConfig['facebook_url'])): ?>
                         <a href="<?php echo htmlspecialchars($footerConfig['facebook_url']); ?>" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
@@ -51,6 +56,7 @@
                         </a>
                         <?php endif; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
                 
                 <!-- Columna 2: Enlaces rápidos -->
@@ -67,12 +73,6 @@
                             <a href="<?php echo BASE_URL; ?>/categorias">
                                 <?php echo icon('grid', 16); ?>
                                 <span>Categorías</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>/destacados">
-                                <?php echo icon('star', 16); ?>
-                                <span>Destacados</span>
                             </a>
                         </li>
                         <li>
@@ -183,24 +183,6 @@
                         </li>
                         <?php endif; ?>
                     </ul>
-                    
-                    <!-- Newsletter -->
-                    <div class="footer-newsletter">
-                        <h4 class="newsletter-title">Suscríbete</h4>
-                        <form action="<?php echo BASE_URL; ?>/newsletter/subscribe" method="POST" class="newsletter-form">
-                            <input 
-                                type="email" 
-                                name="email" 
-                                placeholder="Tu email" 
-                                required 
-                                class="newsletter-input"
-                            >
-                            <button type="submit" class="newsletter-btn" aria-label="Suscribirse">
-                                <?php echo icon('arrow-right', 18); ?>
-                            </button>
-                        </form>
-                        <p class="newsletter-note">Recibe ofertas y novedades</p>
-                    </div>
                 </div>
                 
             </div>
@@ -217,26 +199,7 @@
                     </p>
                 </div>
                 
-                <div class="footer-meta">
-                    <div class="footer-language">
-                        <?php echo icon('globe', 16); ?>
-                        <select class="language-selector" aria-label="Idioma">
-                            <option value="es">Español</option>
-                            <option value="en">English</option>
-                        </select>
-                    </div>
-                    
-                    <div class="footer-stats">
-                        <span class="stat-item">
-                            <?php echo icon('users', 16); ?>
-                            <span><?php echo number_format($totalUsers ?? 0); ?> usuarios</span>
-                        </span>
-                        <span class="stat-item">
-                            <?php echo icon('list', 16); ?>
-                            <span><?php echo number_format($totalPublications ?? 0); ?> publicaciones</span>
-                        </span>
-                    </div>
-                </div>
+
             </div>
         </div>
     </footer>

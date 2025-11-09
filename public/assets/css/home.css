@@ -1,0 +1,581 @@
+/**
+ * ============================================================================
+ * CHILECHOCADOS - ESTILOS PÁGINA DE INICIO
+ * ============================================================================
+ * Estilos específicos para la página principal (home)
+ */
+
+/* ============================================================================
+ * HERO SECTION
+ * ============================================================================ */
+
+.hero {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.hero .card.hero-banner,
+.card.hero-banner,
+.hero-banner {
+    background: #F9FAFB !important;
+    border: 0 !important;
+    border-width: 0 !important;
+    text-align: center;
+    padding: 48px 32px !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+}
+
+.hero-title {
+    color: #1F2937;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.hero-text {
+    font-size: 18px;
+    color: #4B5563;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ============================================================================
+ * CATEGORÍAS - NUEVO DISEÑO
+ * ============================================================================ */
+
+.cat-card-new {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 32px 24px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #E5E7EB;
+    border-radius: 16px;
+    background: white;
+}
+
+.cat-card-new::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--cc-primary), #FF6B6B);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.cat-card-new:hover::before {
+    transform: scaleX(1);
+}
+
+.cat-card-new:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(230, 51, 42, 0.15);
+    border-color: var(--cc-primary);
+}
+
+.cat-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(230, 51, 42, 0.1), rgba(230, 51, 42, 0.05));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.cat-card-new:hover .cat-icon-wrapper {
+    background: linear-gradient(135deg, rgba(230, 51, 42, 0.2), rgba(230, 51, 42, 0.1));
+    transform: scale(1.1) rotate(5deg);
+}
+
+.cat-icon {
+    color: var(--cc-primary);
+    transition: all 0.3s ease;
+}
+
+.cat-card-new:hover .cat-icon {
+    transform: scale(1.1);
+}
+
+.cat-info {
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.cat-title {
+    margin-bottom: 4px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1F2937;
+}
+
+.cat-meta {
+    font-size: 13px;
+    color: #6B7280;
+    margin: 0;
+}
+
+.cat-count-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    background: #F9FAFB;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.cat-card-new:hover .cat-count-badge {
+    background: rgba(230, 51, 42, 0.05);
+    border-color: var(--cc-primary);
+}
+
+.cat-count-number {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--cc-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.cat-count-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================================================
+ * CTA BANNER
+ * ============================================================================ */
+
+.cta-banner {
+    border: 2px solid #E5E5E5;
+    min-height: 250px;
+}
+
+.cta-title {
+    color: #2E2E2E;
+    margin-bottom: 12px;
+}
+
+.cta-text {
+    font-size: 18px;
+    color: #666666;
+    margin: 0 0 24px 0;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-btn-secondary {
+    background: white;
+    color: #2E2E2E;
+    border: 2px solid #E5E5E5;
+}
+
+.cta-btn-secondary:hover {
+    background: #F5F5F5;
+    border-color: var(--cc-primary);
+}
+
+/* ============================================================================
+ * PUBLICACIONES
+ * ============================================================================ */
+
+.pub-card {
+    transition: all 0.2s ease;
+}
+
+.pub-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] body {
+    background: #0F172A !important;
+}
+
+:root[data-theme="dark"] main {
+    background: #0F172A !important;
+}
+
+:root[data-theme="dark"] main.container {
+    background: #0F172A !important;
+}
+
+:root[data-theme="dark"] .hero {
+    background: transparent !important;
+}
+
+:root[data-theme="dark"] .hero .card.hero-banner,
+:root[data-theme="dark"] .card.hero-banner,
+:root[data-theme="dark"] .hero-banner {
+    background: #1E293B !important;
+    border: 0 !important;
+    border-width: 0 !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+}
+
+:root[data-theme="dark"] .hero-title {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] .hero-text {
+    color: #CBD5E1 !important;
+}
+
+/* Categorías - Dark Mode */
+:root[data-theme="dark"] .cat-card-new {
+    background: #1E293B !important;
+    border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .cat-card-new:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
+    border-color: #F05045;
+}
+
+:root[data-theme="dark"] .cat-icon-wrapper {
+    background: linear-gradient(135deg, rgba(240, 80, 69, 0.2), rgba(240, 80, 69, 0.1)) !important;
+}
+
+:root[data-theme="dark"] .cat-card-new:hover .cat-icon-wrapper {
+    background: linear-gradient(135deg, rgba(240, 80, 69, 0.3), rgba(240, 80, 69, 0.15)) !important;
+}
+
+:root[data-theme="dark"] .cat-icon {
+    color: #F87171 !important;
+}
+
+:root[data-theme="dark"] .cat-title {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] .cat-meta {
+    color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] .cat-count-badge {
+    background: #334155 !important;
+    border-color: #475569 !important;
+}
+
+:root[data-theme="dark"] .cat-card-new:hover .cat-count-badge {
+    background: rgba(240, 80, 69, 0.15) !important;
+    border-color: #F05045 !important;
+}
+
+:root[data-theme="dark"] .cat-count-number {
+    color: #F87171 !important;
+}
+
+:root[data-theme="dark"] .cat-count-label {
+    color: #94A3B8 !important;
+}
+
+/* CTA Banner - Dark Mode */
+:root[data-theme="dark"] .cta-banner {
+    border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .cta-banner > div[style*="background: rgba(0, 0, 0"] {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+:root[data-theme="dark"] .cta-title {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] .cta-text {
+    color: #CBD5E1 !important;
+}
+
+:root[data-theme="dark"] .cta-btn-secondary {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #F1F5F9 !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+:root[data-theme="dark"] .cta-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Publicaciones - Dark Mode */
+:root[data-theme="dark"] .pub-card {
+    background: #1E293B !important;
+    border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .pub-card:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    border-color: #F05045;
+}
+
+/* Títulos y textos generales */
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] .h3 {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] .meta {
+    color: #94A3B8 !important;
+}
+
+/* Cards generales */
+:root[data-theme="dark"] .card {
+    background: #1E293B !important;
+    border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .card:hover {
+    border-color: #475569 !important;
+}
+
+/* Secciones */
+:root[data-theme="dark"] section {
+    background: transparent !important;
+}
+
+/* Grid de estadísticas */
+:root[data-theme="dark"] .stats .card {
+    background: #1E293B !important;
+    border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .stats .card .h2 {
+    color: #F87171 !important;
+}
+
+:root[data-theme="dark"] .stats .card .meta {
+    color: #94A3B8 !important;
+}
+
+/* Imágenes de publicaciones */
+:root[data-theme="dark"] .pub-img {
+    background: #334155 !important;
+}
+
+/* Botones */
+:root[data-theme="dark"] .btn:not(.primary) {
+    background: #334155 !important;
+    color: #F1F5F9 !important;
+    border-color: #475569 !important;
+}
+
+:root[data-theme="dark"] .btn:not(.primary):hover {
+    background: #475569 !important;
+    border-color: #64748B !important;
+}
+
+/* ============================================================================
+ * RESPONSIVE
+ * ============================================================================ */
+
+@media (max-width: 1024px) {
+    .grid.cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 40px 0;
+    }
+    
+    .hero-banner {
+        padding: 32px 24px;
+    }
+    
+    .hero-title {
+        font-size: 28px;
+    }
+    
+    .hero-text {
+        font-size: 16px;
+    }
+    
+    .cat-card-new {
+        padding: 24px 16px;
+    }
+    
+    .cat-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+    }
+    
+    .cat-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .cat-title {
+        font-size: 16px;
+    }
+    
+    .cat-count-number {
+        font-size: 20px;
+    }
+    
+    .cta-banner > div > div {
+        padding: 40px 24px !important;
+        min-height: 220px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid.cols-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero {
+        padding: 32px 0;
+    }
+    
+    .hero-banner {
+        padding: 24px 16px;
+    }
+    
+    .hero-title {
+        font-size: 24px;
+    }
+    
+    .hero-text {
+        font-size: 15px;
+    }
+    
+    .cat-card-new {
+        padding: 20px 16px;
+    }
+    
+    .cat-icon-wrapper {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 12px;
+    }
+    
+    .cat-icon {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+
+/* Sobrescribir estilos inline en dark mode */
+:root[data-theme="dark"] div[style*="background: var(--bg-secondary)"] {
+    background: #334155 !important;
+}
+
+:root[data-theme="dark"] div[style*="color: var(--text-secondary)"] {
+    color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] div[style*="padding: 16px 0"] .h3 {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] div[style*="padding: 16px 0"] .meta {
+    color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] span[style*="color: var(--primary)"] {
+    color: #F87171 !important;
+}
+
+/* Sección "Cómo funciona" */
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] {
+    background: #1E293B !important;
+    border-color: #334155 !important;
+}
+
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] .h3 {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] .meta {
+    color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] .grid .card[style*="text-align: center"] > div[style*="background: var(--bg-secondary)"] {
+    background: #334155 !important;
+}
+
+/* Asegurar que los SVG tengan el color correcto */
+:root[data-theme="dark"] svg[stroke="currentColor"] {
+    stroke: #94A3B8;
+}
+
+:root[data-theme="dark"] svg[stroke="var(--primary)"] {
+    stroke: #F87171 !important;
+}
+
+/* Títulos de secciones con flex */
+:root[data-theme="dark"] section > div[style*="display: flex"] .h2 {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] section > div[style*="display: flex"] .meta {
+    color: #94A3B8 !important;
+}
+
+/* Estado vacío */
+:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] {
+    color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] p {
+    color: #94A3B8 !important;
+}
+
+/* Badge de vendido */
+:root[data-theme="dark"] span[style*="background: #10B981"] {
+    background: #10B981 !important;
+    color: white !important;
+}
+
+/* Asegurar que las cards de publicaciones tengan el fondo correcto */
+:root[data-theme="dark"] .pub-card .h3 {
+    color: #F1F5F9 !important;
+}
+
+:root[data-theme="dark"] .pub-card .meta,
+:root[data-theme="dark"] .pub-card .row {
+    color: #94A3B8 !important;
+}
+
+:root[data-theme="dark"] .pub-card span[class*="h2"] {
+    color: #F87171 !important;
+}
+
+/* Asegurar que no haya fondos blancos residuales */
+:root[data-theme="dark"] * {
+    border-color: inherit;
+}
+
+:root[data-theme="dark"] .container {
+    background: #0F172A !important;
+}

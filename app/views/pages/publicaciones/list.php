@@ -617,6 +617,247 @@ function toggleFavorito(publicacionId) {
 }
 </script>
 
+<style>
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] main.container {
+  background: #111827 !important;
+}
+
+/* Breadcrumbs */
+:root[data-theme="dark"] a[style*="color: var(--cc-text-secondary"] {
+  color: #9CA3AF !important;
+}
+
+/* Títulos y textos */
+:root[data-theme="dark"] .h2,
+:root[data-theme="dark"] h1.h2 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .meta,
+:root[data-theme="dark"] p.meta {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] strong {
+  color: #F3F4F6 !important;
+}
+
+/* Cards - Filtros y publicaciones */
+:root[data-theme="dark"] .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] aside .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Filtros - Labels e inputs */
+:root[data-theme="dark"] aside label {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] aside input,
+:root[data-theme="dark"] aside select {
+  background: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] aside input::placeholder {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] aside input:focus,
+:root[data-theme="dark"] aside select:focus {
+  border-color: var(--cc-primary) !important;
+  box-shadow: 0 0 0 3px rgba(240, 80, 69, 0.2) !important;
+}
+
+:root[data-theme="dark"] aside select option {
+  background: #374151 !important;
+  color: #F3F4F6 !important;
+}
+
+/* Filtros activos badge */
+:root[data-theme="dark"] div[style*="background: #e3f2fd"] {
+  background: rgba(59, 130, 246, 0.15) !important;
+}
+
+:root[data-theme="dark"] div[style*="color: #0066CC"] {
+  color: #93C5FD !important;
+}
+
+/* Select de ordenamiento */
+:root[data-theme="dark"] select[style*="padding: 6px 12px"] {
+  background: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] select[style*="padding: 6px 12px"] option {
+  background: #374151 !important;
+  color: #F3F4F6 !important;
+}
+
+/* Cards de publicaciones */
+:root[data-theme="dark"] .publicacion-card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .publicacion-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+  border-color: var(--cc-primary) !important;
+}
+
+/* Imagen placeholder */
+:root[data-theme="dark"] div[style*="background: var(--cc-bg-muted"] {
+  background: #374151 !important;
+}
+
+:root[data-theme="dark"] div[style*="color: var(--cc-text-tertiary"] svg {
+  color: #6B7280 !important;
+}
+
+/* Contenido de las cards */
+:root[data-theme="dark"] .publicacion-card h3 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .publicacion-card div[style*="color: var(--cc-text-secondary"] {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .publicacion-card span[style*="color: var(--cc-text-secondary"] {
+  color: #9CA3AF !important;
+}
+
+/* Precio */
+:root[data-theme="dark"] span[style*="color: var(--cc-primary"] {
+  color: var(--cc-primary) !important;
+}
+
+/* Bordes */
+:root[data-theme="dark"] div[style*="border-top: 1px solid var(--cc-border-light"] {
+  border-top-color: #374151 !important;
+}
+
+/* Botón favorito */
+:root[data-theme="dark"] .btn-favorito {
+  background: #374151 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+}
+
+:root[data-theme="dark"] .btn-favorito:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Badges */
+:root[data-theme="dark"] .badge {
+  background: var(--cc-danger) !important;
+  color: white !important;
+}
+
+/* Sin resultados */
+:root[data-theme="dark"] div[style*="text-align: center; padding: 64px 32px"] {
+  background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] div[style*="text-align: center; padding: 64px 32px"] .h2 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] div[style*="text-align: center; padding: 64px 32px"] .meta {
+  color: #9CA3AF !important;
+}
+
+/* Botones */
+:root[data-theme="dark"] .btn {
+  background: #374151 !important;
+  color: #F3F4F6 !important;
+  border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .btn:hover {
+  background: #4B5563 !important;
+  border-color: #6B7280 !important;
+}
+
+:root[data-theme="dark"] .btn.primary {
+  background: var(--cc-primary) !important;
+  color: white !important;
+  border-color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .btn.primary:hover {
+  background: #c72a22 !important;
+  border-color: #c72a22 !important;
+}
+
+/* Enlaces */
+:root[data-theme="dark"] a[style*="color: var(--cc-primary"] {
+  color: var(--cc-primary) !important;
+}
+
+/* H3 en filtros */
+:root[data-theme="dark"] h3.h3 {
+  color: #F3F4F6 !important;
+}
+
+/* Categoría en cards */
+:root[data-theme="dark"] div[style*="color: var(--cc-primary, #E6332A)"] {
+  color: var(--cc-primary) !important;
+}
+
+/* Asegurar que todos los textos en cards sean visibles */
+:root[data-theme="dark"] article.card * {
+  color: inherit;
+}
+
+:root[data-theme="dark"] article.card h3,
+:root[data-theme="dark"] article.card div,
+:root[data-theme="dark"] article.card span {
+  color: inherit;
+}
+
+/* Forzar colores específicos */
+:root[data-theme="dark"] article.publicacion-card div[style*="padding: 16px"] h3 {
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] article.publicacion-card div[style*="font-size: 11px"] {
+  color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] article.publicacion-card div[style*="font-size: 13px"] {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] article.publicacion-card div[style*="font-size: 13px"] span {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] article.publicacion-card span[style*="font-size: 20px"] {
+  color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] article.publicacion-card span[style*="font-size: 14px"][style*="font-weight: 600"] {
+  color: #9CA3AF !important;
+}
+
+/* SVG icons */
+:root[data-theme="dark"] svg {
+  color: inherit;
+  stroke: currentColor;
+}
+</style>
+
 <?php
 // Incluir footer
 require_once APP_PATH . '/views/layouts/footer.php';

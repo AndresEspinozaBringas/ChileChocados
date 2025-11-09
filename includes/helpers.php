@@ -447,3 +447,60 @@ function timeAgo($fecha) {
 }
 
 
+
+
+/**
+ * Obtener contador de notificaciones no leídas
+ */
+function getNotificationCount() {
+    if (!isset($_SESSION['user_id'])) {
+        return 0;
+    }
+    
+    require_once APP_PATH . '/models/Notificacion.php';
+    $notificacionModel = new \App\Models\Notificacion();
+    
+    // Si es admin, mostrar publicaciones pendientes como "notificaciones"
+    if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin') {
+        return $notificacionModel->contarPendientesAdmin();
+    }
+    
+    return $notificacionModel->contarNoLeidas($_SESSION['user_id']);
+}
+
+/**
+ * Obtener contador de mensajes no leídos
+ */
+function getMessageCount() {
+    if (!isset($_SESSION['user_id'])) {
+        return 0;
+    }
+    
+    try {
+        require_once APP_PATH . '/models/Mensaje.php';
+        $mensajeModel = new \App\Models\Mensaje();
+        
+        // Si es admin, contar TODOS los mensajes sin leer del sistema
+        if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin') {
+            return $mensajeModel->contarTodosNoLeidos();
+        }
+        
+        return $mensajeModel->contarNoLeidos($_SESSION['user_id']);
+    } catch (\Exception $e) {
+        error_log("Error al contar mensajes: " . $e->getMessage());
+        return 0;
+    }
+}
+
+/**
+ * Obtener notificaciones de un usuario
+ */
+function getUserNotifications($limit = 10) {
+    if (!isset($_SESSION['user_id'])) {
+        return [];
+    }
+    
+    require_once APP_PATH . '/models/Notificacion.php';
+    $notificacionModel = new \App\Models\Notificacion();
+    return $notificacionModel->getByUsuario($_SESSION['user_id'], $limit);
+}

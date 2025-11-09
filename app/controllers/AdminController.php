@@ -527,6 +527,11 @@ class AdminController
             $_SERVER['REMOTE_ADDR'] ?? null
         ]);
 
+        // Crear notificación en el sistema
+        require_once APP_PATH . '/models/Notificacion.php';
+        $notificacionModel = new \App\Models\Notificacion();
+        $notificacionModel->notificarAprobacion($id, $publicacion->usuario_id, $publicacion->titulo);
+        
         // Enviar notificación por email (si está configurado)
         $this->enviarNotificacionAprobacion($publicacion);
 
@@ -602,6 +607,11 @@ class AdminController
             $_SERVER['REMOTE_ADDR'] ?? null
         ]);
 
+        // Crear notificación en el sistema
+        require_once APP_PATH . '/models/Notificacion.php';
+        $notificacionModel = new \App\Models\Notificacion();
+        $notificacionModel->notificarRechazo($id, $publicacion->usuario_id, $publicacion->titulo, $motivo);
+        
         // Enviar notificación por email
         $this->enviarNotificacionRechazo($publicacion, $motivo);
 

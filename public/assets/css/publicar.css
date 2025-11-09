@@ -1,0 +1,1286 @@
+/**
+ * ============================================================================
+ * CHILECHOCADOS - ESTILOS PARA PUBLICAR/EDITAR
+ * ============================================================================
+ * Estilos específicos para las páginas de publicar y editar publicaciones
+ */
+
+/* ============================================================================
+ * FORMULARIOS
+ * ============================================================================ */
+
+.container form input[type="text"],
+.container form input[type="number"],
+.container form select,
+.container form textarea {
+  padding: 12px 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  border: 2px solid var(--cc-border-default);
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--cc-font-primary);
+  background: var(--cc-white);
+  color: var(--cc-text-primary);
+  transition: all 0.2s;
+}
+
+.container form input:focus,
+.container form select:focus,
+.container form textarea:focus {
+  outline: none;
+  border-color: var(--cc-primary);
+  box-shadow: 0 0 0 3px rgba(230, 51, 42, 0.1);
+}
+
+.container form input::placeholder,
+.container form textarea::placeholder {
+  color: var(--cc-text-tertiary);
+  font-size: 14px;
+}
+
+.container form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--cc-text-primary);
+}
+
+.container form select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: var(--cc-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231A1A1A' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 36px;
+}
+
+.container form textarea {
+  resize: vertical;
+  font-family: var(--cc-font-primary);
+}
+
+/* ============================================================================
+ * KIT DE RADIO BUTTONS
+ * ============================================================================ */
+
+.kit {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.kit label.tag {
+  flex: 0 0 auto;
+  padding: 12px 20px;
+  border: 2px solid var(--cc-border-default);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--cc-transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cc-white);
+  color: var(--cc-text-primary);
+}
+
+.kit label.tag:hover {
+  border-color: var(--cc-primary);
+  background: var(--cc-primary-pale);
+  transform: translateY(-1px);
+  box-shadow: var(--cc-shadow);
+}
+
+.kit label.tag input[type="radio"]:checked {
+  accent-color: var(--cc-primary);
+}
+
+.kit label.tag:has(input[type="radio"]:checked) {
+  border-color: var(--cc-primary);
+  background: var(--cc-primary-pale);
+  font-weight: 600;
+}
+
+.kit label.tag input[type="radio"] {
+  margin: 0;
+  width: auto;
+  cursor: pointer;
+}
+
+/* ============================================================================
+ * GALERÍA DE FOTOS
+ * ============================================================================ */
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.gallery label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  border: 2px dashed var(--cc-border-default);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--cc-transition);
+  min-height: 120px;
+  justify-content: center;
+  background: var(--cc-bg-surface);
+}
+
+.gallery label:hover {
+  border-color: var(--cc-primary);
+  background: var(--cc-primary-pale);
+  transform: translateY(-2px);
+  box-shadow: var(--cc-shadow-md);
+}
+
+.gallery input[type="file"] {
+  display: none;
+}
+
+.gallery input[type="radio"] {
+  margin-top: 8px;
+  width: auto;
+  accent-color: var(--cc-primary);
+  cursor: pointer;
+}
+
+/* ============================================================================
+ * FOTOS EXISTENTES (MODO EDICIÓN)
+ * ============================================================================ */
+
+.foto-existente {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: var(--cc-transition);
+  background: var(--cc-bg-surface);
+}
+
+.foto-existente:not(.eliminada):hover {
+  transform: translateY(-2px);
+  box-shadow: var(--cc-shadow-lg);
+}
+
+.foto-existente img {
+  transition: transform 0.3s ease;
+}
+
+.foto-existente:not(.eliminada):hover img {
+  transform: scale(1.05);
+}
+
+.foto-existente.eliminada {
+  opacity: 0.3;
+  pointer-events: none;
+  filter: grayscale(100%);
+  transition: var(--cc-transition);
+}
+
+.badge-principal {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--cc-success);
+  color: var(--cc-white);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+  box-shadow: var(--cc-shadow);
+}
+
+.foto-actions-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  padding: 8px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-foto-principal {
+  background: rgba(255,255,255,0.95);
+  color: var(--cc-gray-900);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--cc-transition);
+  backdrop-filter: blur(4px);
+}
+
+.btn-foto-principal:hover {
+  background: var(--cc-white);
+  transform: scale(1.05);
+  box-shadow: var(--cc-shadow-md);
+}
+
+.btn-foto-eliminar {
+  background: var(--cc-danger);
+  color: var(--cc-white);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--cc-transition);
+  backdrop-filter: blur(4px);
+}
+
+.btn-foto-eliminar:hover {
+  background: var(--cc-danger-dark);
+  transform: scale(1.05);
+  box-shadow: var(--cc-shadow-md);
+}
+
+.foto-existente button:active {
+  transform: scale(0.98);
+}
+
+@keyframes fadeOutPhoto {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+}
+
+.foto-existente.eliminada {
+  animation: fadeOutPhoto 0.3s ease-out forwards;
+}
+
+/* ============================================================================
+ * WIZARD CON ACORDEONES
+ * ============================================================================ */
+
+.wizard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.wizard-step {
+  background: var(--cc-white);
+  border: 1px solid var(--cc-border-light);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.wizard-step:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.wizard-step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--cc-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.wizard-step-header:hover {
+  background: var(--cc-bg-muted);
+}
+
+/* Estados del wizard */
+.wizard-step[data-status="active"] {
+  border-color: var(--cc-primary);
+  box-shadow: 0 0 0 2px rgba(230, 51, 42, 0.1);
+}
+
+.wizard-step[data-status="active"] .wizard-step-header {
+  background: rgba(230, 51, 42, 0.03);
+}
+
+.wizard-step[data-status="completed"] {
+  border-color: var(--cc-border-light);
+}
+
+.wizard-step[data-status="pending"] {
+  opacity: 0.6;
+}
+
+.wizard-step.step-disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.wizard-step.step-disabled .wizard-step-header {
+  cursor: not-allowed;
+}
+
+/* Número del paso */
+.wizard-step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--cc-bg-muted);
+  border: 2px solid var(--cc-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--cc-text-secondary);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.wizard-step[data-status="active"] .wizard-step-number {
+  background: var(--cc-primary);
+  border-color: var(--cc-primary);
+  color: var(--cc-white);
+}
+
+.wizard-step[data-status="completed"] .wizard-step-number {
+  background: var(--cc-primary);
+  border-color: var(--cc-primary);
+  color: var(--cc-white);
+}
+
+.step-check-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Información del paso */
+.wizard-step-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.wizard-step-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cc-text-primary);
+  line-height: 1.4;
+}
+
+.wizard-step-description {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: var(--cc-text-secondary);
+  line-height: 1.4;
+}
+
+.wizard-step[data-status="pending"] .wizard-step-title {
+  color: var(--cc-text-tertiary);
+}
+
+.wizard-step[data-status="pending"] .wizard-step-description {
+  color: var(--cc-text-tertiary);
+}
+
+/* Chevron */
+.wizard-step-chevron {
+  flex-shrink: 0;
+  color: var(--cc-text-tertiary);
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.wizard-step-header[aria-expanded="true"] .wizard-step-chevron {
+  transform: rotate(180deg);
+}
+
+.wizard-step[data-status="active"] .wizard-step-chevron {
+  color: var(--cc-primary);
+}
+
+/* Contenido del paso */
+.wizard-step-content {
+  display: none;
+  border-top: 1px solid var(--cc-border-light);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wizard-step-body {
+  padding: 20px;
+  background: var(--cc-white);
+}
+
+/* ============================================================================
+ * RESPONSIVE
+ * ============================================================================ */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  
+  .container > .h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .gallery label {
+    padding: 16px 12px;
+    min-height: 100px;
+  }
+  
+  .container form > .card > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr;
+  }
+  
+  .kit {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .kit label.tag {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  #fotos-existentes {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .wizard-progress {
+    padding: var(--cc-space-3) var(--cc-space-4);
+    margin-bottom: var(--cc-space-4);
+  }
+  
+  .wizard-step {
+    margin-bottom: var(--cc-space-3);
+  }
+  
+  .wizard-step-header {
+    padding: var(--cc-space-4);
+    gap: var(--cc-space-3);
+  }
+  
+  .wizard-step-icon {
+    width: 36px;
+    height: 36px;
+    font-size: var(--cc-text-xl);
+  }
+  
+  .wizard-step-title h3 {
+    font-size: var(--cc-text-base);
+  }
+  
+  .wizard-step-summary {
+    font-size: var(--cc-text-xs);
+  }
+  
+  .wizard-step-body > .card {
+    padding: var(--cc-space-4);
+  }
+  
+  .wizard-step-actions {
+    flex-direction: column-reverse;
+    padding: var(--cc-space-4);
+    gap: var(--cc-space-2);
+  }
+  
+  .wizard-step-actions .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+  
+  #fotos-existentes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .container .card {
+  background: var(--cc-bg-surface);
+  border-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .container .h1,
+:root[data-theme="dark"] .container .h2,
+:root[data-theme="dark"] .container .h3,
+:root[data-theme="dark"] .container .h4 {
+  color: var(--cc-text-primary);
+}
+
+:root[data-theme="dark"] .container form label {
+  color: var(--cc-text-secondary);
+}
+
+:root[data-theme="dark"] .container form input[type="text"],
+:root[data-theme="dark"] .container form input[type="number"],
+:root[data-theme="dark"] .container form input[type="tel"],
+:root[data-theme="dark"] .container form input[type="email"],
+:root[data-theme="dark"] .container form select,
+:root[data-theme="dark"] .container form textarea {
+  background: #374151;
+  border-color: #4B5563;
+  color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .container form input:focus,
+:root[data-theme="dark"] .container form select:focus,
+:root[data-theme="dark"] .container form textarea:focus {
+  border-color: var(--cc-primary);
+  box-shadow: 0 0 0 3px rgba(240, 80, 69, 0.1);
+  background: #374151;
+}
+
+:root[data-theme="dark"] .container form select {
+  background-color: #374151;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F3F4F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
+:root[data-theme="dark"] .container form input::placeholder,
+:root[data-theme="dark"] .container form textarea::placeholder {
+  color: #9CA3AF;
+}
+
+:root[data-theme="dark"] .container form select option {
+  background: #374151;
+  color: #F3F4F6;
+}
+
+/* Prevenir estilos de autocompletado en dark mode */
+:root[data-theme="dark"] .container form input:-webkit-autofill,
+:root[data-theme="dark"] .container form input:-webkit-autofill:hover,
+:root[data-theme="dark"] .container form input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #374151 inset !important;
+  -webkit-text-fill-color: #F3F4F6 !important;
+  box-shadow: 0 0 0 1000px #374151 inset !important;
+}
+
+:root[data-theme="dark"] .kit label.tag {
+  background: var(--cc-bg-elevated);
+  border-color: var(--cc-border-default);
+  color: var(--cc-text-primary);
+}
+
+:root[data-theme="dark"] .kit label.tag:hover {
+  border-color: var(--cc-primary);
+  background: var(--cc-bg-muted);
+  box-shadow: var(--cc-shadow);
+}
+
+:root[data-theme="dark"] .kit label.tag:has(input[type="radio"]:checked) {
+  background: var(--cc-bg-muted);
+  border-color: var(--cc-primary);
+  color: var(--cc-text-primary);
+}
+
+:root[data-theme="dark"] .gallery label {
+  background: var(--cc-bg-elevated);
+  border-color: var(--cc-border-default);
+  color: var(--cc-text-secondary);
+}
+
+:root[data-theme="dark"] .gallery label:hover {
+  border-color: var(--cc-primary);
+  background: var(--cc-bg-muted);
+  box-shadow: var(--cc-shadow-md);
+}
+
+:root[data-theme="dark"] .foto-existente {
+  background: var(--cc-bg-elevated);
+}
+
+:root[data-theme="dark"] .foto-existente:not(.eliminada) {
+  border-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .foto-existente:not(.eliminada):hover {
+  box-shadow: var(--cc-shadow-xl);
+}
+
+:root[data-theme="dark"] .btn-foto-principal {
+  background: var(--cc-bg-elevated);
+  color: var(--cc-text-primary);
+  border: 1px solid var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .btn-foto-principal:hover {
+  background: var(--cc-bg-muted);
+  border-color: var(--cc-border-strong);
+}
+
+:root[data-theme="dark"] .wizard-progress {
+  background: var(--cc-bg-surface);
+  border-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .wizard-progress-bar {
+  background: var(--cc-bg-elevated);
+}
+
+:root[data-theme="dark"] .wizard-progress-text {
+  color: var(--cc-text-tertiary);
+}
+
+:root[data-theme="dark"] .wizard-step {
+  box-shadow: var(--cc-shadow-sm);
+  border-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .wizard-step-header {
+  background: var(--cc-bg-surface);
+  border-bottom-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .wizard-step-header:hover {
+  background: var(--cc-bg-elevated);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="active"] .wizard-step-header {
+  background: var(--cc-bg-muted);
+  border-bottom-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="completed"] .wizard-step-header {
+  background: var(--cc-success-light);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="pending"] .wizard-step-header {
+  background: var(--cc-bg-elevated);
+}
+
+:root[data-theme="dark"] .wizard-step-icon {
+  background: var(--cc-bg-elevated);
+  border-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .wizard-step-title h3 {
+  color: var(--cc-text-primary);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="pending"] .wizard-step-title h3 {
+  color: var(--cc-text-disabled);
+}
+
+:root[data-theme="dark"] .wizard-step-summary {
+  color: var(--cc-text-tertiary);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="pending"] .wizard-step-summary {
+  color: var(--cc-text-disabled);
+}
+
+:root[data-theme="dark"] .wizard-step-chevron {
+  color: var(--cc-text-tertiary);
+}
+
+:root[data-theme="dark"] .wizard-step-body {
+  background: var(--cc-bg-surface);
+}
+
+:root[data-theme="dark"] .wizard-step-body > .card {
+  background: var(--cc-bg-surface);
+  border-top-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .wizard-step-actions {
+  background: var(--cc-bg-elevated);
+  border-top-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .container .meta {
+  color: var(--cc-text-tertiary);
+}
+
+:root[data-theme="dark"] .container strong {
+  color: var(--cc-text-primary);
+}
+
+/* ============================================================================
+ * CHECKS DE PASOS COMPLETADOS
+ * ============================================================================ */
+
+.step-check {
+  font-weight: bold;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  display: inline-block;
+  animation: checkBounce 0.5s ease;
+}
+
+@keyframes checkBounce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.card.step-completed {
+  border-left: 4px solid #E6332A;
+  transition: all 0.3s ease;
+  background: rgba(230, 51, 42, 0.05);
+}
+
+.card.step-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+
+
+/* ============================================================================
+ * STICKY ACTIONS (BOTONES INFERIORES)
+ * ============================================================================ */
+
+.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  background: var(--cc-white);
+  padding: var(--cc-space-4) var(--cc-space-6);
+  border-top: 1px solid var(--cc-border-default);
+  display: flex;
+  gap: var(--cc-space-3);
+  justify-content: flex-end;
+  z-index: 100;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="dark"] .sticky-actions {
+  background: var(--cc-bg-surface);
+  border-top-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn {
+  background: var(--cc-bg-elevated);
+  color: var(--cc-text-primary);
+  border: 1px solid var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn:hover {
+  background: var(--cc-bg-muted);
+  color: var(--cc-text-primary);
+  border-color: var(--cc-border-strong);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn.primary {
+  background: var(--cc-primary);
+  color: var(--cc-white);
+  border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn.primary:hover {
+  background: var(--cc-primary-dark);
+  border-color: var(--cc-primary-dark);
+}
+
+/* ============================================================================
+ * MODALES - MEJORAS DE CONTRASTE EN DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] .admin-modal {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme="dark"] .admin-modal-content {
+  background: var(--cc-bg-surface);
+  border-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .admin-modal-header {
+  background: var(--cc-bg-surface);
+  border-bottom-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .admin-modal-header h2 {
+  color: var(--cc-text-primary);
+}
+
+:root[data-theme="dark"] .admin-modal-body {
+  background: var(--cc-bg-surface);
+  color: var(--cc-text-secondary);
+}
+
+
+
+/* ============================================================================
+ * ICONOS DE ACCIÓN EN FOTOS
+ * ============================================================================ */
+
+.btn-icon-principal,
+.btn-icon-eliminar {
+  transition: all 0.2s ease;
+}
+
+.btn-icon-principal:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(230, 51, 42, 0.4);
+}
+
+.btn-icon-eliminar:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
+}
+
+.btn-icon-principal:active,
+.btn-icon-eliminar:active {
+  transform: scale(0.95);
+}
+
+.foto-existente:hover .foto-icon-actions {
+  opacity: 1;
+}
+
+
+
+/* ============================================================================
+ * MODAL DE VISTA PREVIA
+ * ============================================================================ */
+
+#modalVistaPrevia {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-vista-previa-content {
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#imagenVistaPrevia {
+  cursor: zoom-out;
+}
+
+:root[data-theme="dark"] #modalVistaPrevia {
+  background-color: rgba(0, 0, 0, 0.95);
+}
+
+/* ============================================================================
+ * MEJORAS VISUALES PARA FOTOS
+ * ============================================================================ */
+
+.foto-existente {
+  transition: all 0.3s ease;
+}
+
+.foto-existente:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+:root[data-theme="dark"] .foto-existente:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.foto-existente img {
+  transition: transform 0.3s ease;
+}
+
+.foto-existente:hover img {
+  transform: scale(1.05);
+}
+
+/* Badge principal con color primario */
+.badge-principal {
+  transition: all 0.2s ease;
+}
+
+
+
+/* Responsive para iconos */
+@media (max-width: 768px) {
+  .btn-icon-principal,
+  .btn-icon-eliminar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .btn-icon-principal svg,
+  .btn-icon-eliminar svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .foto-icon-actions {
+    gap: 4px;
+  }
+}
+
+/* ============================================================================
+ * DARK MODE PARA WIZARD
+ * ============================================================================ */
+
+:root[data-theme="dark"] .wizard-step {
+  background: var(--cc-bg-surface);
+  border-color: var(--cc-border-default);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] .wizard-step:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme="dark"] .wizard-step-header {
+  background: var(--cc-bg-surface);
+}
+
+:root[data-theme="dark"] .wizard-step-header:hover {
+  background: var(--cc-bg-elevated);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="active"] {
+  border-color: var(--cc-primary);
+  box-shadow: 0 0 0 2px rgba(230, 51, 42, 0.15);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="active"] .wizard-step-header {
+  background: rgba(230, 51, 42, 0.05);
+}
+
+:root[data-theme="dark"] .wizard-step-number {
+  background: var(--cc-bg-elevated);
+  border-color: var(--cc-border-default);
+  color: var(--cc-text-secondary);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="active"] .wizard-step-number {
+  background: var(--cc-primary);
+  border-color: var(--cc-primary);
+  color: var(--cc-white);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="completed"] .wizard-step-number {
+  background: var(--cc-primary);
+  border-color: var(--cc-primary);
+  color: var(--cc-white);
+}
+
+:root[data-theme="dark"] .wizard-step-title {
+  color: var(--cc-text-primary);
+}
+
+:root[data-theme="dark"] .wizard-step-description {
+  color: var(--cc-text-secondary);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="pending"] .wizard-step-title {
+  color: var(--cc-text-tertiary);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="pending"] .wizard-step-description {
+  color: var(--cc-text-tertiary);
+}
+
+:root[data-theme="dark"] .wizard-step-chevron {
+  color: var(--cc-text-tertiary);
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="active"] .wizard-step-chevron {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .wizard-step-content {
+  border-top-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .wizard-step-body {
+  background: var(--cc-bg-surface);
+}
+
+/* ============================================================================
+ * DARK MODE - AJUSTES ADICIONALES
+ * ============================================================================ */
+
+/* Container principal */
+:root[data-theme="dark"] .container {
+  background: var(--cc-bg-body);
+}
+
+/* Iconos de acción en fotos - Dark Mode */
+:root[data-theme="dark"] .btn-icon-principal {
+  background: var(--cc-bg-elevated);
+  border: 1px solid var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .btn-icon-principal:hover {
+  background: var(--cc-bg-muted);
+  border-color: var(--cc-border-strong);
+}
+
+:root[data-theme="dark"] .btn-icon-eliminar {
+  background: var(--cc-danger);
+}
+
+:root[data-theme="dark"] .btn-icon-eliminar:hover {
+  background: var(--cc-danger-dark);
+}
+
+/* Badge principal en fotos */
+:root[data-theme="dark"] .badge-principal {
+  background: var(--cc-primary);
+  box-shadow: 0 2px 8px rgba(240, 80, 69, 0.4);
+}
+
+/* Modal de vista previa */
+:root[data-theme="dark"] #modalVistaPrevia {
+  background-color: rgba(0, 0, 0, 0.95);
+}
+
+:root[data-theme="dark"] #modalVistaPrevia .modal-vista-previa-content button {
+  background: var(--cc-bg-elevated);
+}
+
+:root[data-theme="dark"] #modalVistaPrevia .modal-vista-previa-content button:hover {
+  background: var(--cc-bg-muted);
+}
+
+:root[data-theme="dark"] #modalVistaPrevia .modal-vista-previa-content button svg {
+  stroke: var(--cc-text-primary);
+}
+
+/* Modales de confirmación */
+:root[data-theme="dark"] .admin-modal {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme="dark"] .admin-modal-content {
+  background: var(--cc-bg-surface);
+  border-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .admin-modal-header {
+  background: var(--cc-bg-surface);
+  border-bottom-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .admin-modal-header h2,
+:root[data-theme="dark"] .admin-modal-header .h2 {
+  color: var(--cc-text-primary);
+}
+
+:root[data-theme="dark"] .admin-modal-body {
+  background: var(--cc-bg-surface);
+  color: var(--cc-text-secondary);
+}
+
+:root[data-theme="dark"] .admin-modal-body p {
+  color: var(--cc-text-secondary);
+}
+
+/* Botones del modal */
+:root[data-theme="dark"] .admin-modal-body .btn {
+  background: var(--cc-bg-elevated);
+  color: var(--cc-text-primary);
+  border: 1px solid var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .admin-modal-body .btn:hover {
+  background: var(--cc-bg-muted);
+  border-color: var(--cc-border-strong);
+}
+
+:root[data-theme="dark"] .admin-modal-body .btn.primary {
+  background: var(--cc-primary);
+  color: var(--cc-white);
+  border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .admin-modal-body .btn.primary:hover {
+  background: var(--cc-primary-dark);
+  border-color: var(--cc-primary-dark);
+}
+
+/* Botón de eliminar en modal */
+:root[data-theme="dark"] .admin-modal-body .btn[style*="background: #DC2626"],
+:root[data-theme="dark"] .admin-modal-body .btn[style*="background:#DC2626"] {
+  background: var(--cc-danger);
+  color: var(--cc-white);
+  border-color: var(--cc-danger);
+}
+
+:root[data-theme="dark"] .admin-modal-body .btn[style*="background: #DC2626"]:hover,
+:root[data-theme="dark"] .admin-modal-body .btn[style*="background:#DC2626"]:hover {
+  background: var(--cc-danger-dark);
+  border-color: var(--cc-danger-dark);
+}
+
+/* Sticky actions (botones inferiores) */
+:root[data-theme="dark"] .sticky-actions {
+  background: var(--cc-bg-surface);
+  border-top-color: var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn {
+  background: var(--cc-bg-elevated);
+  color: var(--cc-text-primary);
+  border: 1px solid var(--cc-border-default);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn:hover {
+  background: var(--cc-bg-muted);
+  border-color: var(--cc-border-strong);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn.primary {
+  background: var(--cc-primary);
+  color: var(--cc-white);
+  border-color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .sticky-actions .btn.primary:hover {
+  background: var(--cc-primary-dark);
+  border-color: var(--cc-primary-dark);
+}
+
+/* Alertas informativas con estilos inline */
+:root[data-theme="dark"] div[style*="background: #f0f9ff"],
+:root[data-theme="dark"] div[style*="background:#f0f9ff"] {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #f0f9ff"] p,
+:root[data-theme="dark"] div[style*="background:#f0f9ff"] p {
+  color: var(--cc-info-light) !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #fef3c7"],
+:root[data-theme="dark"] div[style*="background:#fef3c7"] {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+:root[data-theme="dark"] div[style*="background: #fef3c7"] p,
+:root[data-theme="dark"] div[style*="background:#fef3c7"] p {
+  color: var(--cc-warning-light) !important;
+}
+
+/* File status text */
+:root[data-theme="dark"] .file-status {
+  color: var(--cc-text-tertiary);
+}
+
+/* Scrollbar del modal */
+:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-track {
+  background: var(--cc-bg-elevated);
+}
+
+:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-thumb {
+  background: var(--cc-border-strong);
+}
+
+/* Wizard container */
+:root[data-theme="dark"] .wizard-container {
+  background: transparent;
+}
+
+/* Checks de pasos completados */
+:root[data-theme="dark"] .step-check {
+  color: var(--cc-primary);
+}
+
+:root[data-theme="dark"] .card.step-completed {
+  border-left-color: var(--cc-primary);
+  background: rgba(240, 80, 69, 0.1);
+}
+
+:root[data-theme="dark"] .card.step-disabled {
+  opacity: 0.4;
+  background: rgba(46, 46, 46, 0.5);
+}

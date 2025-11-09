@@ -54,6 +54,37 @@ require_once __DIR__ . '/../../layouts/header.php';
     font-weight: 700;
     color: var(--cc-primary);
     border: 3px solid var(--cc-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-avatar-upload {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 6px;
+    text-align: center;
+    font-size: 11px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.profile-avatar:hover .profile-avatar-upload {
+    opacity: 1;
+}
+
+.avatar-upload-input {
+    display: none;
 }
 
 .profile-stats {
@@ -437,9 +468,23 @@ input[type="tel"].form-input {
     <!-- Encabezado del perfil -->
     <div class="profile-header">
         <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
-            <div class="profile-avatar">
-                <?php echo strtoupper(substr($usuario['nombre'], 0, 1)); ?>
+            <div class="profile-avatar" onclick="document.getElementById('avatar-upload').click()">
+                <?php if (!empty($usuario['avatar'])): ?>
+                    <img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo htmlspecialchars($usuario['avatar']); ?>" 
+                         alt="<?php echo htmlspecialchars($usuario['nombre']); ?>"
+                         id="avatar-preview">
+                <?php else: ?>
+                    <span id="avatar-initial"><?php echo strtoupper(substr($usuario['nombre'], 0, 1)); ?></span>
+                <?php endif; ?>
+                <div class="profile-avatar-upload">
+                    <?php echo icon('camera', 14); ?> Cambiar foto
+                </div>
             </div>
+            <input type="file" 
+                   id="avatar-upload" 
+                   class="avatar-upload-input" 
+                   accept="image/jpeg,image/jpg,image/png,image/webp"
+                   onchange="subirAvatar(this)">
             
             <div style="flex: 1;">
                 <h1 style="font-size: 28px; font-weight: 700; color: var(--cc-text-primary); margin: 0 0 8px 0;">
@@ -699,6 +744,97 @@ document.getElementById('telefono')?.addEventListener('input', function() {
     
     this.value = tel;
 });
+
+// Subir avatar
+function subirAvatar(input) {
+    const file = input.files[0];
+    
+    if (!file) return;
+    
+    // Validar tipo de archivo
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+        alert('Por favor selecciona una imagen válida (JPG, PNG o WebP)');
+        input.value = '';
+        return;
+    }
+    
+    // Validar tamaño (máximo 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        alert('La imagen no debe superar 2MB');
+        input.value = '';
+        return;
+    }
+    
+    // Mostrar preview inmediato
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const avatarContainer = document.querySelector('.profile-avatar');
+        const existingImg = document.getElementById('avatar-preview');
+        const initial = document.getElementById('avatar-initial');
+        
+        if (existingImg) {
+            existingImg.src = e.target.result;
+        } else if (initial) {
+            initial.remove();
+            const img = document.createElement('img');
+            img.id = 'avatar-preview';
+            img.src = e.target.result;
+            img.alt = 'Avatar';
+            avatarContainer.insertBefore(img, avatarContainer.firstChild);
+        }
+    };
+    reader.readAsDataURL(file);
+    
+    // Subir archivo
+    const formData = new FormData();
+    formData.append('avatar', file);
+    formData.append('csrf_token', '<?php echo generateCsrfToken(); ?>');
+    
+    // Mostrar indicador de carga
+    const uploadIndicator = document.querySelector('.profile-avatar-upload');
+    const originalText = uploadIndicator.innerHTML;
+    uploadIndicator.innerHTML = '<?php echo icon("loader", 14); ?> Subiendo...';
+    uploadIndicator.style.opacity = '1';
+    
+    fetch('<?php echo BASE_URL; ?>/perfil/actualizar-avatar', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Actualizar avatar en el header también
+            const headerAvatar = document.querySelector('.user-avatar');
+            if (headerAvatar && headerAvatar.tagName === 'IMG') {
+                headerAvatar.src = '<?php echo BASE_URL; ?>/uploads/avatars/' + data.avatar + '?t=' + Date.now();
+            } else if (headerAvatar) {
+                // Reemplazar placeholder con imagen
+                const img = document.createElement('img');
+                img.src = '<?php echo BASE_URL; ?>/uploads/avatars/' + data.avatar + '?t=' + Date.now();
+                img.alt = '<?php echo htmlspecialchars($usuario['nombre']); ?>';
+                img.className = 'user-avatar';
+                headerAvatar.parentNode.replaceChild(img, headerAvatar);
+            }
+            
+            uploadIndicator.innerHTML = '<?php echo icon("check", 14); ?> ¡Actualizado!';
+            setTimeout(() => {
+                uploadIndicator.innerHTML = originalText;
+                uploadIndicator.style.opacity = '0';
+            }, 2000);
+        } else {
+            alert('Error: ' + (data.message || 'No se pudo subir la imagen'));
+            uploadIndicator.innerHTML = originalText;
+            uploadIndicator.style.opacity = '0';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al subir la imagen. Por favor intenta nuevamente.');
+        uploadIndicator.innerHTML = originalText;
+        uploadIndicator.style.opacity = '0';
+    });
+}
 </script>
 
 <?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

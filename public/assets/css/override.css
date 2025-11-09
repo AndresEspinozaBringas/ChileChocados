@@ -25,16 +25,29 @@ button[class*="btn"] {
 /* Botón primario - Rojo ChileChocados */
 .btn.primary,
 .header-btn.btn-primary,
-button.btn-primary {
+button.btn-primary,
+a.btn-primary {
   background: #e6332a !important;
   color: #ffffff !important;
   border-color: #e6332a !important;
   box-shadow: 0 2px 8px rgba(230, 51, 42, 0.2) !important;
 }
 
+/* Asegurar que el texto y los iconos sean blancos */
+.btn.primary *,
+.header-btn.btn-primary *,
+button.btn-primary *,
+a.btn-primary *,
+a.btn-primary span,
+a.btn-primary svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+}
+
 .btn.primary:hover,
 .header-btn.btn-primary:hover,
-button.btn-primary:hover {
+button.btn-primary:hover,
+a.btn-primary:hover {
   background: #c72920 !important;
   border-color: #c72920 !important;
   box-shadow: 0 4px 12px rgba(230, 51, 42, 0.3) !important;
@@ -69,9 +82,22 @@ button.btn-secondary:hover {
   background: #ffffff !important;
 }
 
+/* Excepción para hero-banner - sin borde */
+.card.hero-banner {
+  border: 0 !important;
+  border-width: 0 !important;
+  box-shadow: none !important;
+  background: #F9FAFB !important;
+}
+
 .card:hover {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
   border-color: #e6332a !important;
+}
+
+.card.hero-banner:hover {
+  box-shadow: none !important;
+  border: 0 !important;
 }
 
 /* ============================================================================
@@ -184,10 +210,10 @@ select:focus {
  * SECCIONES
  * ============================================================================ */
 .hero {
-  border: 1px solid #e5e7eb !important;
-  border-radius: 20px !important;
-  background: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .banner-below {
@@ -240,6 +266,68 @@ select:focus {
 
 .cookie-banner .btn {
   border-radius: 8px !important;
+}
+
+/* ============================================================================
+ * DARK MODE - INPUTS Y FORMULARIOS
+ * ============================================================================ */
+:root[data-theme="dark"] input[type="text"],
+:root[data-theme="dark"] input[type="email"],
+:root[data-theme="dark"] input[type="password"],
+:root[data-theme="dark"] input[type="search"],
+:root[data-theme="dark"] input[type="number"],
+:root[data-theme="dark"] input[type="tel"],
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+  background: #374151 !important;
+  border-color: #4B5563 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] input:focus,
+:root[data-theme="dark"] textarea:focus,
+:root[data-theme="dark"] select:focus {
+  border-color: var(--cc-primary) !important;
+  box-shadow: 0 0 0 3px rgba(240, 80, 69, 0.1) !important;
+  background: #374151 !important;
+}
+
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] select option {
+  background: #374151 !important;
+  color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .search-input-group {
+  background: #374151 !important;
+  border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .search-input-group:focus-within {
+  border-color: var(--cc-primary) !important;
+  box-shadow: 0 0 0 3px rgba(240, 80, 69, 0.1) !important;
+}
+
+/* Hero Banner - Dark Mode */
+:root[data-theme="dark"] .hero {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+:root[data-theme="dark"] .card.hero-banner {
+  background: #1E293B !important;
+  border: 0 !important;
+  border-width: 0 !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme="dark"] .card.hero-banner:hover {
+  box-shadow: none !important;
+  border: 0 !important;
 }
 
 /* ============================================================================

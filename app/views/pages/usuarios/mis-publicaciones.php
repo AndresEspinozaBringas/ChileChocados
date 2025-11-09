@@ -598,6 +598,183 @@ document.addEventListener('keydown', function(e) {
         cerrarModal('modalEliminar');
     }
 });
+
+// ============================================================================
+// POLLING: Verificar actualizaciones cada 30 segundos
+// ============================================================================
+
+let ultimaActualizacion = Date.now();
+let pollingInterval = null;
+
+async function verificarActualizaciones() {
+    try {
+        const response = await fetch('<?php echo BASE_URL; ?>/api/publicaciones/verificar-cambios?timestamp=' + ultimaActualizacion);
+        if (!response.ok) return;
+        
+        const data = await response.json();
+        
+        if (data.hay_cambios) {
+            mostrarBannerActualizacion(data.cambios);
+        }
+    } catch (error) {
+        console.error('Error verificando actualizaciones:', error);
+    }
+}
+
+function mostrarBannerActualizacion(cambios) {
+    // Verificar si ya existe el banner
+    if (document.getElementById('banner-actualizacion')) return;
+    
+    const banner = document.createElement('div');
+    banner.id = 'banner-actualizacion';
+    banner.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        animation: slideDown 0.3s ease-out;
+        max-width: 90%;
+        width: auto;
+    `;
+    
+    let mensaje = '¡Hay actualizaciones disponibles!';
+    if (cambios && cambios.length > 0) {
+        const count = cambios.length;
+        mensaje = `${count} publicación${count > 1 ? 'es' : ''} actualizada${count > 1 ? 's' : ''}`;
+    }
+    
+    banner.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <div style="flex: 1;">
+            <div style="font-weight: 600; font-size: 15px;">${mensaje}</div>
+            <div style="font-size: 13px; opacity: 0.9; margin-top: 2px;">Click para recargar y ver los cambios</div>
+        </div>
+        <button onclick="location.reload()" style="
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            Recargar
+        </button>
+        <button onclick="cerrarBanner()" style="
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    `;
+    
+    document.body.appendChild(banner);
+    
+    // Detener el polling una vez que se muestra el banner
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+        pollingInterval = null;
+    }
+}
+
+function cerrarBanner() {
+    const banner = document.getElementById('banner-actualizacion');
+    if (banner) {
+        banner.style.animation = 'slideUp 0.3s ease-out';
+        setTimeout(() => banner.remove(), 300);
+        
+        // Reiniciar polling
+        iniciarPolling();
+    }
+}
+
+function iniciarPolling() {
+    // Limpiar intervalo anterior si existe
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+    
+    // Iniciar nuevo intervalo de 30 segundos
+    pollingInterval = setInterval(verificarActualizaciones, 30000);
+}
+
+// Iniciar polling al cargar la página
+if (<?php echo !empty($publicaciones) ? 'true' : 'false'; ?>) {
+    iniciarPolling();
+}
+
+// Detener polling al salir de la página
+window.addEventListener('beforeunload', () => {
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+});
+
+// Animaciones CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        #banner-actualizacion {
+            top: 70px !important;
+            left: 16px !important;
+            right: 16px !important;
+            transform: none !important;
+            width: auto !important;
+            max-width: none !important;
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        #banner-actualizacion button {
+            width: 100%;
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
 
 <!-- Modal: Marcar como Vendido -->

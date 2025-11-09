@@ -113,13 +113,17 @@ class PublicacionController
         
         // Obtener publicaciones similares
         $publicaciones_similares = $this->publicacionModel->getSimilares($id, $publicacion->categoria_padre_id, 4);
+        
+        // Obtener otras publicaciones del vendedor (máximo 4, excluyendo la actual)
+        $publicaciones_vendedor = $this->publicacionModel->getByUsuarioExcluir($publicacion->usuario_id, $id, 4);
 
         // Preparar datos para la vista
         $data = [
             'title' => $publicacion->titulo . ' - ChileChocados',
             'publicacion' => $publicacion,
             'imagenes' => $imagenes,
-            'similares' => $publicaciones_similares
+            'similares' => $publicaciones_similares,
+            'publicaciones_vendedor' => $publicaciones_vendedor
         ];
 
         // Cargar vista
@@ -231,6 +235,30 @@ class PublicacionController
             $_SESSION['error'] = 'Error al crear la publicación. Intenta nuevamente.';
             header('Location: ' . BASE_URL . '/publicar');
             exit;
+        }
+
+        // Verificar si marca/modelo son personalizados y crear solicitud de aprobación
+        $marcaModeloModel = new \App\Models\MarcaModelo();
+        $marca = sanitize($_POST['marca'] ?? '');
+        $modelo = sanitize($_POST['modelo'] ?? '');
+        
+        $marcaPersonalizada = !$marcaModeloModel->marcaExisteEnCatalogo($marca);
+        $modeloPersonalizado = !$marcaModeloModel->modeloExisteEnCatalogo($marca, $modelo);
+        
+        if ($marcaPersonalizada || $modeloPersonalizado) {
+            // Crear solicitud de aprobación
+            $marcaModeloModel->crearSolicitud($publicacion_id, $marca, $modelo);
+            
+            // Actualizar publicación para marcar como personalizada
+            $this->publicacionModel->update($publicacion_id, [
+                'marca_personalizada' => $marcaPersonalizada ? 1 : 0,
+                'modelo_personalizado' => $modeloPersonalizado ? 1 : 0,
+                'marca_original' => $marca,
+                'modelo_original' => $modelo,
+                'estado' => 'borrador' // Mantener como borrador hasta aprobación
+            ]);
+            
+            error_log("Marca/modelo personalizado detectado - Publicación $publicacion_id marcada como borrador");
         }
 
         // Procesar y guardar imágenes
@@ -430,17 +458,103 @@ class PublicacionController
         error_log("Nuevo estado: " . $datos['estado']);
         error_log("Cambio de borrador a pendiente: " . ($cambio_de_borrador_a_pendiente ? 'SI' : 'NO'));
 
-        // Actualizar en BD
+        // PASO 1: Procesar fotos eliminadas
+        if (!empty($_POST['fotos_eliminar'])) {
+            error_log("UPDATE - Procesando fotos eliminadas: " . print_r($_POST['fotos_eliminar'], true));
+            
+            foreach ($_POST['fotos_eliminar'] as $fotoId) {
+                if (!empty($fotoId) && is_numeric($fotoId)) {
+                    // Obtener datos de la foto antes de eliminar
+                    $foto = $this->publicacionModel->getFoto($fotoId);
+                    
+                    if ($foto && $foto->publicacion_id == $id) {
+                        // Eliminar archivo físico
+                        $rutaCompleta = UPLOAD_PATH . '/publicaciones/' . $foto->ruta;
+                        if (file_exists($rutaCompleta)) {
+                            if (unlink($rutaCompleta)) {
+                                error_log("UPDATE - Archivo eliminado: $rutaCompleta");
+                            } else {
+                                error_log("UPDATE - ERROR al eliminar archivo: $rutaCompleta");
+                            }
+                        } else {
+                            error_log("UPDATE - Archivo no existe: $rutaCompleta");
+                        }
+                        
+                        // Eliminar registro de BD
+                        $this->publicacionModel->eliminarFoto($fotoId);
+                        error_log("UPDATE - Foto eliminada de BD: $fotoId");
+                    }
+                }
+            }
+        }
+        
+        // PASO 2: Actualizar foto principal si cambió
+        if (!empty($_POST['foto_principal_existente'])) {
+            $fotoPrincipalId = (int) $_POST['foto_principal_existente'];
+            error_log("UPDATE - Actualizando foto principal a: $fotoPrincipalId");
+            
+            // Desmarcar todas las fotos como principal
+            $this->publicacionModel->desmarcarTodasPrincipales($id);
+            
+            // Marcar la nueva como principal
+            $this->publicacionModel->marcarComoPrincipal($fotoPrincipalId);
+        }
+        
+        // PASO 3: Validar que quede al menos 1 foto
+        $fotosRestantes = $this->publicacionModel->contarFotos($id);
+        error_log("UPDATE - Fotos restantes después de eliminaciones: $fotosRestantes");
+        
+        // Si no hay fotos y tampoco se están subiendo nuevas, error
+        $hayFotosNuevas = !empty($_FILES['fotos']['name'][0]);
+        if ($fotosRestantes === 0 && !$hayFotosNuevas) {
+            error_log("UPDATE - ERROR: No quedan fotos y no se están subiendo nuevas");
+            $_SESSION['error'] = 'Debes mantener al menos 1 foto en la publicación';
+            header('Location: ' . BASE_URL . '/publicaciones/' . $id . '/editar');
+            exit;
+        }
+
+        // PASO 4: Verificar si marca/modelo son personalizados
+        $marcaModeloModel = new \App\Models\MarcaModelo();
+        $marca = sanitize($_POST['marca'] ?? '');
+        $modelo = sanitize($_POST['modelo'] ?? '');
+        
+        $marcaPersonalizada = !$marcaModeloModel->marcaExisteEnCatalogo($marca);
+        $modeloPersonalizado = !$marcaModeloModel->modeloExisteEnCatalogo($marca, $modelo);
+        
+        if ($marcaPersonalizada || $modeloPersonalizado) {
+            // Verificar si ya existe una solicitud pendiente
+            $sql = "SELECT id FROM marcas_modelos_pendientes 
+                    WHERE publicacion_id = ? AND estado = 'pendiente'";
+            $stmt = $this->publicacionModel->db->prepare($sql);
+            $stmt->execute([$id]);
+            $solicitudExistente = $stmt->fetch();
+            
+            if (!$solicitudExistente) {
+                // Crear nueva solicitud de aprobación
+                $marcaModeloModel->crearSolicitud($id, $marca, $modelo);
+            }
+            
+            // Actualizar publicación para marcar como personalizada
+            $datos['marca_personalizada'] = $marcaPersonalizada ? 1 : 0;
+            $datos['modelo_personalizado'] = $modeloPersonalizado ? 1 : 0;
+            $datos['marca_original'] = $marca;
+            $datos['modelo_original'] = $modelo;
+            $datos['estado'] = 'borrador'; // Mantener como borrador hasta aprobación
+            
+            error_log("UPDATE - Marca/modelo personalizado detectado - Publicación $id marcada como borrador");
+        }
+
+        // PASO 5: Actualizar datos de la publicación en BD
         $this->publicacionModel->update($id, $datos);
 
         // Debug de archivos
         error_log("UPDATE - FILES recibidos: " . print_r($_FILES, true));
         
-        // Procesar nuevas imágenes si existen
-        if (!empty($_FILES['fotos']['name'][0])) {
-            error_log("UPDATE - Procesando imágenes...");
-            $foto_principal_index = isset($_POST['foto_principal']) ? (int) $_POST['foto_principal'] : 1;
-            $this->procesarImagenes($id, $_FILES['fotos'], $foto_principal_index);
+        // PASO 6: Procesar nuevas imágenes si existen
+        if ($hayFotosNuevas) {
+            error_log("UPDATE - Procesando imágenes nuevas...");
+            $foto_principal_nueva_index = isset($_POST['foto_principal_nueva']) ? (int) $_POST['foto_principal_nueva'] : null;
+            $this->procesarImagenes($id, $_FILES['fotos'], $foto_principal_nueva_index);
         } else {
             error_log("UPDATE - No se recibieron imágenes nuevas");
         }

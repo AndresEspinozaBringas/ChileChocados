@@ -5,6 +5,7 @@
  * Página principal de ChileChocados
  */
 $pageTitle = 'ChileChocados - Compra y Venta de Vehículos Siniestrados';
+$additionalCSS = ['/assets/css/home.css?v=' . time()];
 require_once APP_PATH . '/views/layouts/header.php';
 require_once APP_PATH . '/views/layouts/nav.php';
 
@@ -18,7 +19,7 @@ require_once APP_PATH . '/views/layouts/nav.php';
 
 <!-- Hero Section -->
 <section class="hero">
-    <div class="card hero-banner">
+    <div class="card hero-banner" style="border: 0 !important; border-width: 0 !important; box-shadow: none !important;">
         <h1 class="h1 hero-title">Encuentra vehículos siniestrados al mejor precio</h1>
         <p class="hero-text">
             Compra y vende vehículos chocados, siniestrados o en desarme de forma segura
@@ -26,23 +27,48 @@ require_once APP_PATH . '/views/layouts/nav.php';
     </div>
 </section>
 
-<!-- Estadísticas rápidas -->
-<section class="stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 32px 0;">
-    <div class="card" style="text-align: center; padding: 24px;">
-        <div class="h2" style="color: var(--primary);">350+</div>
-        <p class="meta">Vehículos publicados</p>
-    </div>
-    <div class="card" style="text-align: center; padding: 24px;">
-        <div class="h2" style="color: var(--primary);">120+</div>
-        <p class="meta">Ventas realizadas</p>
-    </div>
-    <div class="card" style="text-align: center; padding: 24px;">
-        <div class="h2" style="color: var(--primary);">500+</div>
-        <p class="meta">Usuarios registrados</p>
-    </div>
-    <div class="card" style="text-align: center; padding: 24px;">
-        <div class="h2" style="color: var(--primary);">15+</div>
-        <p class="meta">Regiones con cobertura</p>
+<!-- Categorías principales -->
+<section>
+    <div class="h2">Categorías principales</div>
+    <div class="grid cols-4">
+        <?php if (!empty($categorias)): ?>
+            <?php 
+            // Mapeo de iconos por categoría (SVG completos)
+            $iconos = [
+                'Auto' => '<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>',
+                'Moto' => '<path d="M19.44 9.03L15.41 5H11v2h3.59l2 2H5c-2.8 0-5 2.2-5 5s2.2 5 5 5c2.46 0 4.45-1.69 4.9-4h1.65l2.77-2.77c-.21.54-.32 1.14-.32 1.77 0 2.8 2.2 5 5 5s5-2.2 5-5c0-2.65-1.97-4.77-4.56-4.97zM7.82 15C7.4 16.15 6.28 17 5 17c-1.63 0-3-1.37-3-3s1.37-3 3-3c1.28 0 2.4.85 2.82 2H5v2h2.82zM19 17c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>',
+                'Camión' => '<path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><rect x="3" y="10" width="12" height="2"/>',
+                'Casa Rodante' => '<path d="M17 2H7c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h1.33l1.34 2.67c.2.4.6.66 1.05.66.45 0 .85-.26 1.05-.66L13.67 19H17c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 15H7V4h10v13z"/><rect x="9" y="6" width="6" height="4"/><rect x="9" y="11" width="2" height="2"/><rect x="13" y="11" width="2" height="2"/><circle cx="8" cy="17" r="1"/><circle cx="16" cy="17" r="1"/>',
+                'Camioneta' => '<path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>',
+                'SUV' => '<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/><rect x="7" y="7" width="10" height="3" rx="1"/>',
+                'Bus' => '<path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z"/>',
+                'Maquinaria' => '<path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/><circle cx="7" cy="15" r="1.5"/><circle cx="12" cy="15" r="1.5"/>',
+                'Repuesto' => '<path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>',
+                'Náutica' => '<path d="M4 18l8-13 8 13H4zm8-11.5L6.5 16h11L12 6.5z"/><path d="M2 20h20v2H2z"/>',
+                'Aéreos' => '<path d="M22 16v-2l-8.5-5V3.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V9L2 14v2l8.5-2.5V19L8 20.5V22l4-1 4 1v-1.5L13.5 19v-5.5L22 16z"/>'
+            ];
+            
+            foreach ($categorias as $cat): 
+                $nombreCat = htmlspecialchars($cat->nombre);
+                $iconPath = $iconos[$nombreCat] ?? '<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>';
+            ?>
+            <a class="card cat-card-new" href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $cat->id; ?>">
+                <div class="cat-icon-wrapper">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" class="cat-icon">
+                        <?php echo $iconPath; ?>
+                    </svg>
+                </div>
+                <div class="cat-info">
+                    <div class="h3 cat-title"><?php echo $nombreCat; ?></div>
+                    <p class="meta cat-meta"><?php echo $cat->total_subcategorias ?? 0; ?> subcategorías</p>
+                </div>
+                <div class="cat-count-badge">
+                    <span class="cat-count-number"><?php echo $cat->total_publicaciones ?? 0; ?></span>
+                    <span class="cat-count-label">publicaciones</span>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -209,48 +235,33 @@ require_once APP_PATH . '/views/layouts/nav.php';
     </div>
 </section>
 
-<!-- Categorías padre -->
-<section>
-    <div class="h2">Categorías principales</div>
-    <div class="grid cols-4">
-        <?php if (!empty($categorias)): ?>
-            <?php foreach ($categorias as $cat): ?>
-            <a class="card cat-card" href="<?php echo BASE_URL; ?>/listado?categoria=<?php echo $cat->id; ?>">
-                <div class="left">
-                    <span class="iconify">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="9" y1="3" x2="9" y2="21"/>
-                        </svg>
-                    </span>
-                    <div>
-                        <div class="h3"><?php echo htmlspecialchars($cat->nombre); ?></div>
-                        <p class="meta"><?php echo $cat->total_subcategorias ?? 0; ?> subcategorías</p>
-                    </div>
-                </div>
-                <span class="cat-count" style="background: var(--bg-secondary); padding: 4px 12px; border-radius: 12px; font-weight: 600;">
-                    <?php echo $cat->total_publicaciones ?? 0; ?>
-                </span>
-            </a>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
-</section>
-
 <!-- CTA Vender -->
 <section>
-    <div class="card cta-banner">
-        <div class="h2 cta-title">¿Tienes un vehículo siniestrado para vender?</div>
-        <p class="cta-text">
-            Publica tu vehículo gratis y llega a miles de compradores potenciales
-        </p>
-        <div class="cta-buttons">
-            <a class="btn primary" href="<?php echo BASE_URL; ?>/publicar">
-                Publicar ahora
-            </a>
-            <a class="btn cta-btn-secondary" href="<?php echo BASE_URL; ?>/vender">
-                Ver más información
-            </a>
+    <div class="card cta-banner" style="position: relative; overflow: hidden; padding: 0 !important;">
+        <!-- Imagen de fondo -->
+        <img src="<?php echo BASE_URL; ?>/assets/Fondo.jpeg?v=<?php echo time(); ?>" 
+             alt="Fondo" 
+             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; z-index: 0;">
+        
+        <!-- Overlay oscuro para mejorar legibilidad -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 1;"></div>
+        
+        <!-- Contenido -->
+        <div style="position: relative; z-index: 2; padding: 60px 32px; min-height: 250px; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 100%; max-width: 800px; margin: 0 auto; text-align: center;">
+                <div class="h2 cta-title" style="color: white !important; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">¿Tienes un vehículo siniestrado para vender?</div>
+                <p class="cta-text" style="color: rgba(255, 255, 255, 0.95) !important; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">
+                    Publica tu vehículo gratis y llega a miles de compradores potenciales
+                </p>
+                <div class="cta-buttons">
+                    <a class="btn primary" href="<?php echo BASE_URL; ?>/publicar">
+                        Publicar ahora
+                    </a>
+                    <a class="btn cta-btn-secondary" href="<?php echo BASE_URL; ?>/vender" style="background: rgba(255, 255, 255, 0.2) !important; color: white !important; border-color: white !important;">
+                        Ver más información
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -294,457 +305,28 @@ require_once APP_PATH . '/views/layouts/nav.php';
     </div>
 </section>
 
+<!-- Estadísticas rápidas -->
+<section class="stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 32px 0;">
+    <div class="card" style="text-align: center; padding: 24px;">
+        <div class="h2" style="color: var(--primary);">350+</div>
+        <p class="meta">Vehículos publicados</p>
+    </div>
+    <div class="card" style="text-align: center; padding: 24px;">
+        <div class="h2" style="color: var(--primary);">120+</div>
+        <p class="meta">Ventas realizadas</p>
+    </div>
+    <div class="card" style="text-align: center; padding: 24px;">
+        <div class="h2" style="color: var(--primary);">500+</div>
+        <p class="meta">Usuarios registrados</p>
+    </div>
+    <div class="card" style="text-align: center; padding: 24px;">
+        <div class="h2" style="color: var(--primary);">15+</div>
+        <p class="meta">Regiones con cobertura</p>
+    </div>
+</section>
+
 </main>
 
-<style>
-/* Hero Section */
-.hero {
-    padding: 60px 0;
-    text-align: center;
-}
-
-.hero-banner {
-    background: white;
-    border: 2px solid #E5E5E5;
-    text-align: center;
-    padding: 48px 32px;
-}
-
-.hero-title {
-    color: #2E2E2E;
-    margin-bottom: 12px;
-}
-
-.hero-text {
-    font-size: 18px;
-    color: #666666;
-    margin: 0;
-}
-
-/* CTA Banner */
-.cta-banner {
-    background: white;
-    border: 2px solid #E5E5E5;
-    text-align: center;
-    padding: 48px 32px;
-}
-
-.cta-title {
-    color: #2E2E2E;
-    margin-bottom: 12px;
-}
-
-.cta-text {
-    font-size: 18px;
-    color: #666666;
-    margin: 0 0 24px 0;
-}
-
-.cta-buttons {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.cta-btn-secondary {
-    background: white;
-    color: #2E2E2E;
-    border: 2px solid #E5E5E5;
-}
-
-.cta-btn-secondary:hover {
-    background: #F5F5F5;
-    border-color: var(--cc-primary);
-}
-
-/* Categorías */
-.cat-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    transition: all 0.2s ease;
-}
-
-.cat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.cat-card .left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* Publicaciones */
-.pub-card {
-    transition: all 0.2s ease;
-}
-
-.pub-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-
-/* ============================================================================
- * DARK MODE
- * ============================================================================ */
-
-:root[data-theme="dark"] main {
-    background: #111827 !important;
-}
-
-:root[data-theme="dark"] .container {
-    background: #111827 !important;
-}
-
-:root[data-theme="dark"] main.container {
-    background: #111827 !important;
-}
-
-:root[data-theme="dark"] .hero {
-    background: #111827 !important;
-}
-
-:root[data-theme="dark"] .hero-banner {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-:root[data-theme="dark"] .hero-title {
-    color: white !important;
-}
-
-:root[data-theme="dark"] .hero-text {
-    color: rgba(255,255,255,0.9) !important;
-}
-
-/* Cards de estadísticas */
-:root[data-theme="dark"] .card {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-:root[data-theme="dark"] .card .h2,
-:root[data-theme="dark"] .card .h3,
-:root[data-theme="dark"] .card div[class*="h2"],
-:root[data-theme="dark"] .card div[class*="h3"] {
-    color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] .card .meta,
-:root[data-theme="dark"] .card p[class*="meta"] {
-    color: #9CA3AF !important;
-}
-
-/* Estadísticas específicas */
-:root[data-theme="dark"] .stats .card {
-    background: #1F2937 !important;
-}
-
-:root[data-theme="dark"] .stats .card .h2,
-:root[data-theme="dark"] .stats .card div[class*="h2"] {
-    color: var(--cc-primary) !important;
-}
-
-:root[data-theme="dark"] .stats .card .meta,
-:root[data-theme="dark"] .stats .card p {
-    color: #9CA3AF !important;
-}
-
-/* Títulos de secciones */
-:root[data-theme="dark"] .h2 {
-    color: #F3F4F6;
-}
-
-:root[data-theme="dark"] .meta {
-    color: #9CA3AF;
-}
-
-/* Publicaciones cards */
-:root[data-theme="dark"] .pub-card {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-:root[data-theme="dark"] .pub-card:hover {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-    border-color: var(--primary);
-}
-
-:root[data-theme="dark"] .pub-card .h3,
-:root[data-theme="dark"] .pub-card div[class*="h3"] {
-    color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] .pub-card .meta,
-:root[data-theme="dark"] .pub-card div[class*="meta"],
-:root[data-theme="dark"] .pub-card .row {
-    color: #9CA3AF !important;
-}
-
-:root[data-theme="dark"] .pub-card .h2,
-:root[data-theme="dark"] .pub-card span[class*="h2"] {
-    color: var(--cc-primary) !important;
-}
-
-:root[data-theme="dark"] .pub-img {
-    background: #374151 !important;
-}
-
-:root[data-theme="dark"] .pub-card span,
-:root[data-theme="dark"] .pub-card div {
-    color: inherit;
-}
-
-/* Categorías cards */
-:root[data-theme="dark"] .cat-card {
-    background: #1F2937;
-    border-color: #374151;
-}
-
-:root[data-theme="dark"] .cat-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    border-color: var(--primary);
-}
-
-:root[data-theme="dark"] .cat-card .h3 {
-    color: #F3F4F6;
-}
-
-:root[data-theme="dark"] .cat-card .meta {
-    color: #9CA3AF;
-}
-
-:root[data-theme="dark"] .cat-count {
-    background: #374151 !important;
-    color: #F3F4F6;
-}
-
-:root[data-theme="dark"] .iconify svg {
-    stroke: var(--primary);
-}
-
-/* CTA Vender - dark mode */
-:root[data-theme="dark"] .cta-banner {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-:root[data-theme="dark"] .cta-title {
-    color: white !important;
-}
-
-:root[data-theme="dark"] .cta-text {
-    color: rgba(255,255,255,0.9) !important;
-}
-
-:root[data-theme="dark"] .cta-btn-secondary {
-    background: transparent !important;
-    color: white !important;
-    border-color: white !important;
-}
-
-:root[data-theme="dark"] .cta-btn-secondary:hover {
-    background: rgba(255,255,255,0.1) !important;
-    border-color: white !important;
-}
-
-/* Sección "Cómo funciona" */
-:root[data-theme="dark"] .grid .card[style*="text-align: center"] {
-    background: #1F2937;
-    border-color: #374151;
-}
-
-:root[data-theme="dark"] .grid .card[style*="text-align: center"] .h3 {
-    color: #F3F4F6;
-}
-
-:root[data-theme="dark"] .grid .card[style*="text-align: center"] .meta {
-    color: #9CA3AF;
-}
-
-:root[data-theme="dark"] .grid .card[style*="text-align: center"] > div[style*="background: var(--bg-secondary)"] {
-    background: #374151 !important;
-}
-
-/* SVG icons */
-:root[data-theme="dark"] svg {
-    color: inherit;
-}
-
-/* Botones generales */
-:root[data-theme="dark"] .btn {
-    background: #374151;
-    color: #F3F4F6;
-    border-color: #4B5563;
-}
-
-:root[data-theme="dark"] .btn:hover {
-    background: #4B5563;
-    border-color: #6B7280;
-}
-
-:root[data-theme="dark"] .btn.primary {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
-
-/* Estado vacío */
-:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] {
-    color: #9CA3AF !important;
-}
-
-:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] p {
-    color: #9CA3AF !important;
-}
-
-:root[data-theme="dark"] div[style*="grid-column: 1 / -1"] svg {
-    opacity: 0.2;
-}
-
-/* Asegurar que todos los textos en cards tengan buen contraste */
-:root[data-theme="dark"] section .card {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-:root[data-theme="dark"] section .card * {
-    border-color: #374151;
-}
-
-/* Forzar colores en elementos con estilos inline */
-:root[data-theme="dark"] main div[style*="padding: 24px"] {
-    background: #1F2937 !important;
-}
-
-:root[data-theme="dark"] main div[style*="text-align: center"] .h2,
-:root[data-theme="dark"] main div[style*="text-align: center"] div[class*="h2"] {
-    color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] main div[style*="text-align: center"] .meta,
-:root[data-theme="dark"] main div[style*="text-align: center"] p {
-    color: #9CA3AF !important;
-}
-
-/* Grid de publicaciones y categorías */
-:root[data-theme="dark"] .grid a.card {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-:root[data-theme="dark"] .grid .card {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-/* Sobrescribir estilos inline específicos */
-:root[data-theme="dark"] section div[style*="padding: 16px 0"] .h3,
-:root[data-theme="dark"] section div[style*="padding: 16px 0"] div[class*="h3"] {
-    color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] section div[style*="padding: 16px 0"] .row,
-:root[data-theme="dark"] section div[style*="padding: 16px 0"] div[class*="row"] {
-    color: #9CA3AF !important;
-}
-
-:root[data-theme="dark"] section div[style*="padding: 16px 0"] span[class*="h2"] {
-    color: var(--cc-primary) !important;
-}
-
-/* Asegurar que las imágenes de publicaciones tengan el fondo correcto */
-:root[data-theme="dark"] div[style*="height: 200px"] {
-    background: #374151 !important;
-}
-
-/* Sobrescribir todos los divs con estilos inline de padding */
-:root[data-theme="dark"] .card > div {
-    color: inherit;
-}
-
-:root[data-theme="dark"] .card > div * {
-    color: inherit;
-}
-
-/* Títulos de secciones con display flex */
-:root[data-theme="dark"] section > div[style*="display: flex"] .h2 {
-    color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] section > div[style*="display: flex"] .meta {
-    color: #9CA3AF !important;
-}
-
-:root[data-theme="dark"] section > div[style*="display: flex"] p {
-    color: #9CA3AF !important;
-}
-
-/* Enlaces "Ver todas" */
-:root[data-theme="dark"] section > div[style*="display: flex"] a.btn {
-    background: #374151;
-    color: #F3F4F6;
-    border-color: #4B5563;
-}
-
-:root[data-theme="dark"] section > div[style*="display: flex"] a.btn:hover {
-    background: #4B5563;
-    border-color: #6B7280;
-}
-
-/* Asegurar que los badges de "VENDIDO" sean visibles */
-:root[data-theme="dark"] span[style*="background: #10B981"] {
-    background: #10B981 !important;
-    color: white !important;
-}
-
-/* Forzar que las cards NO tengan el fondo del banner especial */
-:root[data-theme="dark"] .grid .card:not([style*="background: #2C3E50"]) {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-/* Excluir los banners especiales de las reglas generales de cards */
-:root[data-theme="dark"] .card:not([style*="background: #2C3E50"]):not(.hero-banner):not(.cta-banner) {
-    background: #1F2937 !important;
-    border-color: #374151 !important;
-}
-
-/* Asegurar que no haya fondos blancos en secciones */
-:root[data-theme="dark"] section {
-    background: #111827 !important;
-}
-
-/* Forzar que el body tenga el fondo correcto */
-:root[data-theme="dark"] body {
-    background: #111827 !important;
-}
-
-/* Asegurar que el área alrededor del hero tenga el fondo correcto */
-:root[data-theme="dark"] .hero,
-:root[data-theme="dark"] .hero * {
-    background-color: transparent;
-}
-
-:root[data-theme="dark"] .hero .card.hero-banner {
-    background: #1F2937 !important;
-}
-:root[data-theme="dark"] div[style*="height: 200px"] {
-    background: #374151 !important;
-}
-
-/* Sobrescribir todos los divs con estilos inline de padding */
-:root[data-theme="dark"] .card > div {
-    color: inherit;
-}
-
-:root[data-theme="dark"] .card > div * {
-    color: inherit;
-}
-</style>
+<!-- Los estilos están en public/assets/css/home.css -->
 
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

@@ -32,11 +32,14 @@
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/fixes.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/override.css?v=<?php echo time(); ?>">
     
+    <!-- CRITICAL FIXES - Se carga al final con máxima prioridad -->
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/critical-fixes.css?v=<?php echo time(); ?>">
+    
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="<?php echo BASE_URL; ?>/assets/favicon.ico">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/assets/iso.png">
     
     <?php if (isset($additionalCSS)): ?>
         <?php foreach ($additionalCSS as $css): ?>
@@ -51,6 +54,30 @@
     
     <!-- Estilos para badges de notificación y menú mejorado -->
     <style>
+        /* Badge de notificaciones y mensajes en el header */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            background: #E6332A;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 9px;
+            line-height: 1;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-action-btn {
+            position: relative;
+        }
+        
         .menu-badge {
             display: inline-flex;
             align-items: center;
@@ -164,7 +191,510 @@
                 display: none;
             }
         }
+        
+        /* Estilos del dropdown de notificaciones */
+        .notificaciones-dropdown {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 400px;
+            max-height: 500px;
+            background: var(--cc-bg-surface, #fff);
+            border: 1px solid var(--cc-border-default, #E5E7EB);
+            border-radius: var(--cc-radius-xl, 12px);
+            box-shadow: var(--cc-shadow-2xl, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .notificaciones-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--cc-border-light, #E5E7EB);
+        }
+        
+        .notificaciones-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--cc-text-primary, #111827);
+        }
+        
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--cc-primary, #E6332A);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .btn-text:hover {
+            background: var(--cc-primary-pale, #FEF2F2);
+        }
+        
+        .notificaciones-body {
+            overflow-y: auto;
+            max-height: 400px;
+        }
+        
+        .notificacion-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--cc-border-light, #E5E7EB);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .notificacion-item:hover {
+            background: var(--cc-bg-muted, #F9FAFB);
+        }
+        
+        .notificacion-item.no-leida {
+            background: var(--cc-primary-pale, #FEF2F2);
+        }
+        
+        .notificacion-titulo {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--cc-text-primary, #111827);
+            margin-bottom: 4px;
+        }
+        
+        .notificacion-mensaje {
+            font-size: 13px;
+            color: var(--cc-text-secondary, #6B7280);
+            margin-bottom: 4px;
+        }
+        
+        .notificacion-fecha {
+            font-size: 12px;
+            color: var(--cc-text-tertiary, #9CA3AF);
+        }
+        
+        .notificaciones-loading,
+        .notificaciones-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--cc-text-secondary, #6B7280);
+        }
+        
+        /* Dark mode */
+        :root[data-theme="dark"] .notificaciones-dropdown {
+            background: var(--cc-gray-800, #1F2937);
+            border-color: var(--cc-gray-700, #374151);
+        }
+        
+        :root[data-theme="dark"] .notificaciones-header {
+            border-bottom-color: var(--cc-gray-700, #374151);
+        }
+        
+        :root[data-theme="dark"] .notificaciones-header h3 {
+            color: var(--cc-gray-100, #F3F4F6);
+        }
+        
+        :root[data-theme="dark"] .notificacion-item {
+            border-bottom-color: var(--cc-gray-700, #374151);
+        }
+        
+        :root[data-theme="dark"] .notificacion-item:hover {
+            background: var(--cc-gray-700, #374151);
+        }
+        
+        :root[data-theme="dark"] .notificacion-item.no-leida {
+            background: rgba(230, 51, 42, 0.15);
+        }
+        
+        :root[data-theme="dark"] .notificacion-titulo {
+            color: var(--cc-gray-100, #F3F4F6);
+        }
+        
+        :root[data-theme="dark"] .notificacion-mensaje {
+            color: var(--cc-gray-400, #9CA3AF);
+        }
+        
+        @media (max-width: 768px) {
+            .notificaciones-dropdown {
+                right: 10px;
+                left: 10px;
+                width: auto;
+            }
+        }
     </style>
+    
+    <script>
+        // Sistema de notificaciones
+        function toggleNotificaciones() {
+            <?php if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin'): ?>
+                // Si es admin, redirigir a publicaciones pendientes
+                window.location.href = '<?php echo BASE_URL; ?>/admin/publicaciones?estado=pendiente';
+                return;
+            <?php endif; ?>
+            
+            const dropdown = document.getElementById('notificaciones-dropdown');
+            const isVisible = dropdown.style.display !== 'none';
+            
+            if (isVisible) {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+                cargarNotificaciones();
+            }
+        }
+        
+        function cargarNotificaciones() {
+            const lista = document.getElementById('notificaciones-lista');
+            lista.innerHTML = '<div class="notificaciones-loading">Cargando...</div>';
+            
+            fetch('<?php echo BASE_URL; ?>/api/notificaciones')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.notificaciones.length > 0) {
+                        lista.innerHTML = '';
+                        data.notificaciones.forEach(notif => {
+                            const item = document.createElement('div');
+                            item.className = 'notificacion-item' + (notif.leida == 0 ? ' no-leida' : '');
+                            item.onclick = () => abrirNotificacion(notif.id, notif.enlace);
+                            
+                            item.innerHTML = `
+                                <div class="notificacion-titulo">${notif.titulo}</div>
+                                <div class="notificacion-mensaje">${notif.mensaje}</div>
+                                <div class="notificacion-fecha">${formatearFecha(notif.fecha_creacion)}</div>
+                            `;
+                            
+                            lista.appendChild(item);
+                        });
+                    } else {
+                        lista.innerHTML = '<div class="notificaciones-empty">No tienes notificaciones</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar notificaciones:', error);
+                    lista.innerHTML = '<div class="notificaciones-empty">Error al cargar notificaciones</div>';
+                });
+        }
+        
+        function abrirNotificacion(id, enlace) {
+            // Marcar como leída
+            fetch('<?php echo BASE_URL; ?>/api/notificaciones/marcar-leida', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: id})
+            }).then(() => {
+                actualizarContador();
+                if (enlace) {
+                    window.location.href = '<?php echo BASE_URL; ?>' + enlace;
+                }
+            });
+        }
+        
+        function marcarTodasLeidas() {
+            fetch('<?php echo BASE_URL; ?>/api/notificaciones/marcar-todas-leidas', {
+                method: 'POST'
+            }).then(() => {
+                actualizarContador();
+                cargarNotificaciones();
+            });
+        }
+        
+        function actualizarContador() {
+            // Actualizar contador de notificaciones
+            fetch('<?php echo BASE_URL; ?>/api/notificaciones/contar')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notification-count');
+                    if (data.count > 0) {
+                        if (badge) {
+                            badge.textContent = data.count;
+                        } else {
+                            const btn = document.getElementById('btn-notificaciones');
+                            if (btn) {
+                                const newBadge = document.createElement('span');
+                                newBadge.className = 'notification-badge';
+                                newBadge.id = 'notification-count';
+                                newBadge.textContent = data.count;
+                                btn.appendChild(newBadge);
+                            }
+                        }
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al actualizar contador de notificaciones:', error);
+                });
+            
+            // Actualizar contador de mensajes
+            actualizarContadorMensajes();
+        }
+        
+        // Versión silenciosa que no interfiere con formularios
+        function actualizarContadorSilencioso() {
+            // No actualizar si las actualizaciones están pausadas
+            if (window.pauseAutoUpdates || window.isPublishPage) {
+                return;
+            }
+            
+            // Solo actualizar si no hay elementos de formulario activos
+            const activeElement = document.activeElement;
+            if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'SELECT')) {
+                return;
+            }
+            actualizarContador();
+        }
+        
+        function actualizarContadorMensajes() {
+            // No actualizar si el usuario está interactuando con un formulario
+            const activeElement = document.activeElement;
+            if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'SELECT')) {
+                return;
+            }
+            
+            fetch('<?php echo BASE_URL; ?>/api/mensajes/contar')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('message-count');
+                    const link = document.querySelector('a[href*="/mensajes"]');
+                    
+                    if (data.count > 0) {
+                        if (badge) {
+                            badge.textContent = data.count;
+                        } else if (link) {
+                            const newBadge = document.createElement('span');
+                            newBadge.className = 'notification-badge';
+                            newBadge.id = 'message-count';
+                            newBadge.textContent = data.count;
+                            link.appendChild(newBadge);
+                        }
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al actualizar contador de mensajes:', error);
+                });
+        }
+        
+        function formatearFecha(fecha) {
+            const ahora = new Date();
+            const fechaNotif = new Date(fecha);
+            const diff = Math.floor((ahora - fechaNotif) / 1000);
+            
+            if (diff < 60) return 'Hace un momento';
+            if (diff < 3600) return `Hace ${Math.floor(diff / 60)} minutos`;
+            if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} horas`;
+            if (diff < 604800) return `Hace ${Math.floor(diff / 86400)} días`;
+            
+            return fechaNotif.toLocaleDateString('es-CL');
+        }
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notificaciones-dropdown');
+            const btn = document.getElementById('btn-notificaciones');
+            
+            if (dropdown && btn && !dropdown.contains(event.target) && !btn.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+        
+        // Actualizar contadores cada 30 segundos (menos intrusivo)
+        setInterval(actualizarContadorSilencioso, 30000);
+        
+        // Cargar contadores al inicio
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarContadorMensajes();
+            actualizarContador();
+        });
+        
+        // Hacer las funciones globales para que puedan ser llamadas desde otras páginas
+        window.actualizarContadorMensajes = actualizarContadorMensajes;
+        window.actualizarContadorNotificaciones = actualizarContador;
+        
+        // Escuchar eventos personalizados de mensajes
+        window.addEventListener('mensajeEnviado', function() {
+            // Actualizar contador cuando se envía un mensaje
+            setTimeout(actualizarContadorMensajes, 500);
+        });
+        
+        window.addEventListener('mensajeRecibido', function() {
+            // Actualizar contador cuando se recibe un mensaje
+            actualizarContadorMensajes();
+        });
+        
+        // ============================================
+        // SISTEMA DE NOTIFICACIONES TOAST EN TIEMPO REAL
+        // ============================================
+        <?php if (isset($_SESSION['user_id']) && (!isset($_SESSION['user_rol']) || $_SESSION['user_rol'] !== 'admin')): ?>
+        let ultimaNotificacionId = 0;
+        
+        // Función para verificar nuevas notificaciones
+        function verificarNuevasNotificaciones() {
+            // No ejecutar si las actualizaciones están pausadas
+            if (window.pauseAutoUpdates || window.isPublishPage) {
+                return;
+            }
+            
+            // No ejecutar si el usuario está escribiendo o interactuando con un formulario
+            const activeElement = document.activeElement;
+            if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'SELECT')) {
+                return; // Salir sin hacer nada si hay un campo activo
+            }
+            
+            fetch('<?php echo BASE_URL; ?>/api/notificaciones?desde=' + ultimaNotificacionId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.notificaciones && data.notificaciones.length > 0) {
+                        data.notificaciones.forEach(notif => {
+                            // Solo mostrar notificaciones no leídas
+                            if (notif.leida == 0) {
+                                mostrarToastNotificacion(notif);
+                            }
+                            // Actualizar último ID
+                            if (notif.id > ultimaNotificacionId) {
+                                ultimaNotificacionId = notif.id;
+                            }
+                        });
+                        // Actualizar contador solo si no hay formularios activos
+                        actualizarContadorSilencioso();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al verificar notificaciones:', error);
+                });
+        }
+        
+        // Función para mostrar toast de notificación
+        function mostrarToastNotificacion(notif) {
+            // Crear contenedor de toasts si no existe
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.style.cssText = 'position: fixed; top: 80px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 12px; max-width: 400px;';
+                document.body.appendChild(container);
+            }
+            
+            // Crear toast
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.style.cssText = `
+                background: white;
+                border-left: 4px solid ${notif.tipo === 'publicacion_aprobada' ? '#10B981' : '#EF4444'};
+                border-radius: 8px;
+                padding: 16px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                cursor: pointer;
+                animation: slideInRight 0.3s ease-out;
+                min-width: 350px;
+            `;
+            
+            const iconColor = notif.tipo === 'publicacion_aprobada' ? '#10B981' : '#EF4444';
+            const icon = notif.tipo === 'publicacion_aprobada' ? 
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' :
+                '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+            
+            toast.innerHTML = `
+                <div style="display: flex; gap: 12px; align-items: start;">
+                    <div style="color: ${iconColor}; flex-shrink: 0;">
+                        ${icon}
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; font-size: 14px; color: #111827; margin-bottom: 4px;">
+                            ${notif.titulo}
+                        </div>
+                        <div style="font-size: 13px; color: #6B7280;">
+                            ${notif.mensaje}
+                        </div>
+                    </div>
+                    <button onclick="cerrarToast(this)" style="background: none; border: none; color: #9CA3AF; cursor: pointer; padding: 0; font-size: 20px; line-height: 1;">×</button>
+                </div>
+            `;
+            
+            // Click para ir al enlace
+            toast.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'BUTTON') {
+                    if (notif.enlace) {
+                        window.location.href = '<?php echo BASE_URL; ?>' + notif.enlace;
+                    }
+                }
+            });
+            
+            container.appendChild(toast);
+            
+            // Auto-cerrar después de 8 segundos
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 8000);
+        }
+        
+        // Función para cerrar toast
+        window.cerrarToast = function(btn) {
+            const toast = btn.closest('.notification-toast');
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        };
+        
+        // Agregar animaciones CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+            
+            .notification-toast:hover {
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            }
+            
+            @media (max-width: 640px) {
+                #toast-container {
+                    right: 10px;
+                    left: 10px;
+                    max-width: none;
+                }
+                
+                .notification-toast {
+                    min-width: auto !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Verificar nuevas notificaciones cada 15 segundos (menos intrusivo)
+        setInterval(verificarNuevasNotificaciones, 15000);
+        
+        // Verificar al cargar la página (solo si no estamos en formulario de publicar)
+        setTimeout(function() {
+            const isPublishPage = window.location.pathname.includes('/publicar');
+            if (!isPublishPage) {
+                verificarNuevasNotificaciones();
+            }
+        }, 3000);
+        <?php endif; ?>
+    </script>
 </head>
 <body>
     <!-- Skip to content link (accesibilidad) -->
@@ -180,10 +710,7 @@
             <!-- Logo -->
             <div class="header-logo">
                 <a href="<?php echo BASE_URL; ?>/" class="logo-link">
-                    <span class="logo-icon"><?php echo icon('car', 32); ?></span>
-                    <span class="logo-text">
-                        <span class="logo-primary">Chile</span><span class="logo-accent">Chocados</span>
-                    </span>
+                    <img src="<?php echo BASE_URL; ?>/assets/logo-chch.svg" alt="ChileChocados" class="logo-image" style="height: 40px; width: auto;">
                 </a>
                 <?php if (isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin'): ?>
                     <span class="header-role-indicator">
@@ -220,18 +747,22 @@
                     <!-- Usuario autenticado -->
                     
                     <!-- Notificaciones -->
-                    <button class="header-action-btn" aria-label="Notificaciones">
+                    <?php 
+                    $notificationCount = getNotificationCount();
+                    $messageCount = getMessageCount();
+                    ?>
+                    <button class="header-action-btn" aria-label="Notificaciones" id="btn-notificaciones" onclick="toggleNotificaciones()">
                         <?php echo icon('bell', 22); ?>
-                        <?php if (isset($notificationCount) && $notificationCount > 0): ?>
-                            <span class="notification-badge"><?php echo $notificationCount; ?></span>
+                        <?php if ($notificationCount > 0): ?>
+                            <span class="notification-badge" id="notification-count"><?php echo $notificationCount; ?></span>
                         <?php endif; ?>
                     </button>
                     
                     <!-- Mensajes -->
                     <a href="<?php echo BASE_URL; ?>/mensajes" class="header-action-btn" aria-label="Mensajes">
                         <?php echo icon('message', 22); ?>
-                        <?php if (isset($messageCount) && $messageCount > 0): ?>
-                            <span class="notification-badge"><?php echo $messageCount; ?></span>
+                        <?php if ($messageCount > 0): ?>
+                            <span class="notification-badge" id="message-count"><?php echo $messageCount; ?></span>
                         <?php endif; ?>
                     </a>
                     
@@ -394,6 +925,17 @@
         
         <!-- Navegación -->
         <?php require_once APP_PATH . '/views/layouts/nav.php'; ?>
+        
+        <!-- Dropdown de Notificaciones -->
+        <div id="notificaciones-dropdown" class="notificaciones-dropdown" style="display: none;">
+            <div class="notificaciones-header">
+                <h3>Notificaciones</h3>
+                <button onclick="marcarTodasLeidas()" class="btn-text">Marcar todas como leídas</button>
+            </div>
+            <div class="notificaciones-body" id="notificaciones-lista">
+                <div class="notificaciones-loading">Cargando...</div>
+            </div>
+        </div>
     </header>
     <?php endif; ?>
 

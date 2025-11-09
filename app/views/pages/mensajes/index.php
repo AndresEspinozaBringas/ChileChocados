@@ -182,10 +182,35 @@ require_once __DIR__ . '/../../layouts/nav.php';
     display: flex;
     margin-bottom: 16px;
     gap: 12px;
+    align-items: flex-end;
 }
 
 .mensaje.enviado {
     flex-direction: row-reverse;
+}
+
+.mensaje-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--cc-border-default, #E5E5E5);
+}
+
+.mensaje-avatar-placeholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cc-primary-pale, #FFF5F4);
+    color: var(--cc-primary, #E6332A);
+    font-weight: 700;
+    font-size: 14px;
+    border: 2px solid var(--cc-border-default, #E5E5E5);
 }
 
 .mensaje-contenido {
@@ -320,6 +345,221 @@ require_once __DIR__ . '/../../layouts/nav.php';
         width: 100%;
     }
 }
+
+/* ============================================================================
+ * DARK MODE
+ * ============================================================================ */
+
+:root[data-theme="dark"] main.container {
+    background: #111827 !important;
+}
+
+/* Breadcrumbs */
+:root[data-theme="dark"] .breadcrumbs a {
+    color: #9CA3AF !important;
+}
+
+/* Títulos */
+:root[data-theme="dark"] .h1,
+:root[data-theme="dark"] h1.h1 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .h3,
+:root[data-theme="dark"] h3.h3 {
+    color: #F3F4F6 !important;
+}
+
+/* Panel de conversaciones */
+:root[data-theme="dark"] .conversaciones-panel {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .conversaciones-header {
+    background: #374151 !important;
+    border-bottom-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .conversacion-item {
+    color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .conversacion-item:hover {
+    background: #374151 !important;
+}
+
+:root[data-theme="dark"] .conversacion-item.activa {
+    background: rgba(230, 51, 42, 0.15) !important;
+    border-left-color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .conversacion-foto {
+    background: #374151 !important;
+}
+
+:root[data-theme="dark"] .conversacion-titulo {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .conversacion-usuario {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .conversacion-ultimo-mensaje {
+    color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .conversacion-fecha {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .badge-no-leidos {
+    background: var(--cc-primary) !important;
+    color: white !important;
+}
+
+/* Panel de chat */
+:root[data-theme="dark"] .chat-panel {
+    background: #1F2937 !important;
+    border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .chat-header {
+    background: #374151 !important;
+    border-bottom-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .chat-header-titulo h3 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .chat-header-titulo p {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .chat-mensajes {
+    background: #111827 !important;
+}
+
+/* Mensajes */
+:root[data-theme="dark"] .mensaje-avatar {
+    border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .mensaje-avatar-placeholder {
+    background: rgba(230, 51, 42, 0.15) !important;
+    border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .mensaje-contenido {
+    background: #374151 !important;
+    border-color: #4B5563 !important;
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .mensaje.enviado .mensaje-contenido {
+    background: var(--cc-primary) !important;
+    color: white !important;
+    border-color: var(--cc-primary) !important;
+}
+
+:root[data-theme="dark"] .mensaje-texto {
+    color: inherit !important;
+}
+
+:root[data-theme="dark"] .mensaje-fecha {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .mensaje.enviado .mensaje-fecha {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Input de chat */
+:root[data-theme="dark"] .chat-input-container {
+    background: #1F2937 !important;
+    border-top-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .chat-input {
+    background: #374151 !important;
+    border-color: #4B5563 !important;
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .chat-input::placeholder {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .chat-input:focus {
+    border-color: var(--cc-primary) !important;
+    box-shadow: 0 0 0 3px rgba(240, 80, 69, 0.2) !important;
+}
+
+:root[data-theme="dark"] .btn-enviar {
+    background: var(--cc-primary) !important;
+    color: white !important;
+}
+
+:root[data-theme="dark"] .btn-enviar:hover {
+    background: #c72a22 !important;
+}
+
+:root[data-theme="dark"] .btn-enviar:disabled {
+    background: #4B5563 !important;
+    color: #9CA3AF !important;
+}
+
+/* Mensaje vacío */
+:root[data-theme="dark"] .mensaje-vacio {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .mensaje-vacio h3 {
+    color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .mensaje-vacio p {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .mensaje-vacio svg {
+    color: #6B7280 !important;
+}
+
+/* Divs con estilos inline */
+:root[data-theme="dark"] div[style*="padding: 32px 16px"] {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] div[style*="padding: 32px 16px"] p {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] div[style*="background: var(--cc-primary-pale"] {
+    background: rgba(230, 51, 42, 0.15) !important;
+}
+
+/* Iconos */
+:root[data-theme="dark"] .icon-usuario {
+    color: var(--cc-primary) !important;
+}
+
+/* Separadores en conversación */
+:root[data-theme="dark"] .conversacion-usuario span[style*="color: #ccc"] {
+    color: #6B7280 !important;
+}
+
+/* Botón Comprar */
+:root[data-theme="dark"] .btn-comprar {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+:root[data-theme="dark"] .btn-comprar:hover {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
 </style>
 
 <main class="container" style="max-width: 1400px; padding: 24px;">
@@ -428,6 +668,50 @@ require_once __DIR__ . '/../../layouts/nav.php';
                             <h3><?php echo htmlspecialchars($conversacionActiva['publicacion_titulo']); ?></h3>
                             <p>Conversación con <?php echo htmlspecialchars($conversacionActiva['otro_usuario_nombre']); ?></p>
                         </div>
+                        
+                        <?php 
+                        // Mostrar botón "Comprar" solo si:
+                        // 1. NO eres el dueño de la publicación
+                        // 2. NO eres admin
+                        
+                        // Obtener el dueño de la publicación
+                        $publicacionModel = new \App\Models\Publicacion();
+                        $publicacion = $publicacionModel->find($conversacionActiva['publicacion_id']);
+                        $esDuenoPublicacion = $publicacion && $publicacion->usuario_id == $_SESSION['user_id'];
+                        $esAdmin = isset($_SESSION['user_rol']) && $_SESSION['user_rol'] === 'admin';
+                        
+                        if (!$esDuenoPublicacion && !$esAdmin): 
+                        ?>
+                            <button 
+                                onclick="enviarSolicitudCompra(<?php echo $conversacionActiva['publicacion_id']; ?>, <?php echo $conversacionActiva['otro_usuario_id']; ?>)"
+                                class="btn-comprar"
+                                style="
+                                    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+                                    color: white;
+                                    border: none;
+                                    padding: 10px 20px;
+                                    border-radius: 8px;
+                                    font-weight: 600;
+                                    font-size: 14px;
+                                    cursor: pointer;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    transition: all 0.2s;
+                                    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+                                    white-space: nowrap;
+                                "
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(16, 185, 129, 0.3)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(16, 185, 129, 0.2)'"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                Comprar
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -443,7 +727,33 @@ require_once __DIR__ . '/../../layouts/nav.php';
                         </div>
                     <?php else: ?>
                         <?php foreach ($mensajes as $msg): ?>
-                            <div class="mensaje <?php echo ($msg->remitente_id == $userId) ? 'enviado' : 'recibido'; ?>">
+                            <?php 
+                            $esEnviado = ($msg->remitente_id == $userId);
+                            // Determinar avatar a mostrar
+                            if ($esEnviado) {
+                                // Mensaje enviado - mostrar avatar del usuario actual
+                                $avatarUrl = !empty($_SESSION['user_avatar']) 
+                                    ? BASE_URL . '/uploads/avatars/' . $_SESSION['user_avatar']
+                                    : null;
+                                $avatarInicial = strtoupper(substr($_SESSION['user_nombre'], 0, 1));
+                            } else {
+                                // Mensaje recibido - mostrar avatar del otro usuario
+                                $avatarUrl = !empty($conversacionActiva['otro_usuario_avatar']) 
+                                    ? BASE_URL . '/uploads/avatars/' . $conversacionActiva['otro_usuario_avatar']
+                                    : null;
+                                $avatarInicial = strtoupper(substr($conversacionActiva['otro_usuario_nombre'], 0, 1));
+                            }
+                            ?>
+                            <div class="mensaje <?php echo $esEnviado ? 'enviado' : 'recibido'; ?>">
+                                <?php if ($avatarUrl): ?>
+                                    <img src="<?php echo $avatarUrl; ?>" 
+                                         alt="Avatar" 
+                                         class="mensaje-avatar">
+                                <?php else: ?>
+                                    <div class="mensaje-avatar-placeholder">
+                                        <?php echo $avatarInicial; ?>
+                                    </div>
+                                <?php endif; ?>
                                 <div class="mensaje-contenido">
                                     <p class="mensaje-texto"><?php echo nl2br(htmlspecialchars($msg->mensaje)); ?></p>
                                     <div class="mensaje-fecha"><?php echo $msg->fecha_formateada; ?></div>
@@ -487,6 +797,163 @@ require_once __DIR__ . '/../../layouts/nav.php';
     </div>
 
 </main>
+
+<!-- Modal: Solicitud de Compra -->
+<div id="modalSolicitudCompra" class="admin-modal" style="display: none;">
+    <div class="admin-modal-content admin-modal-small">
+        <div class="admin-modal-header">
+            <h2 class="h2" style="margin: 0;">Solicitud de Compra</h2>
+        </div>
+        <div class="admin-modal-body">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 16px; background: linear-gradient(135deg, #10B981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </div>
+            </div>
+            <p class="meta" style="margin-bottom: 16px; line-height: 1.6; text-align: center; font-size: 15px;">
+                ¿Deseas enviar una solicitud de compra al vendedor?
+            </p>
+            <p class="meta" style="margin-bottom: 24px; color: #10B981; text-align: center; font-size: 14px;">
+                Se le notificará de tu interés en adquirir este vehículo.
+            </p>
+            
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button type="button" onclick="cerrarModalCompra()" class="btn outline" style="min-width: 120px;">
+                    Cancelar
+                </button>
+                <button 
+                    type="button" 
+                    onclick="confirmarSolicitudCompra(this.closest('.admin-modal').dataset.publicacionId, this.closest('.admin-modal').dataset.vendedorId)" 
+                    class="btn" 
+                    style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white; border: none; min-width: 120px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);"
+                >
+                    Sí, enviar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modal overlay */
+.admin-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Modal content container */
+.admin-modal-content {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: adminModalFadeIn 0.3s ease-out;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-modal-small {
+    max-width: 500px;
+    width: 95%;
+}
+
+/* Modal header */
+.admin-modal-header {
+    padding: 24px 32px;
+    border-bottom: 2px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Modal body */
+.admin-modal-body {
+    padding: 32px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+@keyframes adminModalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Dark mode para modal */
+:root[data-theme="dark"] .admin-modal {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+:root[data-theme="dark"] .admin-modal-content {
+    background-color: #1F2937;
+    border-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-header {
+    border-bottom-color: #374151;
+}
+
+:root[data-theme="dark"] .admin-modal-header h2 {
+    color: #F3F4F6;
+}
+
+:root[data-theme="dark"] .admin-modal-body {
+    color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .admin-modal-body p {
+    color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .admin-modal-body p[style*="color: #10B981"] {
+    color: #6EE7B7 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body div[style*="background: linear-gradient(135deg, #10B981"] {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+}
+
+/* Cerrar modal al hacer click fuera */
+</style>
+
+<script>
+// Cerrar modal al hacer click fuera
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('modalSolicitudCompra');
+    if (modal && e.target === modal) {
+        cerrarModalCompra();
+    }
+});
+
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        cerrarModalCompra();
+    }
+});
+</script>
 
 <!-- JavaScript para funcionalidad de mensajería -->
 <script>
@@ -533,8 +1000,17 @@ function enviarMensaje(event) {
         if (data.success) {
             // Agregar mensaje al chat
             const chatMensajes = document.getElementById('chatMensajes');
+            
+            // Avatar del usuario actual
+            const avatarHtml = <?php if (!empty($_SESSION['user_avatar'])): ?>
+                `<img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo $_SESSION['user_avatar']; ?>" alt="Avatar" class="mensaje-avatar">`;
+            <?php else: ?>
+                `<div class="mensaje-avatar-placeholder"><?php echo strtoupper(substr($_SESSION['user_nombre'], 0, 1)); ?></div>`;
+            <?php endif; ?>
+            
             const mensajeHtml = `
                 <div class="mensaje enviado">
+                    ${avatarHtml}
                     <div class="mensaje-contenido">
                         <p class="mensaje-texto">${escapeHtml(mensaje).replace(/\n/g, '<br>')}</p>
                         <div class="mensaje-fecha">${data.mensaje.fecha_formateada}</div>
@@ -551,9 +1027,19 @@ function enviarMensaje(event) {
             chatMensajes.insertAdjacentHTML('beforeend', mensajeHtml);
             chatMensajes.scrollTop = chatMensajes.scrollHeight;
             
+            // IMPORTANTE: Actualizar ultimoMensajeId para evitar duplicados en el polling
+            if (data.mensaje.id && typeof ultimoMensajeId !== 'undefined') {
+                ultimoMensajeId = data.mensaje.id;
+            }
+            
             // Limpiar input
             inputMensaje.value = '';
             inputMensaje.style.height = 'auto';
+            
+            // Disparar evento personalizado para que otras partes de la app puedan reaccionar
+            window.dispatchEvent(new CustomEvent('mensajeEnviado', { 
+                detail: { mensaje: data.mensaje } 
+            }));
         } else {
             alert('Error al enviar el mensaje: ' + (data.error || 'Error desconocido'));
         }
@@ -613,8 +1099,27 @@ function verificarNuevosMensajes() {
                 
                 // Agregar cada mensaje nuevo
                 data.mensajes.forEach(msg => {
+                    // Determinar avatar según quién envió el mensaje
+                    let avatarHtml;
+                    if (msg.es_propio) {
+                        // Mensaje propio
+                        avatarHtml = <?php if (!empty($_SESSION['user_avatar'])): ?>
+                            `<img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo $_SESSION['user_avatar']; ?>" alt="Avatar" class="mensaje-avatar">`;
+                        <?php else: ?>
+                            `<div class="mensaje-avatar-placeholder"><?php echo strtoupper(substr($_SESSION['user_nombre'], 0, 1)); ?></div>`;
+                        <?php endif; ?>
+                    } else {
+                        // Mensaje del otro usuario
+                        avatarHtml = <?php if (!empty($conversacionActiva['otro_usuario_avatar'])): ?>
+                            `<img src="<?php echo BASE_URL; ?>/uploads/avatars/<?php echo $conversacionActiva['otro_usuario_avatar']; ?>" alt="Avatar" class="mensaje-avatar">`;
+                        <?php else: ?>
+                            `<div class="mensaje-avatar-placeholder"><?php echo strtoupper(substr($conversacionActiva['otro_usuario_nombre'], 0, 1)); ?></div>`;
+                        <?php endif; ?>
+                    }
+                    
                     const mensajeHtml = `
                         <div class="mensaje ${msg.es_propio ? 'enviado' : 'recibido'}">
+                            ${avatarHtml}
                             <div class="mensaje-contenido">
                                 <p class="mensaje-texto">${escapeHtml(msg.mensaje).replace(/\n/g, '<br>')}</p>
                                 <div class="mensaje-fecha">${msg.fecha_formateada}</div>
@@ -641,9 +1146,16 @@ function verificarNuevosMensajes() {
                 
                 // Mostrar notificación si el mensaje es de otro usuario
                 const ultimoMensaje = data.mensajes[data.mensajes.length - 1];
-                if (!ultimoMensaje.es_propio && document.hidden) {
-                    // Actualizar título de la página para notificar
-                    document.title = '(1) Nuevo mensaje - ChileChocados';
+                if (!ultimoMensaje.es_propio) {
+                    if (document.hidden) {
+                        // Actualizar título de la página para notificar
+                        document.title = '(1) Nuevo mensaje - ChileChocados';
+                    }
+                    
+                    // Disparar evento de mensaje recibido
+                    window.dispatchEvent(new CustomEvent('mensajeRecibido', { 
+                        detail: { mensaje: ultimoMensaje } 
+                    }));
                 }
             }
         })
@@ -664,9 +1176,154 @@ window.addEventListener('beforeunload', function() {
 document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
         document.title = 'Mensajes - ChileChocados';
+        // Actualizar contador cuando el usuario vuelve a la página
+        if (typeof window.actualizarContadorMensajes === 'function') {
+            window.actualizarContadorMensajes();
+        }
     }
 });
+
+// Actualizar contador cuando se carga la página de mensajes
+if (typeof window.actualizarContadorMensajes === 'function') {
+    window.actualizarContadorMensajes();
+}
 <?php endif; ?>
+
+// ============================================================================
+// FUNCIÓN: Enviar Solicitud de Compra
+// ============================================================================
+
+async function enviarSolicitudCompra(publicacionId, vendedorId) {
+    // Mostrar modal de confirmación
+    mostrarModalCompra(publicacionId, vendedorId);
+}
+
+async function confirmarSolicitudCompra(publicacionId, vendedorId) {
+    const btn = document.querySelector('.btn-comprar');
+    
+    // Cerrar modal
+    cerrarModalCompra();
+    
+    // Deshabilitar botón
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Enviando...';
+    
+    try {
+        const response = await fetch('<?php echo BASE_URL; ?>/api/solicitud-compra', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                publicacion_id: publicacionId,
+                vendedor_id: vendedorId,
+                csrf_token: '<?php echo generateCsrfToken(); ?>'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Mostrar mensaje de éxito
+            btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> ¡Enviado!';
+            btn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+            
+            // Mostrar notificación
+            mostrarNotificacion('Solicitud enviada', 'El vendedor ha sido notificado de tu interés en comprar.', 'success');
+            
+            // Revertir botón después de 3 segundos
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> Comprar';
+            }, 3000);
+        } else {
+            throw new Error(data.message || 'Error al enviar solicitud');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> Comprar';
+        mostrarNotificacion('Error', error.message || 'No se pudo enviar la solicitud. Intenta nuevamente.', 'error');
+    }
+}
+
+function mostrarModalCompra(publicacionId, vendedorId) {
+    const modal = document.getElementById('modalSolicitudCompra');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.dataset.publicacionId = publicacionId;
+        modal.dataset.vendedorId = vendedorId;
+    }
+}
+
+function cerrarModalCompra() {
+    const modal = document.getElementById('modalSolicitudCompra');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function mostrarNotificacion(titulo, mensaje, tipo = 'info') {
+    // Crear notificación toast
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 10000;
+        background: ${tipo === 'success' ? '#10B981' : tipo === 'error' ? '#EF4444' : '#3B82F6'};
+        color: white;
+        padding: 16px 20px;
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        min-width: 300px;
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    toast.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 4px;">${titulo}</div>
+        <div style="font-size: 14px; opacity: 0.9;">${mensaje}</div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Remover después de 5 segundos
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+    }, 5000);
+}
+
+// Agregar animaciones
+if (!document.getElementById('toast-animations')) {
+    const style = document.createElement('style');
+    style.id = 'toast-animations';
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 </script>
 
 <?php

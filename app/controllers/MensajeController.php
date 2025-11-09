@@ -77,7 +77,7 @@ class MensajeController
                         'publicacion_foto' => $publicacion->foto_principal,
                         'otro_usuario_id' => $otroUsuarioId,
                         'otro_usuario_nombre' => $otroUsuario->nombre . ' ' . $otroUsuario->apellido,
-                        'otro_usuario_foto' => $otroUsuario->foto_perfil,
+                        'otro_usuario_avatar' => $otroUsuario->avatar,
                         'otro_usuario_tipo' => $otroUsuario->rol,
                         'ultimo_mensaje' => null,
                         'ultimo_mensaje_fecha' => null,

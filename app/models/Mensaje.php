@@ -72,7 +72,7 @@ class Mensaje extends Model
                     conv.foto_principal,
                     conv.otro_usuario_id,
                     conv.otro_usuario_nombre,
-                    conv.otro_usuario_foto,
+                    conv.otro_usuario_avatar,
                     conv.otro_usuario_tipo,
                     conv.ultimo_mensaje_fecha,
                     (SELECT mensaje FROM mensajes 
@@ -95,7 +95,7 @@ class Mensaje extends Model
                            CONCAT(COALESCE(ud.nombre, ''), ' ', COALESCE(ud.apellido, '')),
                            CONCAT(COALESCE(ur.nombre, ''), ' ', COALESCE(ur.apellido, ''))
                         ) as otro_usuario_nombre,
-                        IF(m.remitente_id = ?, ud.foto_perfil, ur.foto_perfil) as otro_usuario_foto,
+                        IF(m.remitente_id = ?, ud.avatar, ur.avatar) as otro_usuario_avatar,
                         IF(m.remitente_id = ?, ud.rol, ur.rol) as otro_usuario_tipo,
                         MAX(m.fecha_envio) as ultimo_mensaje_fecha
                     FROM {$this->table} m
@@ -103,7 +103,7 @@ class Mensaje extends Model
                     INNER JOIN usuarios ur ON m.remitente_id = ur.id
                     INNER JOIN usuarios ud ON m.destinatario_id = ud.id
                     WHERE m.remitente_id = ? OR m.destinatario_id = ?
-                    GROUP BY p.id, otro_usuario_id, otro_usuario_nombre, otro_usuario_foto, otro_usuario_tipo
+                    GROUP BY p.id, otro_usuario_id, otro_usuario_nombre, otro_usuario_avatar, otro_usuario_tipo
                 ) as conv
                 ORDER BY conv.ultimo_mensaje_fecha DESC";
         
@@ -152,6 +152,21 @@ class Mensaje extends Model
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$usuarioId]);
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        
+        return $result ? $result->total : 0;
+    }
+    
+    /**
+     * Contar TODOS los mensajes no leídos del sistema (para admin)
+     */
+    public function contarTodosNoLeidos()
+    {
+        $sql = "SELECT COUNT(*) as total 
+                FROM {$this->table} 
+                WHERE leido = 0";
+        
+        $stmt = $this->db->query($sql);
         $result = $stmt->fetch(PDO::FETCH_OBJ);
         
         return $result ? $result->total : 0;

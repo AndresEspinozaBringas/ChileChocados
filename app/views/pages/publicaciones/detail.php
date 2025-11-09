@@ -334,20 +334,85 @@ function mostrarNotificacion(mensaje, tipo) {
             <?php echo e($publicacion->vendedor_apellido); ?>
           <?php endif; ?>
         </div>
-        <div class="meta">
-          <?php echo icon('mail', 16); ?>
-          <?php echo e($publicacion->vendedor_email ?? 'Email no disponible'); ?>
+        <div class="meta" style="margin-top: 8px;">
+          <?php echo icon('user', 16); ?>
+          Miembro desde <?php echo date('Y', strtotime($publicacion->fecha_creacion ?? 'now')); ?>
         </div>
-        <?php if (!empty($publicacion->vendedor_telefono)): ?>
-          <div class="meta" style="margin-top: 4px;">
-            <?php echo icon('phone', 16); ?>
-            <?php echo e($publicacion->vendedor_telefono); ?>
-          </div>
-        <?php endif; ?>
       </div>
     </div>
   </div>
 
+
+  <!-- Más publicaciones del vendedor -->
+  <?php if (!empty($publicaciones_vendedor)): ?>
+  <section style="margin-top: 40px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <div>
+        <div class="h2">Más publicaciones de <?php echo e($publicacion->vendedor_nombre ?? 'este vendedor'); ?></div>
+        <p class="meta">Otros vehículos publicados por el mismo vendedor</p>
+      </div>
+    </div>
+    
+    <div class="grid cols-4">
+      <?php foreach ($publicaciones_vendedor as $pub): ?>
+        <a class="card pub-card" href="<?php echo BASE_URL; ?>/publicacion/<?php echo $pub->id; ?>" style="text-decoration: none; color: inherit;">
+          <!-- Imagen del vehículo -->
+          <div class="pub-img" style="width: 100%; height: 200px; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; position: relative;">
+            <?php if (!empty($pub->foto_principal)): ?>
+              <img src="<?php echo BASE_URL; ?>/uploads/publicaciones/<?php echo htmlspecialchars($pub->foto_principal); ?>" 
+                   alt="<?php echo htmlspecialchars($pub->titulo); ?>"
+                   style="width: 100%; height: 100%; object-fit: cover; <?php echo (isset($pub->estado) && $pub->estado === 'vendida') ? 'opacity: 0.6;' : ''; ?>">
+            <?php else: ?>
+              <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </div>
+            <?php endif; ?>
+            
+            <!-- Badge de vendido -->
+            <?php if (isset($pub->estado) && $pub->estado === 'vendida'): ?>
+            <span style="position: absolute; top: 12px; left: 12px; background: #10B981; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); text-transform: uppercase; letter-spacing: 0.5px; z-index: 10;">
+              ✓ VENDIDO
+            </span>
+            <?php endif; ?>
+          </div>
+          
+          <!-- Información -->
+          <div style="padding: 16px 0;">
+            <div class="h3" style="margin-bottom: 8px;"><?php echo htmlspecialchars($pub->titulo); ?></div>
+            
+            <div class="row meta" style="gap: 8px; margin-bottom: 8px;">
+              <span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <?php echo htmlspecialchars($pub->region_nombre ?? 'Chile'); ?>
+              </span>
+              <?php if (!empty($pub->categoria_nombre)): ?>
+              <span>•</span>
+              <span><?php echo htmlspecialchars($pub->categoria_nombre); ?></span>
+              <?php endif; ?>
+            </div>
+            
+            <span class="h2" style="color: var(--primary);">
+              <?php 
+              if ($pub->tipo_venta === 'completo' && !empty($pub->precio)) {
+                echo formatPrice($pub->precio);
+              } else {
+                echo 'A convenir';
+              }
+              ?>
+            </span>
+          </div>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </section>
+  <?php endif; ?>
 
   <!-- Publicaciones similares -->
   <?php if (!empty($similares)): ?>

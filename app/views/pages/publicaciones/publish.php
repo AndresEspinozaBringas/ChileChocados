@@ -25,163 +25,13 @@ if (!defined('PRECIO_DESTACADO_30_DIAS')) {
   define('PRECIO_DESTACADO_30_DIAS', 25000);
 }
 
+// Cargar CSS específico de esta página
+$additionalCSS = ['/assets/css/publicar.css?v=' . time()];
+
 require_once APP_PATH . '/views/layouts/header.php';
 ?>
 
-<style>
-/* Estilos mejorados para el formulario de publicación */
-.container form input[type="text"],
-.container form input[type="number"],
-.container form select,
-.container form textarea {
-  padding: 12px 16px !important;
-  font-size: 15px !important;
-  line-height: 1.5 !important;
-  border: 1px solid #ddd !important;
-  border-radius: 8px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-}
 
-.container form input::placeholder,
-.container form textarea::placeholder {
-  color: #999 !important;
-  font-size: 14px !important;
-}
-
-.container form label {
-  display: block !important;
-  margin-bottom: 8px !important;
-  font-weight: 500 !important;
-  font-size: 14px !important;
-  color: #333 !important;
-}
-
-.container form select {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  background-color: #fff !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 12px !important;
-  padding-right: 36px !important;
-}
-
-.container form textarea {
-  resize: vertical !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-}
-
-/* Estilos para radio buttons en horizontal */
-.kit {
-  display: flex !important;
-  gap: 16px !important;
-  flex-wrap: wrap !important;
-}
-
-.kit label.tag {
-  flex: 0 0 auto !important;
-  padding: 12px 20px !important;
-  border: 2px solid #ddd !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-  transition: all 0.2s !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-}
-
-.kit label.tag:hover {
-  border-color: #E6332A !important;
-  background: #fff5f5 !important;
-}
-
-.kit label.tag input[type="radio"] {
-  margin: 0 !important;
-  width: auto !important;
-}
-
-/* Estilos para el paso 4 - Fotos */
-.gallery {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 16px !important;
-  margin-top: 16px !important;
-}
-
-.gallery label {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  padding: 24px 16px !important;
-  border: 2px dashed #ddd !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-  transition: all 0.2s !important;
-  min-height: 120px !important;
-  justify-content: center !important;
-}
-
-.gallery label:hover {
-  border-color: #E6332A !important;
-  background: #fff5f5 !important;
-}
-
-.gallery input[type="file"] {
-  display: none !important;
-}
-
-.gallery input[type="radio"] {
-  margin-top: 8px !important;
-  width: auto !important;
-}
-
-/* Responsive para móvil */
-@media (max-width: 768px) {
-  .gallery {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 12px !important;
-  }
-  
-  .gallery label {
-    padding: 16px 12px !important;
-    min-height: 100px !important;
-  }
-  
-  .gallery label span {
-    font-size: 12px !important;
-  }
-  
-  .gallery label button {
-    font-size: 12px !important;
-    padding: 6px 12px !important;
-  }
-  
-  /* Ajustar grid de datos del vehículo */
-  .container form > .card > div[style*="grid-template-columns"] {
-    grid-template-columns: 1fr !important;
-  }
-  
-  /* Ajustar kit de radio buttons */
-  .kit {
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-  
-  .kit label.tag {
-    width: 100% !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .gallery {
-    grid-template-columns: 1fr !important;
-  }
-}
-</style>
 
 <main class="container">
 
@@ -198,9 +48,29 @@ require_once APP_PATH . '/views/layouts/header.php';
   <form id="form-publicar" method="POST" action="<?php echo $action_url; ?>" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
     
-    <div class="card">
-      <div class="h3">Paso 1: Tipificación</div>
-      <div class="kit">
+    <!-- Wizard con Acordeón -->
+    <div class="wizard-container">
+      
+      <!-- Paso 1: Tipificación -->
+      <div class="wizard-step" id="step1" data-step="1" data-status="active">
+        <div class="wizard-step-header" onclick="toggleStep(1)" role="button" tabindex="0" aria-expanded="true">
+          <div class="wizard-step-number">
+            <span class="step-number">1</span>
+            <span class="step-check-icon" style="display: none;">✓</span>
+          </div>
+          <div class="wizard-step-info">
+            <h3 class="wizard-step-title">Tipificación</h3>
+            <p class="wizard-step-description">Selecciona el tipo de vehículo</p>
+          </div>
+          <div class="wizard-step-chevron">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="wizard-step-content" style="display: block;">
+          <div class="wizard-step-body">
+            <div class="kit">
         <label class="tag" id="label-chocado">
           <input type="radio" name="tipificacion" value="chocado" id="tip-chocado" 
             <?php echo ($modoEdicion && $publicacion->tipificacion === 'chocado') ? 'checked' : (!$modoEdicion ? 'required' : ''); ?>> Chocado
@@ -210,15 +80,34 @@ require_once APP_PATH . '/views/layouts/header.php';
             <?php echo ($modoEdicion && $publicacion->tipificacion === 'siniestrado') ? 'checked' : ''; ?>> Siniestrado
         </label>
       </div>
-      <p class="meta" style="margin-top: 8px; font-size: 13px;">
-        <strong>Chocado:</strong> Venta directa con precio definido · 
-        <strong>Siniestrado:</strong> Precio a convenir
-      </p>
-    </div>
+            <p class="meta" style="margin-top: 8px; font-size: 13px;">
+              <strong>Chocado:</strong> Venta directa con precio definido · 
+              <strong>Siniestrado:</strong> Precio a convenir
+            </p>
+          </div>
+        </div>
+      </div>
 
-    <div class="card" id="step2">
-      <div class="h3">Paso 2: Tipo de venta</div>
-      <div class="kit">
+      <!-- Paso 2: Tipo de venta -->
+      <div class="wizard-step" id="step2" data-step="2" data-status="pending">
+        <div class="wizard-step-header" onclick="toggleStep(2)" role="button" tabindex="0" aria-expanded="false">
+          <div class="wizard-step-number">
+            <span class="step-number">2</span>
+            <span class="step-check-icon" style="display: none;">✓</span>
+          </div>
+          <div class="wizard-step-info">
+            <h3 class="wizard-step-title">Tipo de venta</h3>
+            <p class="wizard-step-description">Define cómo venderás el vehículo</p>
+          </div>
+          <div class="wizard-step-chevron">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="wizard-step-content" style="display: none;">
+          <div class="wizard-step-body">
+            <div class="kit">
         <label class="tag" id="label-completo">
           <input type="radio" name="tipo_venta" value="completo" id="venta-completo" 
             <?php echo ($modoEdicion && $publicacion->tipo_venta === 'completo') ? 'checked' : (!$modoEdicion ? 'required' : ''); ?>> Venta Directa (con precio)
@@ -226,22 +115,41 @@ require_once APP_PATH . '/views/layouts/header.php';
         <label class="tag" id="label-desarme">
           <input type="radio" name="tipo_venta" value="desarme" id="venta-desarme"
             <?php echo ($modoEdicion && $publicacion->tipo_venta === 'desarme') ? 'checked' : ''; ?>> Precio a convenir
-        </label>
+          </label>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="h3">Paso 3: Datos del vehículo</div>
-      <!-- Fila 1: Marca, Modelo, Año -->
+      <!-- Paso 3: Datos del vehículo -->
+      <div class="wizard-step" id="step3" data-step="3" data-status="pending">
+        <div class="wizard-step-header" onclick="toggleStep(3)" role="button" tabindex="0" aria-expanded="false">
+          <div class="wizard-step-number">
+            <span class="step-number">3</span>
+            <span class="step-check-icon" style="display: none;">✓</span>
+          </div>
+          <div class="wizard-step-info">
+            <h3 class="wizard-step-title">Datos del vehículo</h3>
+            <p class="wizard-step-description">Información básica del vehículo</p>
+          </div>
+          <div class="wizard-step-chevron">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="wizard-step-content" style="display: none;">
+          <div class="wizard-step-body">
+            <!-- Fila 1: Marca, Modelo, Año -->
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
         <label>Marca
-          <input type="text" name="marca" placeholder="Ej: Toyota" 
+          <input type="text" id="marca" name="marca" placeholder="Ej: Toyota" 
             value="<?php echo $modoEdicion ? htmlspecialchars($publicacion->marca ?? '') : ''; ?>" 
             <?php echo !$modoEdicion ? 'required' : ''; ?>>
         </label>
         
         <label>Modelo
-          <input type="text" name="modelo" placeholder="Ej: Corolla" 
+          <input type="text" id="modelo" name="modelo" placeholder="Ej: Corolla" 
             value="<?php echo $modoEdicion ? htmlspecialchars($publicacion->modelo ?? '') : ''; ?>" 
             <?php echo !$modoEdicion ? 'required' : ''; ?>>
         </label>
@@ -309,72 +217,179 @@ require_once APP_PATH . '/views/layouts/header.php';
         <div></div>
       </div>
       
-      <!-- Fila 4: Descripción (ancho completo) -->
-      <div style="margin-bottom: 16px;">
-        <label style="display: block;">Descripción detallada
-          <textarea name="descripcion" rows="6" placeholder="Describe los daños principales, estado actual del vehículo, piezas disponibles, historial, etc. Sé lo más detallado posible." <?php echo !$modoEdicion ? 'required' : ''; ?> style="min-height: 120px; width: 100%; margin-top: 8px;"><?php echo $modoEdicion ? htmlspecialchars($publicacion->descripcion ?? '') : ''; ?></textarea>
-        </label>
+            <!-- Fila 4: Descripción (ancho completo) -->
+            <div style="margin-bottom: 16px;">
+              <label style="display: block;">Descripción detallada
+                <textarea name="descripcion" rows="6" placeholder="Describe los daños principales, estado actual del vehículo, piezas disponibles, historial, etc. Sé lo más detallado posible." <?php echo !$modoEdicion ? 'required' : ''; ?> style="min-height: 120px; width: 100%; margin-top: 8px;"><?php echo $modoEdicion ? htmlspecialchars($publicacion->descripcion ?? '') : ''; ?></textarea>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="card">
-      <div class="h3">Paso 4: Fotos (1 a 6) · Selecciona la <strong>foto principal</strong></div>
+      <!-- Paso 4: Fotos -->
+      <div class="wizard-step" id="step4" data-step="4" data-status="pending">
+        <div class="wizard-step-header" onclick="toggleStep(4)" role="button" tabindex="0" aria-expanded="false">
+          <div class="wizard-step-number">
+            <span class="step-number">4</span>
+            <span class="step-check-icon" style="display: none;">✓</span>
+          </div>
+          <div class="wizard-step-info">
+            <h3 class="wizard-step-title">Fotos del vehículo</h3>
+            <p class="wizard-step-description">Sube entre 1 y 6 fotos</p>
+          </div>
+          <div class="wizard-step-chevron">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="wizard-step-content" style="display: none;">
+          <div class="wizard-step-body">
       
       <?php if ($modoEdicion && !empty($imagenes)): ?>
         <div style="margin-bottom: 20px; padding: 12px; background: #f0f9ff; border: 1px solid #bfdbfe; border-radius: 8px;">
           <p style="margin: 0; font-size: 14px; color: #1e40af;">
-            <?php echo icon('info', 16); ?> <strong>Fotos actuales:</strong> <?php echo count($imagenes); ?> imagen(es). Puedes agregar más fotos o reemplazarlas.
+            <?php echo icon('info', 16); ?> <strong>Fotos actuales:</strong> <span id="contador-fotos-existentes"><?php echo count($imagenes); ?></span> imagen(es). Puedes eliminar fotos o agregar más (máximo 6 en total).
           </p>
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
+        <div id="fotos-existentes-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;">
           <?php foreach ($imagenes as $img): ?>
             <?php 
             $rutaImagen = BASE_URL . '/uploads/publicaciones/' . htmlspecialchars($img->ruta);
             ?>
-            <div style="position: relative; border: 2px solid #e5e7eb; border-radius: 8px; overflow: hidden;">
+            <div class="foto-existente" 
+                 data-foto-id="<?php echo $img->id; ?>" 
+                 data-es-principal="<?php echo $img->es_principal ? '1' : '0'; ?>"
+                 data-foto-url="<?php echo $rutaImagen; ?>"
+                 style="position: relative; border: 2px solid <?php echo $img->es_principal ? '#E6332A' : '#e5e7eb'; ?>; border-radius: 8px; overflow: hidden; transition: all 0.3s; cursor: pointer;">
+              
               <img src="<?php echo $rutaImagen; ?>" 
                    alt="Foto" 
                    style="width: 100%; height: 150px; object-fit: cover;"
+                   onclick="abrirModalVistaPrevia('<?php echo $rutaImagen; ?>')"
                    onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:150px;background:#f3f4f6;color:#9ca3af;\'>Imagen no disponible</div>'">
+              
               <?php if ($img->es_principal): ?>
-                <div style="position: absolute; top: 8px; right: 8px; background: #10b981; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">
-                  PRINCIPAL
+                <div class="badge-principal" style="position: absolute; top: 8px; left: 8px; background: #E6332A; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                  ★ PRINCIPAL
+                </div>
+              <?php else: ?>
+                <div class="badge-principal" style="position: absolute; top: 8px; left: 8px; background: #E6332A; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; display: none; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                  ★ PRINCIPAL
                 </div>
               <?php endif; ?>
+              
+              <!-- Iconos de acción en las esquinas -->
+              <div class="foto-icon-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; z-index: 10;">
+                <button type="button" 
+                        onclick="event.stopPropagation(); marcarComoPrincipal(<?php echo $img->id; ?>)"
+                        class="btn-icon-principal"
+                        title="Marcar como principal"
+                        style="width: 32px; height: 32px; background: rgba(255,255,255,0.95); border: none; border-radius: 50%; cursor: pointer; display: <?php echo $img->es_principal ? 'none' : 'flex'; ?>; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: all 0.2s;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E6332A" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                </button>
+                <button type="button" 
+                        onclick="event.stopPropagation(); eliminarFotoExistente(<?php echo $img->id; ?>)"
+                        class="btn-icon-eliminar"
+                        title="Eliminar foto"
+                        style="width: 32px; height: 32px; background: rgba(239,68,68,0.95); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.2); transition: all 0.2s;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              <!-- Input hidden para marcar foto como eliminada -->
+              <input type="hidden" 
+                     name="fotos_eliminar[]" 
+                     value="" 
+                     data-foto-id="<?php echo $img->id; ?>" 
+                     class="input-eliminar">
             </div>
           <?php endforeach; ?>
         </div>
+        
+        <!-- Input hidden para foto principal existente -->
+        <input type="hidden" 
+               name="foto_principal_existente" 
+               value="<?php 
+                 foreach ($imagenes as $img) {
+                   if ($img->es_principal) {
+                     echo $img->id;
+                     break;
+                   }
+                 }
+               ?>" 
+               id="input-foto-principal-existente">
+        
+        <div style="margin-bottom: 16px; padding: 12px; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px;">
+          <p style="margin: 0; font-size: 13px; color: #92400e;">
+            💡 <strong>Tip:</strong> Puedes agregar hasta <span id="fotos-disponibles"><?php echo 6 - count($imagenes); ?></span> foto(s) más.
+          </p>
+        </div>
       <?php endif; ?>
       
-      <div class="gallery">
-        <?php for ($i = 1; $i <= 6; $i++): ?>
-        <label>
+      <div class="gallery" id="gallery-nuevas-fotos">
+        <?php 
+        // Calcular slots disponibles dinámicamente
+        $fotosExistentes = $modoEdicion && !empty($imagenes) ? count($imagenes) : 0;
+        $maxFotos = 6;
+        $slotsDisponibles = $maxFotos - $fotosExistentes;
+        
+        for ($i = 1; $i <= $slotsDisponibles; $i++): 
+        ?>
+        <label class="foto-slot" data-slot="<?php echo $i; ?>">
           <span style="font-size: 14px; color: #666; margin-bottom: 8px;">Foto <?php echo $i; ?></span>
-          <input type="file" name="fotos[]" accept="image/*" id="foto_<?php echo $i; ?>">
+          <input type="file" name="fotos[]" accept="image/*" id="foto_<?php echo $i; ?>" class="foto-input">
           <button type="button" onclick="document.getElementById('foto_<?php echo $i; ?>').click()" style="padding: 8px 16px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; margin-top: 8px;">
             Seleccionar archivo
           </button>
-          <span style="font-size: 12px; color: #999; margin-top: 8px;">Sin archivos seleccionados</span>
+          <span class="file-status" style="font-size: 12px; color: #999; margin-top: 8px;">Sin archivos seleccionados</span>
+          <?php if (!$modoEdicion || empty($imagenes)): ?>
           <div style="margin-top: 12px; display: flex; align-items: center; gap: 6px;">
             <input type="radio" name="foto_principal" value="<?php echo $i; ?>" <?php echo $i === 1 ? 'checked' : ''; ?>>
             <span style="font-size: 13px;">Foto principal</span>
           </div>
+          <?php endif; ?>
         </label>
         <?php endfor; ?>
       </div>
       <p class="meta" style="margin-top: 16px; color: #666;">
         <?php if ($modoEdicion): ?>
           Las nuevas fotos se agregarán a las existentes. La primera foto será la principal por defecto.
-        <?php else: ?>
-          La primera foto será la principal por defecto
-        <?php endif; ?>
-      </p>
-    </div>
+            <?php else: ?>
+              La primera foto será la principal por defecto
+            <?php endif; ?>
+            </p>
+          </div>
+        </div>
+      </div>
 
-    <div class="card">
-      <div class="h3">Paso 5: Promoción</div>
-      <div class="kit">
+      <!-- Paso 5: Promoción -->
+      <div class="wizard-step" id="step5" data-step="5" data-status="pending">
+        <div class="wizard-step-header" onclick="toggleStep(5)" role="button" tabindex="0" aria-expanded="false">
+          <div class="wizard-step-number">
+            <span class="step-number">5</span>
+            <span class="step-check-icon" style="display: none;">✓</span>
+          </div>
+          <div class="wizard-step-info">
+            <h3 class="wizard-step-title">Promoción</h3>
+            <p class="wizard-step-description">Elige el tipo de publicación</p>
+          </div>
+          <div class="wizard-step-chevron">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+        <div class="wizard-step-content" style="display: none;">
+          <div class="wizard-step-body">
+            <div class="kit">
         <?php
         // Determinar qué promoción está seleccionada
         $promocionActual = 'normal';
@@ -398,11 +413,15 @@ require_once APP_PATH . '/views/layouts/header.php';
             <?php echo ($promocionActual === 'destacada15') ? 'checked' : ''; ?>> Destacada (<?php echo formatPrice(PRECIO_DESTACADO_15_DIAS); ?> · 15 días)
         </label>
         <label class="tag">
-          <input type="radio" name="promocion" value="destacada30"
-            <?php echo ($promocionActual === 'destacada30') ? 'checked' : ''; ?>> Destacada (<?php echo formatPrice(PRECIO_DESTACADO_30_DIAS); ?> · 30 días)
-        </label>
+            <input type="radio" name="promocion" value="destacada30"
+              <?php echo ($promocionActual === 'destacada30') ? 'checked' : ''; ?>> Destacada (<?php echo formatPrice(PRECIO_DESTACADO_30_DIAS); ?> · 30 días)
+          </label>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+      
+    </div><!-- Fin wizard-container -->
 
     <div class="sticky-actions">
       <button type="button" class="btn" onclick="guardarBorrador()">Guardar borrador</button>
@@ -415,6 +434,265 @@ require_once APP_PATH . '/views/layouts/header.php';
 </main>
 
 <script>
+// ============================================================================
+// LÓGICA DE VALIDACIÓN Y MARCADO DE PASOS
+// ============================================================================
+
+/**
+ * Valida y marca un paso como completado
+ * VALIDACIÓN SECUENCIAL: Solo se puede completar un paso si los anteriores están completos
+ */
+function validarYMarcarPaso(stepNumber) {
+  const step = document.getElementById(`step${stepNumber}`);
+  if (!step) return false;
+  
+  // Verificar que los pasos anteriores estén completos (excepto en modo edición)
+  const modoEdicion = <?php echo $modoEdicion ? 'true' : 'false'; ?>;
+  if (!modoEdicion && stepNumber > 1) {
+    for (let i = 1; i < stepNumber; i++) {
+      if (!validarPasoSinMarcar(i)) {
+        // Si un paso anterior no está completo, deshabilitar este paso
+        deshabilitarPaso(stepNumber);
+        return false;
+      }
+    }
+  }
+  
+  // Habilitar el paso si llegamos aquí
+  habilitarPaso(stepNumber);
+  
+  const checkIcon = step.querySelector('.step-check');
+  let isValid = false;
+  
+  switch(stepNumber) {
+    case 1: // Tipificación
+      const tipificacion = document.querySelector('input[name="tipificacion"]:checked');
+      isValid = !!tipificacion;
+      break;
+      
+    case 2: // Tipo de venta
+      const tipoVenta = document.querySelector('input[name="tipo_venta"]:checked');
+      isValid = !!tipoVenta;
+      break;
+      
+    case 3: // Datos del vehículo
+      const marca = document.querySelector('input[name="marca"]')?.value.trim();
+      const modelo = document.querySelector('input[name="modelo"]')?.value.trim();
+      const anio = document.querySelector('input[name="anio"]')?.value;
+      const categoria = document.querySelector('select[name="categoria_padre_id"]')?.value;
+      const subcategoria = document.querySelector('select[name="subcategoria_id"]')?.value;
+      const region = document.querySelector('select[name="region_id"]')?.value;
+      const comuna = document.querySelector('select[name="comuna_id"]')?.value;
+      const descripcion = document.querySelector('textarea[name="descripcion"]')?.value.trim();
+      
+      isValid = marca && modelo && anio && categoria && subcategoria && 
+                region && comuna && descripcion && descripcion.length >= 20;
+      break;
+      
+    case 4: // Fotos
+      const fotosExistentes = document.querySelectorAll('.foto-existente:not(.eliminada)').length;
+      const fotosNuevas = Array.from(document.querySelectorAll('input[name="fotos[]"]'))
+        .filter(input => input.files.length > 0).length;
+      const totalFotos = fotosExistentes + fotosNuevas;
+      isValid = totalFotos >= 1 && totalFotos <= 6;
+      break;
+      
+    case 5: // Promoción
+      const promocion = document.querySelector('input[name="promocion"]:checked');
+      isValid = !!promocion;
+      break;
+  }
+  
+  // Actualizar el icono de check en el wizard
+  const stepNumber_elem = step.querySelector('.step-number');
+  const stepCheckIcon = step.querySelector('.step-check-icon');
+  
+  if (isValid) {
+    step.classList.add('step-completed');
+    step.dataset.status = 'completed';
+    
+    // Mostrar check icon y ocultar número
+    if (stepNumber_elem) stepNumber_elem.style.display = 'none';
+    if (stepCheckIcon) stepCheckIcon.style.display = 'inline';
+    
+    // Cerrar el paso completado y abrir el siguiente
+    if (stepNumber < 5 && !<?php echo $modoEdicion ? 'true' : 'false'; ?>) {
+      setTimeout(() => {
+        closeStep(stepNumber);
+        openStep(stepNumber + 1);
+      }, 500);
+    }
+  } else {
+    step.classList.remove('step-completed');
+    
+    // Mostrar número y ocultar check icon
+    if (stepNumber_elem) stepNumber_elem.style.display = 'inline';
+    if (stepCheckIcon) stepCheckIcon.style.display = 'none';
+  }
+  
+  // Validar el siguiente paso para habilitarlo/deshabilitarlo
+  if (stepNumber < 5) {
+    validarYMarcarPaso(stepNumber + 1);
+  }
+  
+  return isValid;
+}
+
+/**
+ * Valida un paso sin marcarlo (solo para verificar)
+ */
+function validarPasoSinMarcar(stepNumber) {
+  switch(stepNumber) {
+    case 1:
+      return !!document.querySelector('input[name="tipificacion"]:checked');
+    case 2:
+      return !!document.querySelector('input[name="tipo_venta"]:checked');
+    case 3:
+      const marca = document.querySelector('input[name="marca"]')?.value.trim();
+      const modelo = document.querySelector('input[name="modelo"]')?.value.trim();
+      const anio = document.querySelector('input[name="anio"]')?.value;
+      const categoria = document.querySelector('select[name="categoria_padre_id"]')?.value;
+      const subcategoria = document.querySelector('select[name="subcategoria_id"]')?.value;
+      const region = document.querySelector('select[name="region_id"]')?.value;
+      const comuna = document.querySelector('select[name="comuna_id"]')?.value;
+      const descripcion = document.querySelector('textarea[name="descripcion"]')?.value.trim();
+      return marca && modelo && anio && categoria && subcategoria && 
+             region && comuna && descripcion && descripcion.length >= 20;
+    case 4:
+      const fotosExistentes = document.querySelectorAll('.foto-existente:not(.eliminada)').length;
+      const fotosNuevas = Array.from(document.querySelectorAll('input[name="fotos[]"]'))
+        .filter(input => input.files.length > 0).length;
+      const totalFotos = fotosExistentes + fotosNuevas;
+      return totalFotos >= 1 && totalFotos <= 6;
+    case 5:
+      return !!document.querySelector('input[name="promocion"]:checked');
+  }
+  return false;
+}
+
+/**
+ * Deshabilita un paso visualmente
+ */
+function deshabilitarPaso(stepNumber) {
+  const step = document.getElementById(`step${stepNumber}`);
+  if (!step) return;
+  
+  step.classList.add('step-disabled');
+  step.style.opacity = '0.5';
+  step.style.pointerEvents = 'none';
+  
+  // Deshabilitar todos los inputs del paso
+  step.querySelectorAll('input, select, textarea, button').forEach(el => {
+    el.disabled = true;
+  });
+}
+
+/**
+ * Habilita un paso visualmente
+ */
+function habilitarPaso(stepNumber) {
+  const step = document.getElementById(`step${stepNumber}`);
+  if (!step) return;
+  
+  step.classList.remove('step-disabled');
+  step.style.opacity = '1';
+  step.style.pointerEvents = 'auto';
+  
+  // Habilitar todos los inputs del paso (excepto los que deben estar deshabilitados por lógica)
+  step.querySelectorAll('input, select, textarea, button').forEach(el => {
+    // No habilitar inputs que están deshabilitados por lógica de negocio
+    if (!el.dataset.logicDisabled) {
+      el.disabled = false;
+    }
+  });
+}
+
+/**
+ * Valida todos los pasos y actualiza sus estados
+ */
+function validarTodosLosPasos() {
+  for (let i = 1; i <= 5; i++) {
+    validarYMarcarPaso(i);
+  }
+}
+
+/**
+ * Toggle (abrir/cerrar) un paso del acordeón
+ */
+function toggleStep(stepNumber) {
+  const step = document.getElementById(`step${stepNumber}`);
+  if (!step) return;
+  
+  const header = step.querySelector('.wizard-step-header');
+  const content = step.querySelector('.wizard-step-content');
+  const isExpanded = header.getAttribute('aria-expanded') === 'true';
+  
+  // Si el paso está deshabilitado, no hacer nada
+  if (step.classList.contains('step-disabled')) {
+    return;
+  }
+  
+  if (isExpanded) {
+    // Cerrar el paso
+    content.style.display = 'none';
+    header.setAttribute('aria-expanded', 'false');
+    step.dataset.status = step.classList.contains('step-completed') ? 'completed' : 'pending';
+  } else {
+    // Abrir el paso
+    content.style.display = 'block';
+    header.setAttribute('aria-expanded', 'true');
+    step.dataset.status = 'active';
+  }
+}
+
+/**
+ * Abre un paso específico del acordeón
+ */
+function openStep(stepNumber) {
+  const step = document.getElementById(`step${stepNumber}`);
+  if (!step) return;
+  
+  const header = step.querySelector('.wizard-step-header');
+  const content = step.querySelector('.wizard-step-content');
+  
+  content.style.display = 'block';
+  header.setAttribute('aria-expanded', 'true');
+  step.dataset.status = 'active';
+  
+  // Scroll suave al paso
+  step.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/**
+ * Cierra un paso específico del acordeón
+ */
+function closeStep(stepNumber) {
+  const step = document.getElementById(`step${stepNumber}`);
+  if (!step) return;
+  
+  const header = step.querySelector('.wizard-step-header');
+  const content = step.querySelector('.wizard-step-content');
+  
+  content.style.display = 'none';
+  header.setAttribute('aria-expanded', 'false');
+  step.dataset.status = step.classList.contains('step-completed') ? 'completed' : 'pending';
+}
+
+// Validar pasos al cargar la página (útil en modo edición)
+document.addEventListener('DOMContentLoaded', function() {
+  validarTodosLosPasos();
+  
+  // En modo edición, abrir todos los pasos completados
+  const modoEdicion = <?php echo $modoEdicion ? 'true' : 'false'; ?>;
+  if (modoEdicion) {
+    for (let i = 1; i <= 5; i++) {
+      if (validarPasoSinMarcar(i)) {
+        // No abrir automáticamente, dejar cerrados
+      }
+    }
+  }
+});
+
 // ============================================================================
 // LÓGICA DE TIPIFICACIÓN Y TIPO DE VENTA
 // ============================================================================
@@ -433,7 +711,10 @@ document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
       // CHOCADO: Solo "Venta Directa (con precio)"
       ventaCompleto.checked = true;
       ventaCompleto.disabled = false;
+      delete ventaCompleto.dataset.logicDisabled;
+      
       ventaDesarme.disabled = true;
+      ventaDesarme.dataset.logicDisabled = 'true';
       ventaDesarme.checked = false;
       
       labelCompleto.style.opacity = '1';
@@ -450,7 +731,10 @@ document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
       // SINIESTRADO: Solo "Precio a convenir"
       ventaDesarme.checked = true;
       ventaDesarme.disabled = false;
+      delete ventaDesarme.dataset.logicDisabled;
+      
       ventaCompleto.disabled = true;
+      ventaCompleto.dataset.logicDisabled = 'true';
       ventaCompleto.checked = false;
       
       labelDesarme.style.opacity = '1';
@@ -464,6 +748,10 @@ document.querySelectorAll('input[name="tipificacion"]').forEach(radio => {
       precioInput.required = false;
       precioInput.value = ''; // Limpiar el valor
     }
+    
+    // Validar pasos 1 y 2 automáticamente
+    validarYMarcarPaso(1);
+    validarYMarcarPaso(2);
   });
 });
 
@@ -485,7 +773,21 @@ document.querySelectorAll('input[name="tipo_venta"]').forEach(radio => {
       precioInput.disabled = false;
       precioInput.required = true;
     }
+    
+    // Validar paso 2
+    validarYMarcarPaso(2);
   });
+});
+
+// Validar paso 3 cuando cambian los campos
+document.querySelectorAll('#step3 input, #step3 select, #step3 textarea').forEach(field => {
+  field.addEventListener('input', () => validarYMarcarPaso(3));
+  field.addEventListener('change', () => validarYMarcarPaso(3));
+});
+
+// Validar paso 5 cuando cambia la promoción
+document.querySelectorAll('input[name="promocion"]').forEach(radio => {
+  radio.addEventListener('change', () => validarYMarcarPaso(5));
 });
 
 // Cargar subcategorías cuando se selecciona una categoría
@@ -592,6 +894,12 @@ document.querySelectorAll('input[type="file"][name="fotos[]"]').forEach((input, 
         preview.src = e.target.result;
       };
       reader.readAsDataURL(file);
+      
+      // Actualizar contador de fotos disponibles
+      actualizarContadorFotos();
+      
+      // Validar paso 4
+      validarYMarcarPaso(4);
     } else {
       statusSpan.textContent = 'Sin archivos seleccionados';
       statusSpan.style.color = '#999';
@@ -601,6 +909,12 @@ document.querySelectorAll('input[type="file"][name="fotos[]"]').forEach((input, 
       if (preview) {
         preview.remove();
       }
+      
+      // Actualizar contador de fotos disponibles
+      actualizarContadorFotos();
+      
+      // Validar paso 4
+      validarYMarcarPaso(4);
     }
   });
 });
@@ -749,6 +1063,222 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php endif; ?>
 
 // ============================================================================
+// GESTIÓN DE FOTOS EXISTENTES (MODO EDICIÓN)
+// ============================================================================
+
+/**
+ * Marca una foto existente como eliminada
+ * @param {number} fotoId - ID de la foto en la base de datos
+ */
+function eliminarFotoExistente(fotoId) {
+  const fotoDiv = document.querySelector(`.foto-existente[data-foto-id="${fotoId}"]`);
+  if (!fotoDiv) return;
+  
+  // Mostrar modal de confirmación
+  const modal = document.getElementById('modalEliminarFoto');
+  const btnConfirmar = document.getElementById('btnConfirmarEliminarFoto');
+  
+  // Limpiar event listeners previos
+  const nuevoBtn = btnConfirmar.cloneNode(true);
+  btnConfirmar.parentNode.replaceChild(nuevoBtn, btnConfirmar);
+  
+  // Agregar event listener para confirmar eliminación
+  nuevoBtn.addEventListener('click', function() {
+    // Marcar visualmente como eliminada
+    fotoDiv.style.opacity = '0.3';
+    fotoDiv.style.pointerEvents = 'none';
+    fotoDiv.classList.add('eliminada');
+    fotoDiv.style.filter = 'grayscale(100%)';
+    
+    // Actualizar input hidden para enviar al backend
+    const inputEliminar = fotoDiv.querySelector('.input-eliminar');
+    if (inputEliminar) {
+      inputEliminar.value = fotoId;
+    }
+    
+    // Si era la foto principal, limpiar y marcar otra automáticamente
+    const esPrincipal = fotoDiv.dataset.esPrincipal === '1';
+    if (esPrincipal) {
+      const inputPrincipal = document.getElementById('input-foto-principal-existente');
+      if (inputPrincipal) {
+        inputPrincipal.value = '';
+      }
+      
+      // Intentar marcar otra foto como principal automáticamente
+      const primeraFotoNoEliminada = document.querySelector('.foto-existente:not(.eliminada)');
+      if (primeraFotoNoEliminada) {
+        const nuevoPrincipalId = primeraFotoNoEliminada.dataset.fotoId;
+        marcarComoPrincipal(nuevoPrincipalId);
+      }
+    }
+    
+    // Actualizar contador
+    actualizarContadorFotos();
+    
+    // Validar paso 4
+    validarYMarcarPaso(4);
+    
+    // Cerrar modal
+    cerrarModalEliminarFoto();
+  });
+  
+  // Mostrar modal
+  modal.style.display = 'flex';
+}
+
+/**
+ * Cierra el modal de eliminación de foto
+ */
+function cerrarModalEliminarFoto() {
+  document.getElementById('modalEliminarFoto').style.display = 'none';
+}
+
+/**
+ * Abre el modal de vista previa de imagen
+ */
+function abrirModalVistaPrevia(urlImagen) {
+  const modal = document.getElementById('modalVistaPrevia');
+  const imagen = document.getElementById('imagenVistaPrevia');
+  
+  imagen.src = urlImagen;
+  modal.style.display = 'flex';
+  
+  // Prevenir scroll del body
+  document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Cierra el modal de vista previa
+ */
+function cerrarModalVistaPrevia() {
+  const modal = document.getElementById('modalVistaPrevia');
+  modal.style.display = 'none';
+  
+  // Restaurar scroll del body
+  document.body.style.overflow = 'auto';
+}
+
+/**
+ * Marca una foto existente como principal
+ * @param {number} fotoId - ID de la foto en la base de datos
+ */
+function marcarComoPrincipal(fotoId) {
+  // Remover badge "PRINCIPAL" de todas las fotos
+  document.querySelectorAll('.foto-existente').forEach(foto => {
+    foto.dataset.esPrincipal = '0';
+    foto.style.borderColor = '#e5e7eb';
+    
+    const badge = foto.querySelector('.badge-principal');
+    if (badge) badge.style.display = 'none';
+    
+    const btnPrincipal = foto.querySelector('.btn-foto-action');
+    if (btnPrincipal) btnPrincipal.style.display = 'flex';
+  });
+  
+  // Marcar la foto seleccionada como principal
+  const fotoDiv = document.querySelector(`.foto-existente[data-foto-id="${fotoId}"]`);
+  if (fotoDiv && !fotoDiv.classList.contains('eliminada')) {
+    fotoDiv.dataset.esPrincipal = '1';
+    fotoDiv.style.borderColor = '#E6332A';
+    
+    const badge = fotoDiv.querySelector('.badge-principal');
+    if (badge) badge.style.display = 'flex';
+    
+    const btnPrincipal = fotoDiv.querySelector('.btn-foto-action');
+    if (btnPrincipal) btnPrincipal.style.display = 'none';
+    
+    // Actualizar input hidden
+    const inputPrincipal = document.getElementById('input-foto-principal-existente');
+    if (inputPrincipal) {
+      inputPrincipal.value = fotoId;
+    }
+  }
+}
+
+/**
+ * Actualiza el contador de fotos disponibles y slots dinámicos
+ */
+function actualizarContadorFotos() {
+  const fotosExistentesNoEliminadas = document.querySelectorAll('.foto-existente:not(.eliminada)').length;
+  const fotosNuevas = Array.from(document.querySelectorAll('input[name="fotos[]"]')).filter(input => input.files.length > 0).length;
+  const totalFotos = fotosExistentesNoEliminadas + fotosNuevas;
+  const maxFotos = 6;
+  const fotosDisponibles = maxFotos - fotosExistentesNoEliminadas;
+  
+  // Actualizar contador en UI
+  const contadorExistentes = document.getElementById('contador-fotos-existentes');
+  if (contadorExistentes) {
+    contadorExistentes.textContent = fotosExistentesNoEliminadas;
+  }
+  
+  const contadorDisponibles = document.getElementById('fotos-disponibles');
+  if (contadorDisponibles) {
+    contadorDisponibles.textContent = Math.max(0, fotosDisponibles);
+  }
+  
+  // Actualizar slots disponibles dinámicamente
+  const gallery = document.getElementById('gallery-nuevas-fotos');
+  if (gallery) {
+    const slots = gallery.querySelectorAll('.foto-slot');
+    
+    // Mostrar/ocultar slots según disponibilidad
+    slots.forEach((slot, index) => {
+      if (index < fotosDisponibles) {
+        slot.style.display = 'flex';
+      } else {
+        slot.style.display = 'none';
+      }
+    });
+    
+    // Si necesitamos más slots, agregarlos
+    const slotsActuales = slots.length;
+    if (fotosDisponibles > slotsActuales) {
+      for (let i = slotsActuales + 1; i <= fotosDisponibles; i++) {
+        const nuevoSlot = crearSlotFoto(i);
+        gallery.appendChild(nuevoSlot);
+      }
+    }
+  }
+  
+  console.log('Contador actualizado:', {
+    existentes: fotosExistentesNoEliminadas,
+    nuevas: fotosNuevas,
+    total: totalFotos,
+    disponibles: fotosDisponibles
+  });
+}
+
+/**
+ * Crea un nuevo slot para subir foto
+ */
+function crearSlotFoto(index) {
+  const label = document.createElement('label');
+  label.className = 'foto-slot';
+  label.dataset.slot = index;
+  label.style.display = 'flex';
+  label.style.flexDirection = 'column';
+  label.style.alignItems = 'center';
+  label.style.padding = '24px 16px';
+  label.style.border = '2px dashed #ddd';
+  label.style.borderRadius = '8px';
+  label.style.cursor = 'pointer';
+  label.style.transition = 'all 0.2s';
+  label.style.minHeight = '120px';
+  label.style.justifyContent = 'center';
+  
+  label.innerHTML = `
+    <span style="font-size: 14px; color: #666; margin-bottom: 8px;">Foto ${index}</span>
+    <input type="file" name="fotos[]" accept="image/*" id="foto_${index}" class="foto-input" style="display: none;">
+    <button type="button" onclick="document.getElementById('foto_${index}').click()" style="padding: 8px 16px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; margin-top: 8px;">
+      Seleccionar archivo
+    </button>
+    <span class="file-status" style="font-size: 12px; color: #999; margin-top: 8px;">Sin archivos seleccionados</span>
+  `;
+  
+  return label;
+}
+
+// ============================================================================
 // VALIDACIÓN DEL FORMULARIO
 // ============================================================================
 
@@ -765,10 +1295,19 @@ function validarFormulario(esBorrador = false) {
   const comuna = document.querySelector('select[name="comuna_id"]')?.value;
   const descripcion = document.querySelector('textarea[name="descripcion"]')?.value.trim();
   
-  // Validar fotos (solo si no es modo edición o si no hay fotos existentes)
-  const fotosExistentes = document.querySelectorAll('.gallery-item').length;
-  const fotosNuevas = document.querySelector('input[name="fotos[]"]')?.files.length || 0;
-  const totalFotos = fotosExistentes + fotosNuevas;
+  // CORRECCIÓN: Contar fotos existentes NO eliminadas
+  const fotosExistentesNoEliminadas = document.querySelectorAll('.foto-existente:not(.eliminada)').length;
+  
+  // Contar fotos nuevas seleccionadas
+  const fotosNuevas = Array.from(document.querySelectorAll('input[name="fotos[]"]')).filter(input => input.files.length > 0).length;
+  
+  const totalFotos = fotosExistentesNoEliminadas + fotosNuevas;
+  
+  console.log('Validación de fotos:', {
+    existentes: fotosExistentesNoEliminadas,
+    nuevas: fotosNuevas,
+    total: totalFotos
+  });
   
   // Validaciones básicas (siempre requeridas)
   if (!marca) errores.push('Marca del vehículo');
@@ -783,6 +1322,9 @@ function validarFormulario(esBorrador = false) {
   }
   if (totalFotos === 0) {
     errores.push('Al menos 1 foto del vehículo');
+  }
+  if (totalFotos > 6) {
+    errores.push('Máximo 6 fotos en total');
   }
   
   return errores;
@@ -816,11 +1358,17 @@ function cerrarModalValidacion() {
 // Nota: La validación se maneja en el click del botón "Enviar a revisión"
 // Ver código más abajo en el event listener del btnEnviar
 
-// Cerrar modal al hacer clic fuera
+// Cerrar modales al hacer clic fuera
 window.addEventListener('click', function(event) {
-  const modal = document.getElementById('modalValidacion');
-  if (event.target === modal) {
+  const modalValidacion = document.getElementById('modalValidacion');
+  const modalEliminarFoto = document.getElementById('modalEliminarFoto');
+  
+  if (event.target === modalValidacion) {
     cerrarModalValidacion();
+  }
+  
+  if (event.target === modalEliminarFoto) {
+    cerrarModalEliminarFoto();
   }
 });
 
@@ -857,327 +1405,85 @@ window.addEventListener('click', function(event) {
   </div>
 </div>
 
-<!-- Estilos para el modal -->
-<style>
-/* Modal overlay */
-.admin-modal {
-  display: none;
-  position: fixed;
-  z-index: 10000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.75);
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
+<!-- Modal de Vista Previa de Imagen -->
+<div id="modalVistaPrevia" class="admin-modal" style="display: none;" onclick="cerrarModalVistaPrevia()">
+  <div class="modal-vista-previa-content" onclick="event.stopPropagation()" style="position: relative; max-width: 90vw; max-height: 90vh; background: transparent;">
+    <button type="button" 
+            onclick="cerrarModalVistaPrevia()" 
+            style="position: absolute; top: -40px; right: 0; width: 40px; height: 40px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); z-index: 10001;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1F2937" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <img id="imagenVistaPrevia" 
+         src="" 
+         alt="Vista previa" 
+         style="max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+  </div>
+</div>
 
-/* Modal content container */
-.admin-modal-content {
-  background-color: #FFFFFF;
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: adminModalFadeIn 0.3s ease-out;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-}
+<!-- Modal de Confirmación: Eliminar Foto -->
+<div id="modalEliminarFoto" class="admin-modal" style="display: none;">
+  <div class="admin-modal-content admin-modal-small">
+    <div class="admin-modal-header">
+      <h2 class="h2" style="margin: 0; display: flex; align-items: center; gap: 12px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2">
+          <path d="M3 6h18"></path>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        Eliminar Foto
+      </h2>
+    </div>
+    <div class="admin-modal-body">
+      <p style="margin-bottom: 20px; color: var(--cc-text-secondary, #6B7280); font-size: 15px; line-height: 1.6;">
+        ¿Estás seguro de que deseas eliminar esta foto? Esta acción no se puede deshacer.
+      </p>
+      
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button type="button" onclick="cerrarModalEliminarFoto()" class="btn">
+          Cancelar
+        </button>
+        <button type="button" id="btnConfirmarEliminarFoto" class="btn" style="background: #DC2626; color: white; border-color: #DC2626;">
+          Eliminar Foto
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
-.admin-modal-small {
-  max-width: 500px;
-  width: 95%;
-}
 
-/* Modal header */
-.admin-modal-header {
-  padding: 24px 32px;
-  border-bottom: 2px solid #E5E7EB;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-}
 
-/* Modal body */
-.admin-modal-body {
-  padding: 32px;
-  overflow-y: auto;
-  flex: 1;
-}
+<!-- Script de autocompletado de marcas y modelos -->
+<script src="/assets/js/marca-modelo-selector.js?v=<?php echo time(); ?>"></script>
 
-@keyframes adminModalFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
+<!-- Deshabilitar actualizaciones automáticas en esta página -->
+<script>
+// Marcar que estamos en página de publicar para evitar actualizaciones intrusivas
+window.isPublishPage = true;
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Scrollbar personalizado para el modal */
-.admin-modal-body::-webkit-scrollbar {
-  width: 10px;
-}
-
-.admin-modal-body::-webkit-scrollbar-track {
-  background: #F3F4F6;
-  border-radius: 10px;
-}
-
-.admin-modal-body::-webkit-scrollbar-thumb {
-  background: #9CA3AF;
-  border-radius: 10px;
-}
-
-/* ============================================================================
- * RESPONSIVE MEJORADO
- * ============================================================================ */
-
-@media (max-width: 768px) {
-  /* Container principal */
-  .container {
-    padding: 16px !important;
-  }
-  
-  /* Título principal */
-  .container > .h1 {
-    font-size: 24px !important;
-    margin-bottom: 16px !important;
-  }
-  
-  /* Cards */
-  .container .card {
-    padding: 16px !important;
-    margin-bottom: 16px !important;
-  }
-  
-  .container .card .h3 {
-    font-size: 18px !important;
-    margin-bottom: 12px !important;
-  }
-  
-  /* Inputs y selects */
-  .container form input[type="text"],
-  .container form input[type="number"],
-  .container form select,
-  .container form textarea {
-    font-size: 16px !important;
-    padding: 12px 14px !important;
-  }
-  
-  /* Labels */
-  .container form label {
-    font-size: 13px !important;
-    margin-bottom: 6px !important;
-  }
-  
-  /* Meta text */
-  .container .meta {
-    font-size: 12px !important;
-  }
-  
-  /* Botones */
-  .container button[type="submit"],
-  .container .btn {
-    width: 100% !important;
-    padding: 14px !important;
-    font-size: 15px !important;
-  }
-  
-  /* Kit de radio buttons */
-  .kit label.tag {
-    padding: 14px 16px !important;
-    font-size: 14px !important;
-  }
-  
-  /* Gallery de fotos */
-  .gallery label {
-    font-size: 13px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 12px !important;
-  }
-  
-  .container > .h1 {
-    font-size: 22px !important;
-  }
-  
-  .container .card {
-    padding: 14px !important;
-  }
-}
-
-/* ============================================================================
- * DARK MODE
- * ============================================================================ */
-
-/* Container y cards */
-:root[data-theme="dark"] .container {
-  background: #111827;
-}
-
-:root[data-theme="dark"] .container .card {
-  background: #1F2937 !important;
-  border-color: #374151 !important;
-}
-
-/* Títulos */
-:root[data-theme="dark"] .container .h1,
-:root[data-theme="dark"] .container .h2,
-:root[data-theme="dark"] .container .h3 {
-  color: #F3F4F6 !important;
-}
-
-/* Labels */
-:root[data-theme="dark"] .container form label {
-  color: #D1D5DB !important;
-}
-
-/* Inputs, selects y textareas */
-:root[data-theme="dark"] .container form input[type="text"],
-:root[data-theme="dark"] .container form input[type="number"],
-:root[data-theme="dark"] .container form input[type="tel"],
-:root[data-theme="dark"] .container form textarea {
-  background: #374151 !important;
-  background-color: #374151 !important;
-  border-color: #4B5563 !important;
-  color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] .container form select {
-  background: #374151 !important;
-  background-color: #374151 !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23F3F4F6' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 12px center !important;
-  background-size: 12px !important;
-  border-color: #4B5563 !important;
-  color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] .container form input::placeholder,
-:root[data-theme="dark"] .container form textarea::placeholder {
-  color: #9CA3AF !important;
-}
-
-/* Opciones del select en dark mode */
-:root[data-theme="dark"] .container form select option {
-  background: #374151 !important;
-  color: #F3F4F6 !important;
-}
-
-/* Radio buttons - kit */
-:root[data-theme="dark"] .kit label.tag {
-  background: #374151 !important;
-  border-color: #4B5563 !important;
-  color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] .kit label.tag:hover {
-  border-color: #E6332A !important;
-  background: #4B5563 !important;
-}
-
-:root[data-theme="dark"] .kit label.tag input[type="radio"]:checked + span,
-:root[data-theme="dark"] .kit label.tag:has(input[type="radio"]:checked) {
-  background: #E6332A !important;
-  border-color: #E6332A !important;
-  color: #FFFFFF !important;
-}
-
-/* Meta text */
-:root[data-theme="dark"] .container .meta,
-:root[data-theme="dark"] .container p[style*="color"] {
-  color: #9CA3AF !important;
-}
-
-/* Gallery de fotos */
-:root[data-theme="dark"] .gallery label {
-  background: #374151 !important;
-  border-color: #4B5563 !important;
-  color: #D1D5DB !important;
-}
-
-:root[data-theme="dark"] .gallery label:hover {
-  border-color: #E6332A !important;
-  background: #4B5563 !important;
-}
-
-:root[data-theme="dark"] .gallery label span {
-  color: #9CA3AF !important;
-}
-
-/* Botones */
-:root[data-theme="dark"] .container button[type="submit"] {
-  background: #E6332A !important;
-  color: #FFFFFF !important;
-}
-
-:root[data-theme="dark"] .container .btn-outline {
-  background: #374151 !important;
-  color: #F3F4F6 !important;
-  border-color: #4B5563 !important;
-}
-
-/* Textos con estilos inline */
-:root[data-theme="dark"] .container strong {
-  color: #F3F4F6 !important;
-}
-
-:root[data-theme="dark"] .container small {
-  color: #9CA3AF !important;
-}
-
-/* Modal */
-:root[data-theme="dark"] .admin-modal-overlay {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-:root[data-theme="dark"] .admin-modal {
-  background: #1F2937;
-  border-color: #374151;
-}
-
-:root[data-theme="dark"] .admin-modal-header {
-  background: #374151;
-  border-bottom-color: #4B5563;
-}
-
-:root[data-theme="dark"] .admin-modal-header h2 {
-  color: #F3F4F6;
-}
-
-:root[data-theme="dark"] .admin-modal-body {
-  background: #1F2937;
-  color: #D1D5DB;
-}
-
-:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-track {
-  background: #374151;
-}
-
-:root[data-theme="dark"] .admin-modal-body::-webkit-scrollbar-thumb {
-  background: #6B7280;
-}
-</style>
+// Deshabilitar completamente las actualizaciones automáticas mientras se edita
+document.addEventListener('DOMContentLoaded', function() {
+    // Detener todos los intervalos de actualización cuando el usuario interactúa con el formulario
+    const form = document.getElementById('form-publicar');
+    if (form) {
+        // Detectar cuando el usuario empieza a interactuar
+        form.addEventListener('focusin', function() {
+            window.pauseAutoUpdates = true;
+        });
+        
+        // Reanudar después de 5 segundos de inactividad
+        let inactivityTimer;
+        form.addEventListener('focusout', function() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(function() {
+                window.pauseAutoUpdates = false;
+            }, 5000);
+        });
+    }
+});
+</script>
 
 <?php require_once APP_PATH . '/views/layouts/footer.php'; ?>

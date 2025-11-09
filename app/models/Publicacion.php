@@ -473,6 +473,24 @@ class Publicacion extends Model
     }
     
     /**
+     * Obtener publicaciones de un usuario específico (excluyendo una publicación)
+     */
+    public function getByUsuarioExcluir($usuarioId, $excluirId, $limit = 4)
+    {
+        $sql = "SELECT p.*, cp.nombre as categoria_nombre, r.nombre as region_nombre
+                FROM {$this->table} p
+                INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+                INNER JOIN regiones r ON p.region_id = r.id
+                WHERE p.usuario_id = ?
+                AND p.id != ?
+                AND p.estado IN (?, ?)
+                ORDER BY p.fecha_creacion DESC
+                LIMIT {$limit}";
+        
+        return $this->query($sql, [$usuarioId, $excluirId, self::ESTADO_APROBADA, 'vendida']);
+    }
+    
+    /**
      * Listar con filtros (método mejorado)
      */
     public function listarConFiltros($filtros = [])
@@ -584,5 +602,68 @@ class Publicacion extends Model
             'total' => $total,
             'total_paginas' => ceil($total / $perPage)
         ];
+    }
+    
+    /**
+     * Obtiene una foto específica por ID
+     * @param int $fotoId
+     * @return object|null
+     */
+    public function getFoto($fotoId)
+    {
+        $sql = "SELECT * FROM publicacion_fotos WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$fotoId]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Elimina una foto de la base de datos
+     * @param int $fotoId
+     * @return bool
+     */
+    public function eliminarFoto($fotoId)
+    {
+        $sql = "DELETE FROM publicacion_fotos WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$fotoId]);
+    }
+    
+    /**
+     * Desmarca todas las fotos de una publicación como principal
+     * @param int $publicacionId
+     * @return bool
+     */
+    public function desmarcarTodasPrincipales($publicacionId)
+    {
+        $sql = "UPDATE publicacion_fotos SET es_principal = 0 WHERE publicacion_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$publicacionId]);
+    }
+    
+    /**
+     * Marca una foto específica como principal
+     * @param int $fotoId
+     * @return bool
+     */
+    public function marcarComoPrincipal($fotoId)
+    {
+        $sql = "UPDATE publicacion_fotos SET es_principal = 1 WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$fotoId]);
+    }
+    
+    /**
+     * Cuenta el número de fotos de una publicación
+     * @param int $publicacionId
+     * @return int
+     */
+    public function contarFotos($publicacionId)
+    {
+        $sql = "SELECT COUNT(*) as total FROM publicacion_fotos WHERE publicacion_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$publicacionId]);
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        return (int) ($result ? $result->total : 0);
     }
 }

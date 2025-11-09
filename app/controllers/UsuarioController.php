@@ -221,6 +221,159 @@ class UsuarioController
     }
 
     /**
+     * Actualizar avatar del usuario
+     */
+    public function actualizarAvatar()
+    {
+        // Verificar autenticación
+        Auth::require();
+
+        // Verificar método POST
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+            exit;
+        }
+
+        // Verificar token CSRF
+        if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Token de seguridad inválido']);
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'];
+
+        // Verificar que se subió un archivo
+        if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'No se recibió ningún archivo']);
+            exit;
+        }
+
+        $file = $_FILES['avatar'];
+
+        // Validar tipo de archivo
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+
+        if (!in_array($mimeType, $allowedTypes)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Tipo de archivo no permitido. Solo JPG, PNG o WebP']);
+            exit;
+        }
+
+        // Validar tamaño (máximo 2MB)
+        if ($file['size'] > 2 * 1024 * 1024) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'El archivo no debe superar 2MB']);
+            exit;
+        }
+
+        try {
+            // Obtener avatar anterior para eliminarlo
+            $stmt = $this->db->prepare("SELECT avatar FROM usuarios WHERE id = ?");
+            $stmt->execute([$userId]);
+            $avatarAnterior = $stmt->fetchColumn();
+
+            // Crear imagen desde el archivo subido
+            switch ($mimeType) {
+                case 'image/jpeg':
+                case 'image/jpg':
+                    $imagen = imagecreatefromjpeg($file['tmp_name']);
+                    break;
+                case 'image/png':
+                    $imagen = imagecreatefrompng($file['tmp_name']);
+                    break;
+                case 'image/webp':
+                    $imagen = imagecreatefromwebp($file['tmp_name']);
+                    break;
+                default:
+                    throw new \Exception('Tipo de imagen no soportado');
+            }
+
+            if (!$imagen) {
+                throw new \Exception('No se pudo procesar la imagen');
+            }
+
+            // Obtener dimensiones originales
+            $anchoOriginal = imagesx($imagen);
+            $altoOriginal = imagesy($imagen);
+
+            // Crear thumbnail cuadrado de 200x200
+            $tamanoThumb = 200;
+            $thumbnail = imagecreatetruecolor($tamanoThumb, $tamanoThumb);
+
+            // Preservar transparencia para PNG
+            if ($mimeType === 'image/png') {
+                imagealphablending($thumbnail, false);
+                imagesavealpha($thumbnail, true);
+                $transparent = imagecolorallocatealpha($thumbnail, 255, 255, 255, 127);
+                imagefilledrectangle($thumbnail, 0, 0, $tamanoThumb, $tamanoThumb, $transparent);
+            }
+
+            // Calcular dimensiones para crop centrado
+            $lado = min($anchoOriginal, $altoOriginal);
+            $x = ($anchoOriginal - $lado) / 2;
+            $y = ($altoOriginal - $lado) / 2;
+
+            // Redimensionar y hacer crop
+            imagecopyresampled(
+                $thumbnail, $imagen,
+                0, 0, $x, $y,
+                $tamanoThumb, $tamanoThumb,
+                $lado, $lado
+            );
+
+            // Generar nombre único para el archivo
+            $extension = $mimeType === 'image/png' ? 'png' : 'jpg';
+            $nombreArchivo = 'avatar_' . $userId . '_' . time() . '.' . $extension;
+            $rutaDestino = __DIR__ . '/../../public/uploads/avatars/' . $nombreArchivo;
+
+            // Guardar thumbnail
+            if ($extension === 'png') {
+                imagepng($thumbnail, $rutaDestino, 9);
+            } else {
+                imagejpeg($thumbnail, $rutaDestino, 90);
+            }
+
+            // Liberar memoria
+            imagedestroy($imagen);
+            imagedestroy($thumbnail);
+
+            // Actualizar base de datos
+            $stmt = $this->db->prepare("UPDATE usuarios SET avatar = ?, fecha_actualizacion = NOW() WHERE id = ?");
+            $stmt->execute([$nombreArchivo, $userId]);
+
+            // Actualizar sesión
+            $_SESSION['user_avatar'] = $nombreArchivo;
+
+            // Eliminar avatar anterior si existe
+            if ($avatarAnterior && file_exists(__DIR__ . '/../../public/uploads/avatars/' . $avatarAnterior)) {
+                unlink(__DIR__ . '/../../public/uploads/avatars/' . $avatarAnterior);
+            }
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Avatar actualizado correctamente',
+                'avatar' => $nombreArchivo
+            ]);
+
+        } catch (\Exception $e) {
+            error_log("Error al actualizar avatar: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al procesar la imagen: ' . $e->getMessage()
+            ]);
+        }
+
+        exit;
+    }
+
+    /**
      * Cambiar contraseña del usuario
      */
     public function cambiarPassword()

@@ -97,14 +97,6 @@
                     </a>
                 </li>
                 
-                <!-- Destacados -->
-                <li class="nav-item">
-                    <a href="<?php echo BASE_URL; ?>/destacados" class="nav-link <?php echo ($currentPage === 'destacados') ? 'active' : ''; ?>">
-                        <?php echo icon('star', 18); ?>
-                        <span>Destacados</span>
-                    </a>
-                </li>
-                
                 <?php if (isset($_SESSION['user_id'])): ?>
                 <!-- Favoritos (solo usuarios autenticados) -->
                 <li class="nav-item">

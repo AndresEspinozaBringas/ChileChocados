@@ -1,0 +1,2942 @@
+{
+  "marcas": [
+    {
+      "nombre": "Chevrolet",
+      "cantidadModelos": 54,
+      "modelos": [
+        {
+          "nombre": "Spark",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Spark",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Onix",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Onix",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sonic",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Sonic",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Cruze",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Cruze",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Malibu",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Malibu",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Impala",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Impala",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Aveo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Aveo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sail",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Sail",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Prisma",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Prisma",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Cobalt",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Cobalt",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Lacetti",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Lacetti",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Optra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Optra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Astra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Astra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vectra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Vectra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Epica",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Epica",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Trax",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Trax",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tracker",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Tracker",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Equinox",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Equinox",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Traverse",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Traverse",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tahoe",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Tahoe",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Suburban",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Suburban",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Blazer",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Blazer",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Captiva",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Captiva",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Trailblazer",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Trailblazer",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Acadia",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Acadia",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Enclave",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Enclave",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Orlando",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Orlando",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Spin",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Spin",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Groove",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Groove",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Montana",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Montana",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S10",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20S10",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Colorado",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Colorado",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Silverado",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Silverado",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Cheyenne",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Cheyenne",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tornado",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Tornado",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "LUV",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20LUV",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Express",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Express",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "N300",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20N300",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "N400",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20N400",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "NPR",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20NPR",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "NQR",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20NQR",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Dmax",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Dmax",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Camaro",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Camaro",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Corvette",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Corvette",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "SS",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20SS",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Bolt",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Bolt",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Volt",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Volt",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Spark EV",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Spark%20EV",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Joy",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Joy",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Beat",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Beat",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Agile",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Agile",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Celta",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Celta",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Meriva",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Meriva",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Zafira",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet%20Zafira",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Chevrolet"
+    },
+    {
+      "nombre": "Toyota",
+      "cantidadModelos": 72,
+      "modelos": [
+        {
+          "nombre": "Corolla",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Corolla",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Camry",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Camry",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Avalon",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Avalon",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Yaris",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Yaris",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Prius",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Prius",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mirai",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Mirai",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vitz",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Vitz",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Platz",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Platz",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Belta",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Belta",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vios",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Vios",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Etios",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Etios",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Yaris Sedan",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Yaris%20Sedan",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Corolla Cross",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Corolla%20Cross",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Corolla Altis",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Corolla%20Altis",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Camry Hybrid",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Camry%20Hybrid",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Crown",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Crown",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RAV4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20RAV4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Highlander",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Highlander",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sequoia",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Sequoia",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Land Cruiser",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Land%20Cruiser",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "4Runner",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%204Runner",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "C-HR",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20C-HR",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Venza",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Venza",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Harrier",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Harrier",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kluger",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Kluger",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Prado",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Prado",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "FJ Cruiser",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20FJ%20Cruiser",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Rush",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Rush",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Raize",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Raize",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Urban Cruiser",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Urban%20Cruiser",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Fortuner",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Fortuner",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RAV4 Hybrid",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20RAV4%20Hybrid",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Highlander Hybrid",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Highlander%20Hybrid",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vanguard",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Vanguard",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kluger Hybrid",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Kluger%20Hybrid",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Hilux",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Hilux",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tacoma",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Tacoma",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tundra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Tundra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Hiace",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Hiace",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Coaster",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Coaster",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Dyna",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Dyna",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ToyoAce",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20ToyoAce",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Quantum",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Quantum",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Granvia",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Granvia",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Alphard",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Alphard",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vellfire",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Vellfire",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Noah",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Noah",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Voxy",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Voxy",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Esquire",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Esquire",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sienta",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Sienta",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Supra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Supra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GR86",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20GR86",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GR Yaris",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20GR%20Yaris",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GR Supra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20GR%20Supra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Celica",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Celica",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "MR2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20MR2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "86",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%2086",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GT86",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20GT86",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Prius Prime",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Prius%20Prime",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Prius C",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Prius%20C",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Prius V",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Prius%20V",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Aqua",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Aqua",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "bZ4X",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20bZ4X",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mirai",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Mirai",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sienna",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Sienna",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Previa",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Previa",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Avanza",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Avanza",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Innova",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Innova",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Wish",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Wish",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ipsum",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Ipsum",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Picnic",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Picnic",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Estima",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Toyota%20Estima",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Toyota"
+    },
+    {
+      "nombre": "Mitsubishi",
+      "cantidadModelos": 13,
+      "modelos": [
+        {
+          "nombre": "Mirage",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Mirage",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Lancer",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Lancer",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Galant",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Galant",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Eclipse",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Eclipse",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Outlander",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Outlander",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ASX",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20ASX",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Pajero",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Pajero",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Montero",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Montero",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "L200",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20L200",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Triton",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Triton",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Colt",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Colt",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Space Star",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Space%20Star",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Grandis",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi%20Grandis",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Mitsubishi"
+    },
+    {
+      "nombre": "Ford",
+      "cantidadModelos": 28,
+      "modelos": [
+        {
+          "nombre": "Ka",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Ka",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Fiesta",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Fiesta",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Focus",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Focus",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Fusion",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Fusion",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mondeo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Mondeo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Taurus",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Taurus",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "EcoSport",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20EcoSport",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kuga",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Kuga",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Escape",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Escape",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Edge",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Edge",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Explorer",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Explorer",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Expedition",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Expedition",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Bronco",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Bronco",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ranger",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Ranger",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "F-150",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20F-150",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "F-250",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20F-250",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "F-350",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20F-350",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Maverick",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Maverick",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mustang",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Mustang",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20GT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mustang Mach-E",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Mustang%20Mach-E",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "F-150 Lightning",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20F-150%20Lightning",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Transit",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Transit",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Transit Connect",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Transit%20Connect",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "E-Series",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20E-Series",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Territory",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Territory",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Everest",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Everest",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Bronco Sport",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Ford%20Bronco%20Sport",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Ford"
+    },
+    {
+      "nombre": "Mazda",
+      "cantidadModelos": 17,
+      "modelos": [
+        {
+          "nombre": "Mazda2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20Mazda2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mazda3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20Mazda3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mazda6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20Mazda6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX-3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20CX-3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX-30",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20CX-30",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX-5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20CX-5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX-7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20CX-7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX-9",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20CX-9",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX-90",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20CX-90",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "BT-50",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20BT-50",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "MX-5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20MX-5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RX-7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20RX-7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RX-8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20RX-8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "MPV",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20MPV",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tribute",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20Tribute",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%205",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Premacy",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Mazda%20Premacy",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Mazda"
+    },
+    {
+      "nombre": "Suzuki",
+      "cantidadModelos": 20,
+      "modelos": [
+        {
+          "nombre": "Swift",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Swift",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Baleno",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Baleno",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ciaz",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Ciaz",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Dzire",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Dzire",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ertiga",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Ertiga",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "XL6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20XL6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vitara",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Vitara",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S-Cross",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20S-Cross",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Jimny",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Jimny",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Grand Vitara",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Grand%20Vitara",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "SX4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20SX4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kizashi",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Kizashi",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Alto",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Alto",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Wagon R",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Wagon%20R",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Celerio",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Celerio",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ignis",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Ignis",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Splash",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Splash",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "APV",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20APV",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Carry",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Carry",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Super Carry",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki%20Super%20Carry",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Suzuki"
+    },
+    {
+      "nombre": "Volkswagen",
+      "cantidadModelos": 25,
+      "modelos": [
+        {
+          "nombre": "Gol",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Gol",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Polo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Polo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Golf",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Golf",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Jetta",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Jetta",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Passat",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Passat",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Arteon",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Arteon",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Virtus",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Virtus",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "T-Cross",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20T-Cross",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tiguan",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Tiguan",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Touareg",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Touareg",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Atlas",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Atlas",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Taos",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Taos",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ID.4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20ID.4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Amarok",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Amarok",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Saveiro",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Saveiro",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Crafter",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Crafter",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Caddy",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Caddy",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Transporter",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Transporter",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ID.3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20ID.3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ID.4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20ID.4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ID.Buzz",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20ID.Buzz",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Beetle",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Beetle",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Scirocco",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Scirocco",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CC",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20CC",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Voyage",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen%20Voyage",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Volkswagen"
+    },
+    {
+      "nombre": "Peugeot",
+      "cantidadModelos": 15,
+      "modelos": [
+        {
+          "nombre": "108",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20108",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "208",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20208",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "308",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20308",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "408",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20408",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "508",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20508",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "2008",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%202008",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "3008",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%203008",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "5008",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%205008",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Partner",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20Partner",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Expert",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20Expert",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Boxer",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20Boxer",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RCZ",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20RCZ",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "207",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20207",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "307",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20307",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "407",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot%20407",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Peugeot"
+    },
+    {
+      "nombre": "Opel",
+      "cantidadModelos": 10,
+      "modelos": [
+        {
+          "nombre": "Corsa",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Corsa",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Astra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Astra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Insignia",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Insignia",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mokka",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Mokka",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Crossland",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Crossland",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Grandland",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Grandland",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Combo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Combo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vivaro",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Vivaro",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Movano",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Movano",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Zafira",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Opel%20Zafira",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Opel"
+    },
+    {
+      "nombre": "Changan",
+      "cantidadModelos": 10,
+      "modelos": [
+        {
+          "nombre": "CS35",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20CS35",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CS55",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20CS55",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CS75",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20CS75",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CS95",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20CS95",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Eado",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20Eado",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Alsvin",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20Alsvin",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Raeton",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20Raeton",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX20",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20CX20",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "CX30",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20CX30",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Benni",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Changan%20Benni",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Changan"
+    },
+    {
+      "nombre": "Chery",
+      "cantidadModelos": 12,
+      "modelos": [
+        {
+          "nombre": "QQ",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20QQ",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tiggo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20Tiggo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Arrizo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20Arrizo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Fulwin",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20Fulwin",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A1",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20A1",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20A3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20A5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "E3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20E3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "E5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20E5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Oriental Son",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20Oriental%20Son",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Eastar",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20Eastar",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Very",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Chery%20Very",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Chery"
+    },
+    {
+      "nombre": "Hyundai",
+      "cantidadModelos": 22,
+      "modelos": [
+        {
+          "nombre": "Grand i10",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Grand%20i10",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "i20",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20i20",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Accent",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Accent",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Elantra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Elantra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sonata",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Sonata",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Genesis",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Genesis",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Venue",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Venue",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kona",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Kona",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Creta",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Creta",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tucson",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Tucson",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Santa Fe",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Santa%20Fe",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Palisade",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Palisade",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "H100",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20H100",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Porter",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Porter",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Starex",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Starex",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ioniq",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Ioniq",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kona Electric",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Kona%20Electric",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ioniq 5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Ioniq%205",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ioniq 6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Ioniq%206",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Veloster",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Veloster",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Genesis Coupe",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Genesis%20Coupe",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Azera",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai%20Azera",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Hyundai"
+    },
+    {
+      "nombre": "JAC",
+      "cantidadModelos": 13,
+      "modelos": [
+        {
+          "nombre": "J2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20J2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "J3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20J3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "J4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20J4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "J5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20J5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "J6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20J6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20S2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20S3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20S5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "T6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20T6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "T8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20T8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Refine",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20Refine",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Rein",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20Rein",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sunray",
+          "url": "https://www.chileautos.cl/vehiculos/?q=JAC%20Sunray",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=JAC"
+    },
+    {
+      "nombre": "MG",
+      "cantidadModelos": 13,
+      "modelos": [
+        {
+          "nombre": "MG3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20MG3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "MG5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20MG5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "MG6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20MG6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "MG7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20MG7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ZS",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20ZS",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "HS",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20HS",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RX5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20RX5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RX8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20RX8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20GT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "TF",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20TF",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ZR",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20ZR",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "ZT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20ZT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "F",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MG%20F",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=MG"
+    },
+    {
+      "nombre": "Nissan",
+      "cantidadModelos": 54,
+      "modelos": [
+        {
+          "nombre": "Versa",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Versa",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sentra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Sentra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Altima",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Altima",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Maxima",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Maxima",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "March",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20March",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Note",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Note",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tiida",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Tiida",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Almera",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Almera",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Primera",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Primera",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sunny",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Sunny",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tsuru",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Tsuru",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Platina",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Platina",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Aprio",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Aprio",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Latio",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Latio",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kicks",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Kicks",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Qashqai",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Qashqai",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X-Trail",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20X-Trail",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Murano",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Murano",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Pathfinder",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Pathfinder",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Armada",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Armada",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Patrol",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Patrol",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Juke",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Juke",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Rogue",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Rogue",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Xterra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Xterra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Terrano",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Terrano",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Paladin",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Paladin",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Livina X-Gear",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Livina%20X-Gear",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Navara",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Navara",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Frontier",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Frontier",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Titan",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Titan",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Hardbody",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Hardbody",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "King Cab",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20King%20Cab",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "NP300",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20NP300",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GT-R",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20GT-R",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "370Z",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20370Z",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "350Z",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20350Z",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "300ZX",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20300ZX",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "240SX",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20240SX",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Silvia",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Silvia",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Skyline",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Skyline",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Leaf",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Leaf",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ariya",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Ariya",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "e-NV200",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20e-NV200",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Urvan",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Urvan",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Cabstar",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Cabstar",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "NV200",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20NV200",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "NV400",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20NV400",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Interstar",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Interstar",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Livina",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Livina",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Grand Livina",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Grand%20Livina",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Cube",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Cube",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Micra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Micra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Pixo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Pixo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Quest",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Nissan%20Quest",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Nissan"
+    },
+    {
+      "nombre": "BMW",
+      "cantidadModelos": 33,
+      "modelos": [
+        {
+          "nombre": "Serie 1",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%201",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Serie 2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%202",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Serie 3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%203",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Serie 4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%204",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Serie 5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%205",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Serie 6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%206",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Serie 7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%207",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Serie 8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Serie%208",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X1",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20X1",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20X2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20X3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20X4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20X5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20X6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "X7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20X7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "i3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20i3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "i4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20i4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "iX",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20iX",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "i7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20i7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "iX3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20iX3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Z3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Z3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Z4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20Z4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "M2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20M2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "M3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20M3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "M4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20M4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "M5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20M5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "M6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20M6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "M8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%20M8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "1 Series GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%201%20Series%20GT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "2 Series GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%202%20Series%20GT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "3 Series GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%203%20Series%20GT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "5 Series GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%205%20Series%20GT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "6 Series GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=BMW%206%20Series%20GT",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=BMW"
+    },
+    {
+      "nombre": "Kia",
+      "cantidadModelos": 22,
+      "modelos": [
+        {
+          "nombre": "Picanto",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Picanto",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Rio",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Rio",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Forte",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Forte",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Optima",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Optima",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Cadenza",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Cadenza",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "K5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20K5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Seltos",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Seltos",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sportage",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Sportage",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sorento",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Sorento",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mohave",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Mohave",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Telluride",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Telluride",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Bongo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Bongo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "K2500",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20K2500",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "K3000",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20K3000",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Soul EV",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Soul%20EV",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Niro",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Niro",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "EV6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20EV6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Stinger",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Stinger",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Forte Koup",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Forte%20Koup",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Soul",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Soul",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Carnival",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Carnival",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sedona",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Kia%20Sedona",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Kia"
+    },
+    {
+      "nombre": "Mercedes",
+      "cantidadModelos": 0,
+      "modelos": [],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Mercedes"
+    },
+    {
+      "nombre": "Skoda",
+      "cantidadModelos": 10,
+      "modelos": [
+        {
+          "nombre": "Fabia",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Fabia",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Rapid",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Rapid",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Octavia",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Octavia",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Superb",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Superb",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kamiq",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Kamiq",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Karoq",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Karoq",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kodiaq",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Kodiaq",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Citigo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Citigo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Yeti",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Yeti",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Roomster",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Skoda%20Roomster",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Skoda"
+    },
+    {
+      "nombre": "Audi",
+      "cantidadModelos": 29,
+      "modelos": [
+        {
+          "nombre": "A1",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20A1",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20A3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20A4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20A5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20A6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20A7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "A8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20A8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Q2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20Q2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Q3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20Q3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Q4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20Q4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Q5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20Q5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Q7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20Q7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Q8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20Q8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "TT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20TT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "R8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20R8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RS3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20RS3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RS4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20RS4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RS5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20RS5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RS6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20RS6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "RS7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20RS7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "e-tron",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20e-tron",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "e-tron GT",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20e-tron%20GT",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Q4 e-tron",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20Q4%20e-tron",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S3",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20S3",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S4",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20S4",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20S5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20S6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20S7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Audi%20S8",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Audi"
+    },
+    {
+      "nombre": "SEAT",
+      "cantidadModelos": 10,
+      "modelos": [
+        {
+          "nombre": "Ibiza",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Ibiza",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Leon",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Leon",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Toledo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Toledo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Arona",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Arona",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Ateca",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Ateca",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Tarraco",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Tarraco",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Alhambra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Alhambra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Altea",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Altea",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Cordoba",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Cordoba",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Mii",
+          "url": "https://www.chileautos.cl/vehiculos/?q=SEAT%20Mii",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=SEAT"
+    },
+    {
+      "nombre": "Haval",
+      "cantidadModelos": 10,
+      "modelos": [
+        {
+          "nombre": "H1",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20H1",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "H2",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20H2",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "H6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20H6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "H7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20H7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "H8",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20H8",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "H9",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20H9",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "F5",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20F5",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "F7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20F7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Jolion",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20Jolion",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Dargo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Haval%20Dargo",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Haval"
+    },
+    {
+      "nombre": "Volvo",
+      "cantidadModelos": 14,
+      "modelos": [
+        {
+          "nombre": "S60",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20S60",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S90",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20S90",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "V40",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20V40",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "V60",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20V60",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "V90",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20V90",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "XC40",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20XC40",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "XC60",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20XC60",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "XC90",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20XC90",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "C30",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20C30",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "C70",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20C70",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "S40",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20S40",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "V50",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20V50",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "V70",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20V70",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "XC70",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Volvo%20XC70",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Volvo"
+    },
+    {
+      "nombre": "Foton",
+      "cantidadModelos": 0,
+      "modelos": [],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Foton"
+    },
+    {
+      "nombre": "MINI",
+      "cantidadModelos": 8,
+      "modelos": [
+        {
+          "nombre": "Cooper",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20Cooper",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Countryman",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20Countryman",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Clubman",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20Clubman",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Convertible",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20Convertible",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Coupe",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20Coupe",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Roadster",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20Roadster",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Paceman",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20Paceman",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "One",
+          "url": "https://www.chileautos.cl/vehiculos/?q=MINI%20One",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=MINI"
+    },
+    {
+      "nombre": "Geely",
+      "cantidadModelos": 11,
+      "modelos": [
+        {
+          "nombre": "Emgrand",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20Emgrand",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GC6",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20GC6",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GC7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20GC7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "GX7",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20GX7",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "LC",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20LC",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "MK",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20MK",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Panda",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20Panda",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Vision",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20Vision",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Coolray",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20Coolray",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Azkarra",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20Azkarra",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Okavango",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Geely%20Okavango",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Geely"
+    },
+    {
+      "nombre": "Renault",
+      "cantidadModelos": 19,
+      "modelos": [
+        {
+          "nombre": "Clio",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Clio",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Megane",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Megane",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Fluence",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Fluence",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Talisman",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Talisman",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Logan",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Logan",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Sandero",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Sandero",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Captur",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Captur",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kadjar",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Kadjar",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Koleos",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Koleos",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Duster",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Duster",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kangoo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Kangoo",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Master",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Master",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Trafic",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Trafic",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Kwid",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Kwid",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Symbol",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Symbol",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Alpine A110",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Alpine%20A110",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Scenic",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Scenic",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Espace",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Espace",
+          "fuente": "fallback"
+        },
+        {
+          "nombre": "Twingo",
+          "url": "https://www.chileautos.cl/vehiculos/?q=Renault%20Twingo",
+          "fuente": "fallback"
+        }
+      ],
+      "fuente": "scraping",
+      "url": "https://www.chileautos.cl/vehiculos/?q=Renault"
+    }
+  ],
+  "totalMarcas": 27,
+  "totalModelos": 544,
+  "fechaExtraccion": "2025-09-03T15:09:23.894Z",
+  "source": "chileautos.cl"
+}

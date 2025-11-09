@@ -1,0 +1,200 @@
+/**
+ * CRITICAL FIXES - Se carga al final para sobrescribir todo
+ * Este archivo contiene correcciones críticas que deben aplicarse
+ * con la máxima prioridad sobre cualquier otro estilo.
+ * 
+ * Referencia de estilos: /mis-publicaciones
+ * Variables del sistema de diseño en design-system.css
+ */
+
+/* ============================================================================
+ * WIZARD STEPS - Colores de títulos según estado
+ * Referencia: Mismo esquema de colores que cards en mis-publicaciones
+ * ============================================================================ */
+
+/* Paso activo - Negro usando variable del sistema */
+.wizard-step[data-status="active"] .wizard-step-title h3 {
+  color: var(--cc-text-primary, #2E2E2E) !important;
+}
+
+/* Paso completado - Negro usando variable del sistema */
+.wizard-step[data-status="completed"] .wizard-step-title h3 {
+  color: var(--cc-text-primary, #2E2E2E) !important;
+}
+
+/* Pasos pendientes - Gris según especificación */
+.wizard-step[data-status="pending"] .wizard-step-title h3 {
+  color: #999CA0 !important;
+}
+
+.wizard-step[data-status="pending"] .wizard-step-summary {
+  color: var(--cc-text-secondary, #666) !important;
+}
+
+/* Wizard progress - Alineado con sistema */
+.wizard-progress {
+  background: var(--cc-white, #FFFFFF) !important;
+  border: 1px solid var(--cc-border-default, #E5E5E5) !important;
+}
+
+/* Wizard step headers - Alineado con cards */
+.wizard-step {
+  background: var(--cc-white) !important;
+  border: 1px solid var(--cc-border-light) !important;
+}
+
+.wizard-step-header {
+  background: var(--cc-white) !important;
+}
+
+.wizard-step[data-status="active"] .wizard-step-header {
+  background: rgba(230, 51, 42, 0.03) !important;
+}
+
+/* Cards dentro del wizard */
+.wizard-step-body > .card {
+  background: var(--cc-white) !important;
+  border-color: var(--cc-border-light) !important;
+}
+
+.wizard-step-body {
+  background: var(--cc-white) !important;
+}
+
+.wizard-step-actions {
+  background: var(--cc-bg-muted) !important;
+  border-top: 1px solid var(--cc-border-default) !important;
+}
+
+/* ============================================================================
+ * BOTÓN PRIMARIO - Texto blanco visible
+ * ============================================================================ */
+
+/* Todos los selectores posibles para btn-primary */
+.btn-primary,
+a.btn-primary,
+button.btn-primary,
+.btn.primary,
+.header-btn.btn-primary {
+  background: #e6332a !important;
+  color: #ffffff !important;
+  border-color: #e6332a !important;
+}
+
+/* Forzar color blanco en todos los elementos hijos */
+.btn-primary *,
+.btn-primary span,
+.btn-primary svg,
+.btn-primary .btn-text,
+a.btn-primary *,
+a.btn-primary span,
+a.btn-primary svg,
+a.btn-primary .btn-text,
+button.btn-primary *,
+button.btn-primary span,
+button.btn-primary svg,
+.btn.primary *,
+.btn.primary span,
+.btn.primary svg,
+.header-btn.btn-primary *,
+.header-btn.btn-primary span,
+.header-btn.btn-primary svg {
+  color: #ffffff !important;
+  fill: currentColor !important;
+}
+
+/* Hover states */
+.btn-primary:hover,
+a.btn-primary:hover,
+button.btn-primary:hover,
+.btn.primary:hover,
+.header-btn.btn-primary:hover {
+  background: #c72920 !important;
+  border-color: #c72920 !important;
+}
+
+/* ============================================================================
+ * DARK MODE - Wizard Steps
+ * Referencia: Variables de dark mode en design-system.css
+ * ============================================================================ */
+
+:root[data-theme="dark"] .wizard-progress {
+  background: var(--cc-gray-800, #1F2937) !important;
+  border-color: var(--cc-gray-700, #374151) !important;
+}
+
+:root[data-theme="dark"] .wizard-step {
+  background: var(--cc-bg-surface) !important;
+  border-color: var(--cc-border-default) !important;
+}
+
+:root[data-theme="dark"] .wizard-step-header {
+  background: var(--cc-bg-surface) !important;
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="active"] .wizard-step-header {
+  background: rgba(240, 80, 69, 0.1) !important;
+}
+
+:root[data-theme="dark"] .wizard-step-body {
+  background: var(--cc-bg-surface) !important;
+}
+
+:root[data-theme="dark"] .wizard-step-body > .card {
+  background: var(--cc-bg-surface) !important;
+  border-color: var(--cc-border-default) !important;
+}
+
+:root[data-theme="dark"] .wizard-step-actions {
+  background: var(--cc-bg-elevated) !important;
+  border-top-color: var(--cc-border-default) !important;
+}
+
+:root[data-theme="dark"] .wizard-step-title h3 {
+  color: var(--cc-text-primary) !important;
+}
+
+:root[data-theme="dark"] .wizard-step[data-status="pending"] .wizard-step-title h3 {
+  color: var(--cc-text-tertiary) !important;
+}
+
+/* ============================================================================
+ * DARK MODE - Modales
+ * ============================================================================ */
+
+:root[data-theme="dark"] .admin-modal-content {
+  background-color: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body {
+  background: #1F2937 !important;
+  color: #D1D5DB !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body p {
+  color: #D1D5DB !important;
+}
+
+/* ============================================================================
+ * DARK MODE - Botones de fotos
+ * ============================================================================ */
+
+:root[data-theme="dark"] .btn-foto-principal {
+  background: rgba(255,255,255,0.15) !important;
+  color: #F3F4F6 !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+:root[data-theme="dark"] .btn-foto-principal:hover {
+  background: rgba(255,255,255,0.25) !important;
+  border-color: rgba(255,255,255,0.3) !important;
+}
+
+:root[data-theme="dark"] .btn-foto-eliminar {
+  background: rgba(239,68,68,0.8) !important;
+}
+
+:root[data-theme="dark"] .btn-foto-eliminar:hover {
+  background: rgba(239,68,68,1) !important;
+}

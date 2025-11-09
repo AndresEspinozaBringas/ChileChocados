@@ -20,8 +20,8 @@ $info = Session::getFlash('info');
         <div class="auth-wrapper auth-login">
             <!-- Header -->
             <div class="auth-header">
-                <a href="/" class="auth-logo">
-                    <img src="/assets/images/logo.png" alt="ChileChocados">
+                <a href="<?php echo BASE_URL; ?>/" class="auth-logo">
+                    <img src="<?php echo BASE_URL; ?>/assets/logo-chch.svg" alt="ChileChocados">
                 </a>
                 <h1>Bienvenido de vuelta</h1>
                 <p>Inicia sesión para continuar</p>
@@ -137,8 +137,15 @@ $info = Session::getFlash('info');
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 0;
+    padding: 3rem 1rem;
     background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.auth-page .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .auth-wrapper {
@@ -157,7 +164,8 @@ $info = Session::getFlash('info');
 }
 
 .auth-logo img {
-    height: 50px;
+    height: 45px;
+    width: auto;
     margin-bottom: 1.5rem;
 }
 
@@ -413,4 +421,5 @@ function togglePassword(inputId) {
 }
 </script>
 
-<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>
+</body>
+</html>

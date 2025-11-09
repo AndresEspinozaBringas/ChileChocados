@@ -116,6 +116,45 @@ if (!empty($url[0]) && $url[0] === 'api') {
         $params = [];
     }
 
+    // API de Marcas y Modelos
+    if (!empty($url[1]) && $url[1] === 'marcas') {
+        require_once APP_PATH . '/controllers/MarcaModeloController.php';
+        $marcaModeloController = new App\Controllers\MarcaModeloController();
+        $marcaModeloController->buscarMarcas();
+        exit;
+    }
+
+    if (!empty($url[1]) && $url[1] === 'modelos') {
+        require_once APP_PATH . '/controllers/MarcaModeloController.php';
+        $marcaModeloController = new App\Controllers\MarcaModeloController();
+        $marcaModeloController->obtenerModelos();
+        exit;
+    }
+
+    // API de Publicaciones - Verificar cambios
+    if (!empty($url[1]) && $url[1] === 'publicaciones' && !empty($url[2]) && $url[2] === 'verificar-cambios') {
+        require_once __DIR__ . '/api/publicaciones-cambios.php';
+        exit;
+    }
+
+    // API de Solicitud de Compra
+    if (!empty($url[1]) && $url[1] === 'solicitud-compra') {
+        require_once __DIR__ . '/api/solicitud-compra.php';
+        exit;
+    }
+
+    // API de Notificaciones
+    if (!empty($url[1]) && $url[1] === 'notificaciones') {
+        require_once __DIR__ . '/api/notificaciones.php';
+        exit;
+    }
+
+    // API de Mensajes
+    if (!empty($url[1]) && $url[1] === 'mensajes') {
+        require_once __DIR__ . '/api/mensajes.php';
+        exit;
+    }
+
     // API Admin - Notificaciones
     if (!empty($url[1]) && $url[1] === 'admin') {
         require_once APP_PATH . '/controllers/ApiController.php';
@@ -224,6 +263,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
         $controllerName = 'UsuarioController';
         if ($url[1] === 'actualizar') {
             $method = 'actualizarPerfil';
+            $params = [];
+        } elseif ($url[1] === 'actualizar-avatar') {
+            $method = 'actualizarAvatar';
             $params = [];
         } elseif ($url[1] === 'cambiar-password') {
             $method = 'cambiarPassword';
@@ -346,6 +388,30 @@ if (!empty($url[0]) && $url[0] === 'admin') {
 
         if (!empty($url[2]) && $url[2] === 'usuarios') {
             $exportController->exportarUsuarios();
+            exit;
+        }
+    }
+
+    // /admin/marcas-modelos-pendientes - Gestión de marcas/modelos personalizados
+    if ($url[1] === 'marcas-modelos-pendientes') {
+        require_once APP_PATH . '/controllers/MarcaModeloController.php';
+        $marcaModeloController = new App\Controllers\MarcaModeloController();
+
+        // GET /admin/marcas-modelos-pendientes - Listar pendientes
+        if (count($url) === 2) {
+            $marcaModeloController->listarPendientes();
+            exit;
+        }
+
+        // POST /admin/marcas-modelos-pendientes/{id}/aprobar
+        if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'aprobar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $marcaModeloController->aprobar($url[2]);
+            exit;
+        }
+
+        // POST /admin/marcas-modelos-pendientes/{id}/rechazar
+        if (count($url) === 4 && is_numeric($url[2]) && $url[3] === 'rechazar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $marcaModeloController->rechazar($url[2]);
             exit;
         }
     }

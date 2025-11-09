@@ -69,8 +69,15 @@
 /* --- Primary Button --- */
 .btn-primary {
   background-color: var(--cc-primary);
-  color: var(--cc-white);
+  color: var(--cc-white) !important;
   border-color: var(--cc-primary);
+}
+
+.btn-primary *,
+.btn-primary span,
+.btn-primary svg {
+  color: var(--cc-white) !important;
+  fill: currentColor;
 }
 
 .btn-primary:hover {
@@ -1318,7 +1325,10 @@
 /* Forms en Dark Mode */
 :root[data-theme="dark"] .input,
 :root[data-theme="dark"] .select,
-:root[data-theme="dark"] .textarea {
+:root[data-theme="dark"] .textarea,
+:root[data-theme="dark"] .form-input,
+:root[data-theme="dark"] .form-select,
+:root[data-theme="dark"] .form-textarea {
   background-color: #374151;
   border-color: #4B5563;
   color: #F3F4F6;
@@ -1326,18 +1336,30 @@
 
 :root[data-theme="dark"] .input:focus,
 :root[data-theme="dark"] .select:focus,
-:root[data-theme="dark"] .textarea:focus {
+:root[data-theme="dark"] .textarea:focus,
+:root[data-theme="dark"] .form-input:focus,
+:root[data-theme="dark"] .form-select:focus,
+:root[data-theme="dark"] .form-textarea:focus {
   border-color: var(--cc-primary);
-  background-color: #1F2937;
+  background-color: #374151;
+  box-shadow: 0 0 0 3px rgba(240, 80, 69, 0.1);
 }
 
 :root[data-theme="dark"] .input::placeholder,
-:root[data-theme="dark"] .textarea::placeholder {
+:root[data-theme="dark"] .textarea::placeholder,
+:root[data-theme="dark"] .form-input::placeholder,
+:root[data-theme="dark"] .form-textarea::placeholder {
   color: #9CA3AF;
 }
 
 :root[data-theme="dark"] .label {
   color: #D1D5DB;
+}
+
+:root[data-theme="dark"] .select option,
+:root[data-theme="dark"] .form-select option {
+  background: #374151;
+  color: #F3F4F6;
 }
 
 /* Radio buttons y checkboxes en Dark Mode */
