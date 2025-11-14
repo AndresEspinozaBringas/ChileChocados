@@ -77,6 +77,45 @@ layout('header');
     </div>
   <?php endif; ?>
 
+  <!-- Accesos Rápidos -->
+  <div style="margin-bottom: 32px;">
+    <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <?php echo icon('grid', 24); ?> Accesos Rápidos
+    </h2>
+    
+    <div class="grid cols-3" style="gap: 16px;">
+      <a href="<?php echo BASE_URL; ?>/admin/publicaciones" class="quick-access-card">
+        <div class="quick-access-icon"><?php echo icon('file-text', 40); ?></div>
+        <div class="quick-access-content">
+          <div class="quick-access-title">Gestionar Publicaciones</div>
+          <div class="quick-access-description">Moderar, aprobar y rechazar</div>
+        </div>
+        <?php echo icon('chevron-right', 20); ?>
+      </a>
+
+      <a href="<?php echo BASE_URL; ?>/admin/usuarios" class="quick-access-card">
+        <div class="quick-access-icon"><?php echo icon('users', 40); ?></div>
+        <div class="quick-access-content">
+          <div class="quick-access-title">Gestionar Usuarios</div>
+          <div class="quick-access-description">Ver, editar y administrar</div>
+        </div>
+        <?php echo icon('chevron-right', 20); ?>
+      </a>
+
+      <a href="<?php echo BASE_URL; ?>/admin/mensajes" class="quick-access-card">
+        <div class="quick-access-icon"><?php echo icon('message-square', 40); ?></div>
+        <div class="quick-access-content">
+          <div class="quick-access-title">Centro de Mensajería</div>
+          <div class="quick-access-description">Ver todas las conversaciones</div>
+          <?php if ($metricas['mensajes_sin_leer'] > 0): ?>
+            <span class="quick-access-badge"><?php echo $metricas['mensajes_sin_leer']; ?></span>
+          <?php endif; ?>
+        </div>
+        <?php echo icon('chevron-right', 20); ?>
+      </a>
+    </div>
+  </div>
+
   <!-- Métricas Clave -->
   <div style="margin-bottom: 32px;">
     <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
@@ -157,84 +196,7 @@ layout('header');
     </div>
   </div>
 
-  <!-- Gráficos de Actividad -->
-  <div style="margin-bottom: 32px;">
-    <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-      <?php echo icon('trending-up', 24); ?> Actividad y Estadísticas
-    </h2>
-    
-    <div class="grid cols-2" style="gap: 16px;">
-      <!-- Gráfico de Actividad Semanal -->
-      <div class="card" style="padding: 24px;">
-        <h3 class="h3" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-          <?php echo icon('activity', 20); ?>
-          Publicaciones (Últimos 7 días)
-        </h3>
-        <canvas id="chartActividadSemanal" style="max-height: 250px;"></canvas>
-      </div>
-      
-      <!-- Gráfico de Distribución de Estados -->
-      <div class="card" style="padding: 24px;">
-        <h3 class="h3" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-          <?php echo icon('pie-chart', 20); ?>
-          Distribución por Estado
-        </h3>
-        <canvas id="chartDistribucionEstados" style="max-height: 250px;"></canvas>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Gráfico de Categorías -->
-  <div style="margin-bottom: 32px;">
-    <div class="card" style="padding: 24px;">
-      <h3 class="h3" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-        <?php echo icon('bar-chart-2', 20); ?>
-        Top 5 Categorías Más Populares
-      </h3>
-      <canvas id="chartPorCategoria" style="max-height: 300px;"></canvas>
-    </div>
-  </div>
-
-  <!-- Accesos Rápidos -->
-  <div style="margin-bottom: 32px;">
-    <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-      <?php echo icon('grid', 24); ?> Accesos Rápidos
-    </h2>
-    
-    <div class="grid cols-3" style="gap: 16px;">
-      <a href="<?php echo BASE_URL; ?>/admin/publicaciones" class="quick-access-card">
-        <div class="quick-access-icon"><?php echo icon('file-text', 40); ?></div>
-        <div class="quick-access-content">
-          <div class="quick-access-title">Gestionar Publicaciones</div>
-          <div class="quick-access-description">Moderar, aprobar y rechazar</div>
-        </div>
-        <?php echo icon('chevron-right', 20); ?>
-      </a>
-
-      <a href="<?php echo BASE_URL; ?>/admin/usuarios" class="quick-access-card">
-        <div class="quick-access-icon"><?php echo icon('users', 40); ?></div>
-        <div class="quick-access-content">
-          <div class="quick-access-title">Gestionar Usuarios</div>
-          <div class="quick-access-description">Ver, editar y administrar</div>
-        </div>
-        <?php echo icon('chevron-right', 20); ?>
-      </a>
-
-      <a href="<?php echo BASE_URL; ?>/admin/mensajes" class="quick-access-card">
-        <div class="quick-access-icon"><?php echo icon('message-square', 40); ?></div>
-        <div class="quick-access-content">
-          <div class="quick-access-title">Centro de Mensajería</div>
-          <div class="quick-access-description">Ver todas las conversaciones</div>
-          <?php if ($metricas['mensajes_sin_leer'] > 0): ?>
-            <span class="quick-access-badge"><?php echo $metricas['mensajes_sin_leer']; ?></span>
-          <?php endif; ?>
-        </div>
-        <?php echo icon('chevron-right', 20); ?>
-      </a>
-    </div>
-  </div>
-
-  <!-- Estadísticas Adicionales -->
+  <!-- Resumen del Sistema -->
   <div style="margin-bottom: 32px;">
     <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
       <?php echo icon('pie-chart', 24); ?> Resumen del Sistema
@@ -275,6 +237,45 @@ layout('header');
     </div>
   </div>
 
+  <!-- Actividad y Estadísticas -->
+  <div style="margin-bottom: 32px;">
+    <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <?php echo icon('trending-up', 24); ?> Actividad y Estadísticas
+    </h2>
+    
+    <div class="grid cols-2" style="gap: 16px;">
+      <!-- Gráfico de Actividad Semanal -->
+      <div class="card" style="padding: 24px;">
+        <h3 class="h3" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+          <?php echo icon('activity', 20); ?>
+          Publicaciones (Últimos 7 días)
+        </h3>
+        <canvas id="chartActividadSemanal" style="max-height: 250px;"></canvas>
+      </div>
+      
+      <!-- Gráfico de Distribución de Estados -->
+      <div class="card" style="padding: 24px;">
+        <h3 class="h3" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+          <?php echo icon('pie-chart', 20); ?>
+          Distribución por Estado
+        </h3>
+        <canvas id="chartDistribucionEstados" style="max-height: 250px;"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Gráfico de Categorías -->
+  <div style="margin-bottom: 32px;">
+    <div class="card" style="padding: 24px;">
+      <h3 class="h3" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <?php echo icon('bar-chart-2', 20); ?>
+        Top 5 Subcategorías Más Populares
+      </h3>
+      <canvas id="chartPorCategoria" style="max-height: 300px;"></canvas>
+    </div>
+  </div>
+
+
 </main>
 
 <!-- Chart.js CDN -->
@@ -312,6 +313,16 @@ layout('header');
   font-size: 48px;
   flex-shrink: 0;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+}
+
+.alert-icon svg {
+  width: 48px;
+  height: 48px;
 }
 
 .alert-content {
@@ -675,23 +686,25 @@ canvas {
 </style>
 
 <script>
-// Configuración global de Chart.js
-Chart.defaults.font.family = 'Inter, system-ui, -apple-system, sans-serif';
+// Esperar a que el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+  // Configuración global de Chart.js
+  Chart.defaults.font.family = 'Inter, system-ui, -apple-system, sans-serif';
 
-// Detectar tema y configurar colores
-const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-Chart.defaults.color = isDarkMode ? '#D1D5DB' : '#666666';
-Chart.defaults.borderColor = isDarkMode ? '#374151' : '#E5E7EB';
+  // Detectar tema y configurar colores
+  const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+  Chart.defaults.color = isDarkMode ? '#D1D5DB' : '#666666';
+  Chart.defaults.borderColor = isDarkMode ? '#374151' : '#E5E7EB';
 
-// Colores del design system
-const colors = {
-  primary: '#E6332A',
-  success: '#10B981',
-  warning: '#F59E0B',
-  danger: '#EF4444',
-  info: '#3B82F6',
-  gray: '#6B7280'
-};
+  // Colores del design system
+  const colors = {
+    primary: '#E6332A',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    info: '#3B82F6',
+    gray: '#6B7280'
+  };
 
 // ============================================================================
 // GRÁFICO 1: Actividad Semanal (Líneas)
@@ -797,22 +810,35 @@ if (ctxActividad) {
 // ============================================================================
 // GRÁFICO 2: Distribución de Estados (Dona)
 // ============================================================================
+// Debug: Ver datos recibidos
+console.log('Datos de distribución:', <?php echo json_encode($chartData['distribucion_estados'] ?? []); ?>);
+
 const ctxEstados = document.getElementById('chartDistribucionEstados');
 if (ctxEstados) {
+  const datosEstados = [
+    <?php echo $chartData['distribucion_estados']['aprobadas'] ?? 0; ?>,
+    <?php echo $chartData['distribucion_estados']['pendientes'] ?? 0; ?>,
+    <?php echo $chartData['distribucion_estados']['rechazadas'] ?? 0; ?>,
+    <?php echo $chartData['distribucion_estados']['borradores'] ?? 0; ?>,
+    <?php echo $chartData['distribucion_estados']['vendidas'] ?? 0; ?>,
+    <?php echo $chartData['distribucion_estados']['archivadas'] ?? 0; ?>
+  ];
+  
+  console.log('Datos del gráfico:', datosEstados);
+  
   new Chart(ctxEstados, {
     type: 'doughnut',
     data: {
-      labels: ['Aprobadas', 'Pendientes', 'Rechazadas'],
+      labels: ['Aprobadas', 'Pendientes', 'Rechazadas', 'Borradores', 'Vendidas', 'Archivadas'],
       datasets: [{
-        data: [
-          <?php echo $chartData['distribucion_estados']['aprobadas']; ?>,
-          <?php echo $chartData['distribucion_estados']['pendientes']; ?>,
-          <?php echo $chartData['distribucion_estados']['rechazadas']; ?>
-        ],
+        data: datosEstados,
         backgroundColor: [
-          colors.success,
-          colors.warning,
-          colors.danger
+          colors.success,    // Aprobadas - Verde
+          colors.warning,    // Pendientes - Amarillo
+          colors.danger,     // Rechazadas - Rojo
+          colors.gray,       // Borradores - Gris
+          colors.info,       // Vendidas - Azul
+          '#6B7280'          // Archivadas - Gris oscuro
         ],
         borderWidth: 0,
         hoverOffset: 10
@@ -948,6 +974,41 @@ if (ctxCategorias) {
   });
 }
 
+}); // Fin DOMContentLoaded
+
 </script>
 
-<?php layout('footer'); ?>
+<!-- Script de tema (modo claro/oscuro) para admin -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const html = document.documentElement;
+    
+    // Cargar tema guardado
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Recargar gráficos con el nuevo tema
+            location.reload();
+        });
+    }
+    
+    // Inicializar iconos de Lucide
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+
+</main>
+</body>
+</html>

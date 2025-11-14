@@ -1124,6 +1124,14 @@ body {
   transition: all 0.2s ease;
 }
 
+/* Asegurar que los iconos dentro del botón mantengan su tamaño */
+.header-action-btn i[data-lucide],
+.header-action-btn svg {
+  width: 24px !important;
+  height: 24px !important;
+  flex-shrink: 0;
+}
+
 .header-action-btn:hover {
   background: var(--cc-bg-subtle);
   color: var(--cc-text-primary);
@@ -1298,10 +1306,17 @@ body {
   }
   
   .header-action-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
-    padding: 6px;
+    padding: 0;
+  }
+  
+  /* Mantener tamaño de iconos en móvil */
+  .header-action-btn i[data-lucide],
+  .header-action-btn svg {
+    width: 22px !important;
+    height: 22px !important;
   }
   
   .btn {
@@ -1509,7 +1524,7 @@ body {
 
 :root[data-theme="dark"] .nav-link:hover {
   color: #F3F4F6;
-  background-color: #374151;
+  background-color: #1F2937;
 }
 
 :root[data-theme="dark"] .nav-link.active {

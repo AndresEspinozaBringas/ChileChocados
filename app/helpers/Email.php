@@ -10,6 +10,7 @@ class Email
 {
     /**
      * Enviar email usando configuración SMTP
+     * Usa PHPMailer si está disponible, sino fallback a mail()
      * 
      * @param string $to Email destinatario
      * @param string $subject Asunto
@@ -19,6 +20,12 @@ class Email
      */
     public static function send($to, $subject, $template, $data = [])
     {
+        // Intentar con PHPMailer primero
+        if (class_exists('\PHPMailer\PHPMailer\PHPMailer')) {
+            return self::sendWithMailer($to, $subject, $template, $data);
+        }
+        
+        // Fallback a mail() nativo
         try {
             // Cargar configuración
             $config = self::getConfig();
@@ -45,7 +52,6 @@ class Email
     
     /**
      * Enviar email con PHP Mailer (alternativa más robusta)
-     * Requiere: composer require phpmailer/phpmailer
      * 
      * @param string $to Email destinatario
      * @param string $subject Asunto
@@ -55,12 +61,6 @@ class Email
      */
     public static function sendWithMailer($to, $subject, $template, $data = [])
     {
-        // Verificar si PHPMailer está instalado
-        if (!class_exists('\PHPMailer\PHPMailer\PHPMailer')) {
-            // Fallback a mail() nativo
-            return self::send($to, $subject, $template, $data);
-        }
-        
         try {
             $config = self::getConfig();
             $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
@@ -70,10 +70,15 @@ class Email
             $mail->Host = $config['host'];
             $mail->SMTPAuth = true;
             $mail->Username = $config['username'];
-            $mail->Password = $config['password'];
+            $mail->Password = str_replace(' ', '', $config['password']); // Remover espacios del password
             $mail->SMTPSecure = $config['encryption'];
             $mail->Port = $config['port'];
             $mail->CharSet = 'UTF-8';
+            
+            // Debug (solo en desarrollo)
+            if (getenv('APP_DEBUG') === 'true') {
+                $mail->SMTPDebug = 0; // 0=off, 1=client, 2=client+server
+            }
             
             // Remitente y destinatario
             $mail->setFrom($config['from_address'], $config['from_name']);
@@ -84,15 +89,18 @@ class Email
             $mail->Subject = $subject;
             $mail->Body = self::getTemplate($template, $data);
             
+            // Texto alternativo (para clientes que no soportan HTML)
+            $mail->AltBody = strip_tags(self::getTemplate($template, $data));
+            
             // Enviar
             $sent = $mail->send();
             
-            self::log($to, $subject, $sent ? 'success' : 'failed');
+            self::log($to, $subject, $sent ? 'success (PHPMailer)' : 'failed (PHPMailer)');
             
             return $sent;
             
         } catch (\Exception $e) {
-            self::log($to, $subject, 'error: ' . $e->getMessage());
+            self::log($to, $subject, 'error (PHPMailer): ' . $e->getMessage());
             return false;
         }
     }
@@ -168,6 +176,10 @@ class Email
             // Template genérico si no existe
             return self::getGenericTemplate($data);
         }
+        
+        // Agregar variables globales al data
+        $data['app_url'] = getenv('APP_URL') ?: 'http://localhost';
+        $data['app_name'] = getenv('APP_NAME') ?: 'ChileChocados';
         
         // Capturar output del template
         ob_start();

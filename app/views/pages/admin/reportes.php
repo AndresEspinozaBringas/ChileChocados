@@ -811,17 +811,37 @@ canvas {
     </div>
   </div>
   
-  <!-- Gráfico de Categorías (desde /admin) -->
+  <!-- Gráficos de Categorías y Subcategorías lado a lado -->
   <div style="margin-bottom: 32px;">
-    <div class="chart-section">
-      <div class="chart-header">
-        <h3 class="chart-title">
-          <?php echo icon('bar-chart-2', 20); ?>
-          Top 5 Categorías Más Populares
-        </h3>
+    <h2 class="h2" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+      <?php echo icon('bar-chart-2', 24); ?> Análisis de Categorías
+    </h2>
+    
+    <div class="dashboard-grid cols-2" style="grid-template-columns: 1fr 1.85fr; gap: 24px;">
+      <!-- Gráfico de Categorías (35%) -->
+      <div class="chart-section" style="margin-bottom: 0;">
+        <div class="chart-header">
+          <h3 class="chart-title" style="font-size: 18px;">
+            <?php echo icon('bar-chart-2', 20); ?>
+            Top 5 Categorías Más Populares
+          </h3>
+        </div>
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="chartPorCategoria"></canvas>
+        </div>
       </div>
-      <div class="chart-container" style="height: 300px;">
-        <canvas id="chartPorCategoria"></canvas>
+      
+      <!-- Gráfico de Subcategorías (65%) -->
+      <div class="chart-section" style="margin-bottom: 0;">
+        <div class="chart-header">
+          <h3 class="chart-title" style="font-size: 18px;">
+            <?php echo icon('bar-chart-2', 20); ?>
+            Top 5 Subcategorías Más Populares
+          </h3>
+        </div>
+        <div class="chart-container" style="height: 300px;">
+          <canvas id="chartPorSubcategoria"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -887,41 +907,105 @@ canvas {
   <!-- Últimas Transacciones -->
   <?php if (!empty($ultimosPagos)): ?>
   <div class="chart-section">
-    <div class="chart-header">
-      <h2 class="chart-title">
-        <?php echo icon('list', 20); ?> Últimas Transacciones
-      </h2>
-      <p class="chart-subtitle">
-        Monitorea las transacciones más recientes para detectar anomalías o patrones.
-      </p>
+    <div class="chart-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h2 class="chart-title">
+          <?php echo icon('list', 20); ?> Transacciones
+        </h2>
+        <p class="chart-subtitle">
+          Monitorea las transacciones para detectar anomalías o patrones.
+        </p>
+      </div>
+      <button onclick="exportarTransacciones()" class="btn outline" style="display: inline-flex; align-items: center; gap: 8px;">
+        <?php echo icon('download', 18); ?>
+        <span>Exportar CSV</span>
+      </button>
+    </div>
+    
+    <!-- Filtros -->
+    <div style="margin-bottom: 24px; padding: 16px; background: var(--cc-bg-muted, #F9FAFB); border-radius: 12px; border: 1px solid var(--cc-border-default, #E5E7EB);">
+      <form id="filtrosTransacciones" style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+        <!-- Estado -->
+        <div style="flex: 0 0 180px;">
+          <label class="label" style="display: block; margin-bottom: 8px;">Estado</label>
+          <select id="filtroEstado" class="input" onchange="filtrarTransacciones()">
+            <option value="">Todos</option>
+            <option value="aprobado">Aprobado</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="rechazado">Rechazado</option>
+          </select>
+        </div>
+        
+        <!-- Tipo -->
+        <div style="flex: 0 0 180px;">
+          <label class="label" style="display: block; margin-bottom: 8px;">Tipo</label>
+          <select id="filtroTipo" class="input" onchange="filtrarTransacciones()">
+            <option value="">Todos</option>
+            <option value="destacado_15">15 días</option>
+            <option value="destacado_30">30 días</option>
+          </select>
+        </div>
+        
+        <!-- Búsqueda -->
+        <div style="flex: 1; min-width: 250px;">
+          <label class="label" style="display: block; margin-bottom: 8px;">Buscar</label>
+          <input 
+            type="text" 
+            id="filtroBusqueda" 
+            class="input" 
+            placeholder="Usuario, email..." 
+            oninput="filtrarTransacciones()"
+          >
+        </div>
+        
+        <!-- Botón limpiar -->
+        <div>
+          <button type="button" onclick="limpiarFiltros()" class="btn outline">
+            <?php echo icon('x', 16); ?>
+            Limpiar
+          </button>
+        </div>
+      </form>
     </div>
     
     <!-- Vista de tabla para desktop -->
     <div class="transactions-table-view" style="overflow-x: auto;">
-      <table class="data-table">
+      <table class="data-table" id="tablaTransacciones">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Fecha</th>
-            <th>Usuario</th>
-            <th>Monto</th>
-            <th>Estado</th>
-            <th>Tipo</th>
+            <th onclick="ordenarTabla('id')" style="cursor: pointer; user-select: none;">
+              ID <?php echo icon('chevrons-up-down', 14); ?>
+            </th>
+            <th onclick="ordenarTabla('fecha')" style="cursor: pointer; user-select: none;">
+              Fecha <?php echo icon('chevrons-up-down', 14); ?>
+            </th>
+            <th onclick="ordenarTabla('usuario')" style="cursor: pointer; user-select: none;">
+              Usuario <?php echo icon('chevrons-up-down', 14); ?>
+            </th>
+            <th onclick="ordenarTabla('monto')" style="cursor: pointer; user-select: none;">
+              Monto <?php echo icon('chevrons-up-down', 14); ?>
+            </th>
+            <th onclick="ordenarTabla('estado')" style="cursor: pointer; user-select: none;">
+              Estado <?php echo icon('chevrons-up-down', 14); ?>
+            </th>
+            <th onclick="ordenarTabla('tipo')" style="cursor: pointer; user-select: none;">
+              Tipo <?php echo icon('chevrons-up-down', 14); ?>
+            </th>
           </tr>
         </thead>
-        <tbody>
-          <?php foreach (array_slice($ultimosPagos, 0, 8) as $pago): ?>
-          <tr>
-            <td><code style="background: #F3F4F6; padding: 4px 8px; border-radius: 4px;">#<?php echo $pago->id; ?></code></td>
-            <td>
+        <tbody id="transaccionesBody">
+          <?php foreach ($ultimosPagos as $pago): ?>
+          <tr data-estado="<?php echo $pago->estado; ?>" data-tipo="<?php echo $pago->tipo; ?>" data-usuario="<?php echo strtolower($pago->usuario_nombre . ' ' . $pago->usuario_apellido . ' ' . $pago->usuario_email); ?>">
+            <td><code style="background: var(--cc-bg-muted, #F3F4F6); padding: 4px 8px; border-radius: 4px; color: var(--cc-text-primary, #111827);">#<?php echo $pago->id; ?></code></td>
+            <td data-sort="<?php echo strtotime($pago->fecha_creacion); ?>">
               <div style="font-weight: 600;"><?php echo date('d/m/Y', strtotime($pago->fecha_creacion)); ?></div>
-              <small style="color: #9CA3AF;"><?php echo date('H:i', strtotime($pago->fecha_creacion)); ?></small>
+              <small style="color: var(--cc-text-tertiary, #9CA3AF);"><?php echo date('H:i', strtotime($pago->fecha_creacion)); ?></small>
             </td>
             <td>
               <div style="font-weight: 500;"><?php echo htmlspecialchars($pago->usuario_nombre . ' ' . $pago->usuario_apellido); ?></div>
-              <small style="color: #9CA3AF;"><?php echo htmlspecialchars($pago->usuario_email); ?></small>
+              <small style="color: var(--cc-text-tertiary, #9CA3AF);"><?php echo htmlspecialchars($pago->usuario_email); ?></small>
             </td>
-            <td><strong style="font-size: 15px;"><?php echo formatPrice($pago->monto); ?></strong></td>
+            <td data-sort="<?php echo $pago->monto; ?>"><strong style="font-size: 15px;"><?php echo formatPrice($pago->monto); ?></strong></td>
             <td>
               <span class="badge badge-<?php
     echo $pago->estado === 'aprobado'
@@ -943,6 +1027,12 @@ canvas {
           <?php endforeach; ?>
         </tbody>
       </table>
+    </div>
+    
+    <!-- Paginación -->
+    <div id="paginacion" style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div class="meta" id="infoPaginacion"></div>
+      <div id="botonesPaginacion" style="display: flex; gap: 8px;"></div>
     </div>
     
     <!-- Vista de cards para móvil -->
@@ -1021,6 +1111,16 @@ if (isMobile) {
     Chart.defaults.plugins.legend.labels.boxHeight = 12;
     Chart.defaults.font.size = 10;
 }
+
+// Colores del design system
+const colors = {
+    primary: '#E6332A',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    info: '#3B82F6',
+    gray: '#6B7280'
+};
 
 // Datos
 const usuariosData = <?php echo json_encode($usuariosPorMes ?? []); ?>;
@@ -1372,32 +1472,27 @@ if (estadosData.length > 0) {
             datasets: [{
                 data: estadosData.map(d => d.cantidad),
                 backgroundColor: estadosData.map(d => colores[d.estado] || '#6B7280'),
-                borderWidth: 3,
-                borderColor: '#fff',
-                hoverOffset: isMobile ? 6 : 10
+                borderWidth: 0,
+                hoverOffset: 10
             }]
         },
         options: {
-            layout: {
-                padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
-            },
+            responsive: true,
+            maintainAspectRatio: true,
             plugins: {
                 title: { 
-                    display: true, 
-                    text: 'Distribución de Pagos por Estado', 
-                    font: { size: isMobile ? 13 : 16, weight: '700' },
-                    padding: { bottom: isMobile ? 10 : 20 }
+                    display: false
                 },
                 legend: {
-                    display: true,
-                    position: isMobile ? 'bottom' : 'right',
-                    labels: { 
-                        padding: isMobile ? 10 : 20,
-                        font: { size: isMobile ? 11 : 14, weight: '600' },
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: {
+                            size: 13,
+                            weight: '600'
+                        },
                         usePointStyle: true,
-                        pointStyle: 'circle',
-                        boxWidth: isMobile ? 10 : 15,
-                        boxHeight: isMobile ? 10 : 15
+                        pointStyle: 'circle'
                     }
                 },
                 tooltip: {
@@ -1505,17 +1600,26 @@ if (ctxEstados) {
     new Chart(ctxEstados, {
         type: 'doughnut',
         data: {
-            labels: ['Aprobadas', 'Pendientes', 'Rechazadas'],
+            labels: ['Aprobadas', 'Pendientes', 'Rechazadas', 'Borradores', 'Vendidas', 'Archivadas'],
             datasets: [{
                 data: [
-                    <?php echo $chartData['distribucion_estados']['aprobadas']; ?>,
-                    <?php echo $chartData['distribucion_estados']['pendientes']; ?>,
-                    <?php echo $chartData['distribucion_estados']['rechazadas']; ?>
+                    <?php echo $chartData['distribucion_estados']['aprobadas'] ?? 0; ?>,
+                    <?php echo $chartData['distribucion_estados']['pendientes'] ?? 0; ?>,
+                    <?php echo $chartData['distribucion_estados']['rechazadas'] ?? 0; ?>,
+                    <?php echo $chartData['distribucion_estados']['borradores'] ?? 0; ?>,
+                    <?php echo $chartData['distribucion_estados']['vendidas'] ?? 0; ?>,
+                    <?php echo $chartData['distribucion_estados']['archivadas'] ?? 0; ?>
                 ],
-                backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
-                borderWidth: 3,
-                borderColor: '#fff',
-                hoverOffset: isMobile ? 6 : 10
+                backgroundColor: [
+                    colors.success,    // Aprobadas - Verde
+                    colors.warning,    // Pendientes - Amarillo
+                    colors.danger,     // Rechazadas - Rojo
+                    colors.gray,       // Borradores - Gris
+                    colors.info,       // Vendidas - Azul
+                    '#6B7280'          // Archivadas - Gris oscuro
+                ],
+                borderWidth: 0,
+                hoverOffset: 10
             }]
         },
         options: {
@@ -1528,12 +1632,13 @@ if (ctxEstados) {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        padding: isMobile ? 10 : 15,
-                        font: { size: isMobile ? 11 : 13, weight: '600' },
+                        padding: 15,
+                        font: {
+                            size: 13,
+                            weight: '600'
+                        },
                         usePointStyle: true,
-                        pointStyle: 'circle',
-                        boxWidth: isMobile ? 10 : 15,
-                        boxHeight: isMobile ? 10 : 15
+                        pointStyle: 'circle'
                     }
                 },
                 tooltip: {
@@ -1553,7 +1658,7 @@ if (ctxEstados) {
     });
 }
 
-// Gráfico: Top 5 Categorías
+// Gráfico: Top 5 Categorías (barras verticales con colores variados)
 const ctxCategorias = document.getElementById('chartPorCategoria');
 if (ctxCategorias) {
     new Chart(ctxCategorias, {
@@ -1571,17 +1676,27 @@ if (ctxCategorias) {
                         <?php echo $cat->total; ?>,
                     <?php endforeach; ?>
                 ],
-                backgroundColor: 'rgba(230, 51, 42, 0.8)',
-                borderColor: '#E6332A',
+                backgroundColor: [
+                    colors.primary,   // Rojo
+                    colors.info,      // Azul
+                    colors.success,   // Verde
+                    colors.warning,   // Amarillo
+                    colors.gray       // Gris
+                ],
+                borderColor: [
+                    colors.primary,
+                    colors.info,
+                    colors.success,
+                    colors.warning,
+                    colors.gray
+                ],
                 borderWidth: 2,
-                borderRadius: isMobile ? 6 : 8,
-                hoverBackgroundColor: '#C02A23'
+                borderRadius: isMobile ? 6 : 8
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            indexAxis: 'y',
             layout: {
                 padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
             },
@@ -1591,6 +1706,73 @@ if (ctxCategorias) {
                     backgroundColor: '#1A1A1A',
                     padding: 12,
                     cornerRadius: 8,
+                    callbacks: {
+                        label: (context) => context.parsed.y + ' publicaciones'
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { 
+                        stepSize: 1, 
+                        font: { size: isMobile ? 10 : 12 } 
+                    },
+                    grid: { color: '#F3F4F6' }
+                },
+                x: {
+                    ticks: { font: { size: isMobile ? 10 : 12 } },
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico: Top 5 Subcategorías (barras horizontales)
+const ctxSubcategorias = document.getElementById('chartPorSubcategoria');
+if (ctxSubcategorias) {
+    new Chart(ctxSubcategorias, {
+        type: 'bar',
+        data: {
+            labels: [
+                <?php foreach ($chartData['por_subcategoria'] as $subcat): ?>
+                    '<?php echo addslashes($subcat->categoria); ?>',
+                <?php endforeach; ?>
+            ],
+            datasets: [{
+                label: 'Publicaciones',
+                data: [
+                    <?php foreach ($chartData['por_subcategoria'] as $subcat): ?>
+                        <?php echo $subcat->total; ?>,
+                    <?php endforeach; ?>
+                ],
+                backgroundColor: [
+                    colors.primary,
+                    colors.info,
+                    colors.success,
+                    colors.warning,
+                    colors.gray
+                ],
+                borderRadius: isMobile ? 6 : 8,
+                barThickness: 40
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: isMobile ? { top: 5, bottom: 10, left: 5, right: 5 } : { top: 10, bottom: 10 }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1A1A1A',
+                    padding: 12,
+                    cornerRadius: 8,
+                    titleFont: { size: 13, weight: '600' },
+                    bodyFont: { size: 14, weight: '700' },
                     callbacks: {
                         label: (context) => context.parsed.x + ' publicaciones'
                     }
@@ -1606,7 +1788,9 @@ if (ctxCategorias) {
                     grid: { color: '#F3F4F6' }
                 },
                 y: {
-                    ticks: { font: { size: isMobile ? 10 : 12 } },
+                    ticks: { 
+                        font: { size: isMobile ? 11 : 13, weight: '600' } 
+                    },
                     grid: { display: false }
                 }
             }
@@ -1614,6 +1798,220 @@ if (ctxCategorias) {
     });
 }
 
+// ============================================================================
+// SISTEMA DE FILTROS, ORDENAMIENTO Y PAGINACIÓN DE TRANSACCIONES
+// ============================================================================
+
+let transaccionesOriginales = [];
+let transaccionesFiltradas = [];
+let ordenActual = { columna: null, direccion: 'asc' };
+let paginaActual = 1;
+const itemsPorPagina = 10;
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    cargarTransacciones();
+    actualizarTabla();
+});
+
+function cargarTransacciones() {
+    const filas = document.querySelectorAll('#transaccionesBody tr');
+    transaccionesOriginales = Array.from(filas).map(fila => ({
+        elemento: fila,
+        id: parseInt(fila.querySelector('code').textContent.replace('#', '')),
+        fecha: parseInt(fila.querySelector('td[data-sort]').getAttribute('data-sort')),
+        usuario: fila.getAttribute('data-usuario'),
+        monto: parseFloat(fila.querySelectorAll('td')[3].getAttribute('data-sort')),
+        estado: fila.getAttribute('data-estado'),
+        tipo: fila.getAttribute('data-tipo')
+    }));
+    transaccionesFiltradas = [...transaccionesOriginales];
+}
+
+function filtrarTransacciones() {
+    const estado = document.getElementById('filtroEstado').value;
+    const tipo = document.getElementById('filtroTipo').value;
+    const busqueda = document.getElementById('filtroBusqueda').value.toLowerCase();
+    
+    transaccionesFiltradas = transaccionesOriginales.filter(t => {
+        const cumpleEstado = !estado || t.estado === estado;
+        const cumpleTipo = !tipo || t.tipo === tipo;
+        const cumpleBusqueda = !busqueda || t.usuario.includes(busqueda);
+        
+        return cumpleEstado && cumpleTipo && cumpleBusqueda;
+    });
+    
+    paginaActual = 1;
+    actualizarTabla();
+}
+
+function limpiarFiltros() {
+    document.getElementById('filtroEstado').value = '';
+    document.getElementById('filtroTipo').value = '';
+    document.getElementById('filtroBusqueda').value = '';
+    filtrarTransacciones();
+}
+
+function ordenarTabla(columna) {
+    if (ordenActual.columna === columna) {
+        ordenActual.direccion = ordenActual.direccion === 'asc' ? 'desc' : 'asc';
+    } else {
+        ordenActual.columna = columna;
+        ordenActual.direccion = 'asc';
+    }
+    
+    transaccionesFiltradas.sort((a, b) => {
+        let valorA = a[columna];
+        let valorB = b[columna];
+        
+        if (typeof valorA === 'string') {
+            valorA = valorA.toLowerCase();
+            valorB = valorB.toLowerCase();
+        }
+        
+        if (ordenActual.direccion === 'asc') {
+            return valorA > valorB ? 1 : -1;
+        } else {
+            return valorA < valorB ? 1 : -1;
+        }
+    });
+    
+    actualizarTabla();
+}
+
+function actualizarTabla() {
+    const tbody = document.getElementById('transaccionesBody');
+    tbody.innerHTML = '';
+    
+    const inicio = (paginaActual - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    const transaccionesPagina = transaccionesFiltradas.slice(inicio, fin);
+    
+    transaccionesPagina.forEach(t => {
+        tbody.appendChild(t.elemento.cloneNode(true));
+    });
+    
+    actualizarPaginacion();
+}
+
+function actualizarPaginacion() {
+    const totalPaginas = Math.ceil(transaccionesFiltradas.length / itemsPorPagina);
+    const inicio = (paginaActual - 1) * itemsPorPagina + 1;
+    const fin = Math.min(paginaActual * itemsPorPagina, transaccionesFiltradas.length);
+    
+    // Actualizar info
+    document.getElementById('infoPaginacion').textContent = 
+        `Mostrando ${inicio}-${fin} de ${transaccionesFiltradas.length} transacciones`;
+    
+    // Actualizar botones
+    const botones = document.getElementById('botonesPaginacion');
+    botones.innerHTML = '';
+    
+    if (totalPaginas <= 1) return;
+    
+    // Botón anterior
+    if (paginaActual > 1) {
+        const btnAnterior = document.createElement('button');
+        btnAnterior.className = 'btn outline btn-sm';
+        btnAnterior.innerHTML = '← Anterior';
+        btnAnterior.onclick = () => cambiarPagina(paginaActual - 1);
+        botones.appendChild(btnAnterior);
+    }
+    
+    // Botones de páginas
+    const rango = 2;
+    for (let i = Math.max(1, paginaActual - rango); i <= Math.min(totalPaginas, paginaActual + rango); i++) {
+        const btnPagina = document.createElement('button');
+        btnPagina.className = i === paginaActual ? 'btn primary btn-sm' : 'btn outline btn-sm';
+        btnPagina.textContent = i;
+        btnPagina.onclick = () => cambiarPagina(i);
+        botones.appendChild(btnPagina);
+    }
+    
+    // Botón siguiente
+    if (paginaActual < totalPaginas) {
+        const btnSiguiente = document.createElement('button');
+        btnSiguiente.className = 'btn outline btn-sm';
+        btnSiguiente.innerHTML = 'Siguiente →';
+        btnSiguiente.onclick = () => cambiarPagina(paginaActual + 1);
+        botones.appendChild(btnSiguiente);
+    }
+}
+
+function cambiarPagina(pagina) {
+    paginaActual = pagina;
+    actualizarTabla();
+    document.querySelector('.transactions-table-view').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function exportarTransacciones() {
+    // Preparar datos
+    const datos = transaccionesFiltradas.map(t => {
+        const celdas = t.elemento.querySelectorAll('td');
+        return {
+            ID: t.id,
+            Fecha: celdas[1].querySelector('div').textContent + ' ' + celdas[1].querySelector('small').textContent,
+            Usuario: celdas[2].querySelector('div').textContent,
+            Email: celdas[2].querySelector('small').textContent,
+            Monto: celdas[3].textContent.trim(),
+            Estado: celdas[4].textContent.trim(),
+            Tipo: celdas[5].textContent.trim()
+        };
+    });
+    
+    // Crear CSV
+    const headers = Object.keys(datos[0]);
+    let csv = headers.join(',') + '\n';
+    
+    datos.forEach(fila => {
+        csv += headers.map(h => {
+            const valor = fila[h].toString();
+            return valor.includes(',') ? `"${valor}"` : valor;
+        }).join(',') + '\n';
+    });
+    
+    // Descargar
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `transacciones_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 </script>
 
-<?php layout('footer'); ?>
+<!-- Script de tema (modo claro/oscuro) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const html = document.documentElement;
+    
+    // Cargar tema guardado
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    }
+    
+    // Inicializar iconos de Lucide
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+
+</main>
+</body>
+</html>

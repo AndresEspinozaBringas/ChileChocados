@@ -56,7 +56,7 @@ class AuthController
             'telefono' => trim($_POST['telefono'] ?? ''),
             'password' => $_POST['password'] ?? '',
             'password_confirm' => $_POST['password_confirm'] ?? '',
-            'rol' => $_POST['rol'] ?? 'comprador', // Por defecto comprador
+            'rol' => 'vendedor', // Todos los registros son vendedores (admin se crea por BD)
             'terminos' => isset($_POST['terminos'])
         ];
         
@@ -115,7 +115,7 @@ class AuthController
         // Enviar email de verificación
         $verifyLink = getenv('APP_URL') . '/verificar-email/' . $verificationToken;
         
-        Email::send(
+        $emailSent = Email::send(
             $data['email'],
             'Verifica tu cuenta en ChileChocados',
             'verify-email',
@@ -125,7 +125,13 @@ class AuthController
             ]
         );
         
-        Session::flash('success', '¡Registro exitoso! Te hemos enviado un email de verificación');
+        // Mensaje según resultado del envío
+        if ($emailSent) {
+            Session::flash('success', '¡Registro exitoso! Te hemos enviado un email de verificación a ' . $data['email']);
+        } else {
+            Session::flash('warning', '¡Registro exitoso! Sin embargo, hubo un problema al enviar el email de verificación. Por favor contacta al soporte.');
+        }
+        
         header('Location: /login');
         exit;
     }

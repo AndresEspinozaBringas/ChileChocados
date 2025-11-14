@@ -74,7 +74,7 @@ layout('header');
   </div>
 
   <!-- Filtros Adicionales (Colapsables) -->
-  <div class="card" style="margin-bottom: 24px; padding: 16px 24px;">
+  <div class="card" style="margin-bottom: 32px; padding: 16px 24px;">
     <button type="button" onclick="toggleFilters()" class="filter-toggle" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: none; border: none; cursor: pointer; padding: 8px 0;">
       <span style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
         <?php echo icon('filter', 18); ?>
@@ -83,8 +83,8 @@ layout('header');
       <?php echo icon('chevron-down', 18); ?>
     </button>
     
-    <div id="advanced-filters" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--cc-border-default, #D4D4D4);">
-      <form method="GET" action="<?php echo BASE_URL; ?>/admin/usuarios" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+    <div id="advanced-filters" style="display: none; margin-top: 16px; padding-top: 16px; padding-bottom: 16px; border-top: 1px solid var(--cc-border-default, #D4D4D4);">
+      <form method="GET" action="<?php echo BASE_URL; ?>/admin/usuarios" style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
         
         <!-- Mantener estado actual -->
         <?php if (!empty($filtros['estado'])): ?>
@@ -92,8 +92,8 @@ layout('header');
         <?php endif; ?>
         
         <!-- Rol -->
-        <div>
-          <label class="label">Rol</label>
+        <div style="flex: 0 0 200px;">
+          <label class="label" style="display: block; margin-bottom: 8px;">Rol</label>
           <select name="rol" class="input">
             <option value="">Todos</option>
             <option value="admin" <?php echo ($filtros['rol'] ?? '') === 'admin' ? 'selected' : ''; ?>>
@@ -107,29 +107,32 @@ layout('header');
             </option>
           </select>
         </div>
-        </select>
-      </div>
 
-      <!-- Búsqueda -->
-      <div>
-        <label class="label">Búsqueda</label>
-        <input 
-          type="text" 
-          name="q" 
-          class="input" 
-          placeholder="Nombre, email, RUT..." 
-          value="<?php echo htmlspecialchars($filtros['busqueda'] ?? ''); ?>"
-        >
-      </div>
+        <!-- Búsqueda -->
+        <div style="flex: 1; min-width: 350px;">
+          <label class="label" style="display: block; margin-bottom: 8px;">Búsqueda</label>
+          <input 
+            type="text" 
+            name="q" 
+            class="input" 
+            placeholder="Nombre, email, RUT..." 
+            value="<?php echo htmlspecialchars($filtros['busqueda'] ?? ''); ?>"
+          >
+        </div>
 
-      <!-- Botón -->
-      <div style="display: flex; align-items: flex-end;">
-        <button type="submit" class="btn primary" style="width: 100%;">
-          Filtrar
-        </button>
-      </div>
-    </form>
-  </div>
+        <!-- Botones -->
+        <div style="display: flex; gap: 8px;">
+          <button type="submit" class="btn primary">
+            <?php echo icon('search', 16); ?>
+            Filtrar
+          </button>
+          <a href="<?php echo BASE_URL; ?>/admin/usuarios" class="btn outline">
+            <?php echo icon('x', 16); ?>
+            Limpiar
+          </a>
+        </div>
+      </form>
+    </div>
 
   <!-- Tabla de usuarios (Desktop) -->
   <div class="card">
@@ -729,8 +732,21 @@ layout('header');
     }
     
     #advanced-filters form {
-      grid-template-columns: 1fr !important;
-      gap: 12px !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+    
+    #advanced-filters form > div {
+      flex: 1 1 100% !important;
+      min-width: 100% !important;
+    }
+    
+    #advanced-filters form > div:last-child {
+      flex-direction: column !important;
+    }
+    
+    #advanced-filters form > div:last-child .btn {
+      width: 100% !important;
     }
     
     /* Ocultar tabla en móvil */
@@ -1268,8 +1284,6 @@ layout('header');
 <!-- Cargar sistema de feedback -->
 <script src="<?php echo BASE_URL; ?>/assets/js/admin-feedback.js"></script>
 
-<?php layout('footer'); ?>
-
 <script>
 // Toggle filtros avanzados
 function toggleFilters() {
@@ -1357,3 +1371,35 @@ function cerrarModal() {
   }
 }
 </script>
+
+<!-- Script de tema (modo claro/oscuro) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const html = document.documentElement;
+    
+    // Cargar tema guardado
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    }
+    
+    // Inicializar iconos de Lucide
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+
+</main>
+</body>
+</html>

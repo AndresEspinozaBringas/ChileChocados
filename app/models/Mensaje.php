@@ -322,10 +322,12 @@ class Mensaje extends Model
                     m.*,
                     ur.nombre as remitente_nombre,
                     ur.apellido as remitente_apellido,
-                    ur.foto_perfil as remitente_foto,
+                    ur.avatar as remitente_avatar,
+                    ur.rol as remitente_rol,
                     ud.nombre as destinatario_nombre,
                     ud.apellido as destinatario_apellido,
-                    ud.foto_perfil as destinatario_foto
+                    ud.avatar as destinatario_avatar,
+                    ud.rol as destinatario_rol
                 FROM {$this->table} m
                 INNER JOIN usuarios ur ON m.remitente_id = ur.id
                 INNER JOIN usuarios ud ON m.destinatario_id = ud.id

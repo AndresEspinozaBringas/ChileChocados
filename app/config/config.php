@@ -36,6 +36,11 @@ function loadEnv($path)
     }
 }
 
+// Cargar autoload de Composer (para PHPMailer y otras dependencias)
+if (file_exists(ROOT_PATH . '/vendor/autoload.php')) {
+    require_once ROOT_PATH . '/vendor/autoload.php';
+}
+
 // Cargar variables de entorno
 loadEnv(ROOT_PATH . '/.env');
 

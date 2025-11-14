@@ -11,7 +11,8 @@ $hideNav = true; // No mostrar navegación en páginas de autenticación
 require_once __DIR__ . '/../../layouts/header.php';
 
 $error = Session::getFlash('error');
-$token = $_GET['token'] ?? '';
+// El token viene como parámetro del método resetPassword() del controlador
+// y está disponible en la variable $token
 ?>
 
 <main class="auth-page">
@@ -19,8 +20,8 @@ $token = $_GET['token'] ?? '';
         <div class="auth-wrapper">
             <!-- Header -->
             <div class="auth-header">
-                <a href="/" class="auth-logo">
-                    <img src="/assets/images/logo.png" alt="ChileChocados">
+                <a href="<?php echo BASE_URL; ?>/" class="auth-logo">
+                    <img src="<?php echo BASE_URL; ?>/assets/logo-chch.svg" alt="ChileChocados">
                 </a>
                 <h1>Nueva contraseña</h1>
                 <p>Ingresa tu nueva contraseña segura</p>
@@ -35,8 +36,7 @@ $token = $_GET['token'] ?? '';
             <?php endif; ?>
 
             <!-- Formulario -->
-            <form action="/reset-password" method="POST" class="auth-form" id="resetForm">
-                <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+            <form action="/reset-password/<?= htmlspecialchars($token) ?>" method="POST" class="auth-form" id="resetForm">
 
                 <!-- Nueva contraseña -->
                 <div class="form-group">
@@ -109,8 +109,15 @@ $token = $_GET['token'] ?? '';
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 0;
+    padding: 3rem 1rem;
     background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.auth-page .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .auth-wrapper {
@@ -120,7 +127,7 @@ $token = $_GET['token'] ?? '';
     max-width: 450px;
     width: 100%;
     padding: 3rem;
-    margin: 0 1rem;
+    margin: 0 auto;
 }
 
 .auth-header {
@@ -129,7 +136,8 @@ $token = $_GET['token'] ?? '';
 }
 
 .auth-logo img {
-    height: 50px;
+    height: 45px;
+    width: auto;
     margin-bottom: 1.5rem;
 }
 
@@ -351,4 +359,5 @@ document.getElementById('resetForm')?.addEventListener('submit', function(e) {
 });
 </script>
 
-<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>
+</body>
+</html>

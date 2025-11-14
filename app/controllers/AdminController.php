@@ -122,26 +122,22 @@ class AdminController
         ");
         $actividadSemanal = $stmt->fetchAll(\PDO::FETCH_OBJ);
         
-        // Publicaciones por categoría (top 5)
+        // Publicaciones por subcategoría (top 5)
         $stmt = $this->db->query("
             SELECT 
-                cp.nombre as categoria,
+                sc.nombre as categoria,
                 COUNT(p.id) as total
             FROM publicaciones p
-            INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
+            INNER JOIN subcategorias sc ON p.subcategoria_id = sc.id
             WHERE p.estado = 'aprobada'
-            GROUP BY cp.id, cp.nombre
+            GROUP BY sc.id, sc.nombre
             ORDER BY total DESC
             LIMIT 5
         ");
         $publicacionesPorCategoria = $stmt->fetchAll(\PDO::FETCH_OBJ);
         
-        // Distribución de estados (para gráfico de dona)
-        $distribucionEstados = [
-            'aprobadas' => $statsPublicaciones->aprobadas ?? 0,
-            'pendientes' => $statsPublicaciones->pendientes ?? 0,
-            'rechazadas' => $statsPublicaciones->rechazadas ?? 0
-        ];
+        // Obtener distribución de estados para el gráfico
+        $distribucionEstados = $this->obtenerDistribucionEstados();
         
         // Preparar datos para la vista
         $pageTitle = 'Panel de Administración';
@@ -959,11 +955,13 @@ class AdminController
         $actividadSemanal = $this->obtenerActividadSemanal();
         $distribucionEstados = $this->obtenerDistribucionEstados();
         $publicacionesPorCategoria = $this->obtenerPublicacionesPorCategoria();
+        $publicacionesPorSubcategoria = $this->obtenerPublicacionesPorSubcategoria();
         
         // Preparar datos para gráficos
         $chartData = [
             'actividad_semanal' => $actividadSemanal,
             'por_categoria' => $publicacionesPorCategoria,
+            'por_subcategoria' => $publicacionesPorSubcategoria,
             'distribucion_estados' => $distribucionEstados
         ];
         
@@ -1214,22 +1212,46 @@ class AdminController
      */
     private function obtenerDistribucionEstados()
     {
+        // Primero verificar qué estados existen realmente
+        $stmtVerificar = $this->db->query("
+            SELECT estado, COUNT(*) as total 
+            FROM publicaciones 
+            GROUP BY estado
+        ");
+        
+        $estadosReales = [];
+        while ($row = $stmtVerificar->fetch(PDO::FETCH_ASSOC)) {
+            $estadosReales[$row['estado']] = (int)$row['total'];
+        }
+        
+        error_log("Estados reales en BD: " . json_encode($estadosReales));
+        
+        // Ahora hacer la consulta con CASE
         $stmt = $this->db->query("
             SELECT 
                 SUM(CASE WHEN estado = 'aprobada' THEN 1 ELSE 0 END) as aprobadas,
                 SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
-                SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas
+                SUM(CASE WHEN estado = 'rechazada' THEN 1 ELSE 0 END) as rechazadas,
+                SUM(CASE WHEN estado = 'borrador' THEN 1 ELSE 0 END) as borradores,
+                SUM(CASE WHEN estado = 'vendida' THEN 1 ELSE 0 END) as vendidas,
+                SUM(CASE WHEN estado = 'archivada' THEN 1 ELSE 0 END) as archivadas
             FROM publicaciones
-            WHERE estado != 'borrador'
         ");
         
         $result = $stmt->fetch(PDO::FETCH_OBJ);
         
-        return [
-            'aprobadas' => $result->aprobadas ?? 0,
-            'pendientes' => $result->pendientes ?? 0,
-            'rechazadas' => $result->rechazadas ?? 0
+        $distribucion = [
+            'aprobadas' => (int)($result->aprobadas ?? 0),
+            'pendientes' => (int)($result->pendientes ?? 0),
+            'rechazadas' => (int)($result->rechazadas ?? 0),
+            'borradores' => (int)($result->borradores ?? 0),
+            'vendidas' => (int)($result->vendidas ?? 0),
+            'archivadas' => (int)($result->archivadas ?? 0)
         ];
+        
+        error_log("Distribución calculada: " . json_encode($distribucion));
+        
+        return $distribucion;
     }
     
     /**
@@ -1245,6 +1267,26 @@ class AdminController
             INNER JOIN categorias_padre cp ON p.categoria_padre_id = cp.id
             WHERE p.estado = 'aprobada'
             GROUP BY cp.id, cp.nombre
+            ORDER BY total DESC
+            LIMIT 5
+        ");
+        
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+    /**
+     * Obtener publicaciones por subcategoría (top 5)
+     */
+    private function obtenerPublicacionesPorSubcategoria()
+    {
+        $stmt = $this->db->query("
+            SELECT 
+                sc.nombre as categoria,
+                COUNT(p.id) as total
+            FROM publicaciones p
+            INNER JOIN subcategorias sc ON p.subcategoria_id = sc.id
+            WHERE p.estado = 'aprobada'
+            GROUP BY sc.id, sc.nombre
             ORDER BY total DESC
             LIMIT 5
         ");

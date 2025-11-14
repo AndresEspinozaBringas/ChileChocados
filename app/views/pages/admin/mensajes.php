@@ -13,24 +13,20 @@ $userId = $data['user_id'] ?? 1;
 require_once __DIR__ . '/../../layouts/header.php';
 ?>
 
-<!-- CSS específico para mensajería admin -->
+<!-- CSS específico para mensajería admin (copiado de mensajes de usuario) -->
 <style>
-.admin-mensajeria-container {
+.mensajeria-container {
     display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: 24px;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
     margin-top: 24px;
-    height: calc(100vh - 250px);
+    height: calc(100vh - 200px);
     max-height: 700px;
-    max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 24px;
 }
 
 .conversaciones-panel {
-    background: var(--cc-bg-surface);
-    border: 1px solid var(--cc-border-default);
+    background: var(--cc-white, #FFFFFF);
+    border: 1px solid var(--cc-border-default, #E5E5E5);
     border-radius: 12px;
     overflow: hidden;
     display: flex;
@@ -39,15 +35,14 @@ require_once __DIR__ . '/../../layouts/header.php';
 
 .conversaciones-header {
     padding: 16px;
-    border-bottom: 1px solid var(--cc-border-default);
-    background: var(--cc-bg-muted);
+    border-bottom: 1px solid var(--cc-border-default, #E5E5E5);
+    background: var(--cc-bg-surface, #F9F9F9);
 }
 
 .conversaciones-lista {
     flex: 1;
     overflow-y: auto;
     padding: 8px;
-    background: var(--cc-bg-surface);
 }
 
 .conversacion-item {
@@ -63,12 +58,12 @@ require_once __DIR__ . '/../../layouts/header.php';
 }
 
 .conversacion-item:hover {
-    background: var(--cc-bg-muted);
+    background: var(--cc-bg-muted, #F5F5F5);
 }
 
 .conversacion-item.activa {
-    background: var(--cc-primary-pale);
-    border-left: 3px solid var(--cc-primary);
+    background: var(--cc-primary-pale, #FFF5F4);
+    border-left: 3px solid var(--cc-primary, #E6332A);
 }
 
 .conversacion-foto {
@@ -86,9 +81,9 @@ require_once __DIR__ . '/../../layouts/header.php';
 }
 
 .conversacion-titulo {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--cc-text-primary);
+    color: var(--cc-text-primary, #2E2E2E);
     margin: 0 0 4px 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -97,13 +92,13 @@ require_once __DIR__ . '/../../layouts/header.php';
 
 .conversacion-usuarios {
     font-size: 12px;
-    color: var(--cc-text-secondary);
+    color: var(--cc-text-tertiary, #999);
     margin-bottom: 4px;
 }
 
 .conversacion-ultimo-mensaje {
-    font-size: 12px;
-    color: var(--cc-text-tertiary);
+    font-size: 13px;
+    color: var(--cc-text-secondary, #666);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -122,8 +117,8 @@ require_once __DIR__ . '/../../layouts/header.php';
 }
 
 .badge-no-leidos {
-    background: var(--cc-primary);
-    color: var(--cc-white);
+    background: var(--cc-primary, #E6332A);
+    color: white;
     font-size: 11px;
     font-weight: 600;
     padding: 2px 8px;
@@ -133,8 +128,8 @@ require_once __DIR__ . '/../../layouts/header.php';
 }
 
 .chat-panel {
-    background: var(--cc-bg-surface);
-    border: 1px solid var(--cc-border-default);
+    background: var(--cc-white, #FFFFFF);
+    border: 1px solid var(--cc-border-default, #E5E5E5);
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -143,75 +138,99 @@ require_once __DIR__ . '/../../layouts/header.php';
 
 .chat-header {
     padding: 16px 20px;
-    border-bottom: 1px solid var(--cc-border-default);
-    background: var(--cc-bg-muted);
+    border-bottom: 1px solid var(--cc-border-default, #E5E5E5);
+    background: var(--cc-bg-surface, #F9F9F9);
+}
+
+.chat-header-titulo {
+    flex: 1;
+}
+
+.chat-header-titulo h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    color: var(--cc-text-primary, #2E2E2E);
+}
+
+.chat-header-titulo p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--cc-text-secondary, #666);
 }
 
 .chat-header-info h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
     font-size: 16px;
-    color: var(--cc-text-primary);
+    color: var(--cc-text-primary, #2E2E2E);
 }
 
 .chat-header-info p {
     margin: 0;
     font-size: 13px;
-    color: var(--cc-text-secondary);
+    color: var(--cc-text-secondary, #666);
 }
 
 .chat-mensajes {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
-    background: var(--cc-bg-default);
+    background: var(--cc-bg-default, #FAFAFA);
 }
 
 .mensaje {
     display: flex;
     margin-bottom: 16px;
     gap: 12px;
+    align-items: flex-end;
 }
 
-/* Avatares con colores únicos por usuario */
+/* Mensajes del usuario 1 (izquierda) */
+.mensaje.usuario1 {
+    flex-direction: row;
+}
+
+/* Mensajes del usuario 2 (derecha) */
+.mensaje.usuario2 {
+    flex-direction: row-reverse;
+}
+
 .mensaje-avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--cc-border-default, #E5E5E5);
+}
+
+.mensaje-avatar-placeholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    background: var(--cc-primary-pale, #FFF5F4);
+    color: var(--cc-primary, #E6332A);
     font-weight: 700;
-    flex-shrink: 0;
-    border: 3px solid white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-}
-
-.mensaje-avatar:hover {
-    transform: scale(1.1);
-}
-
-/* Colores únicos por usuario usando paleta del proyecto */
-.mensaje-avatar[data-user-id="1"] { background: #E6332A; color: white; }
-.mensaje-avatar[data-user-id="2"] { background: #c72a22; color: white; }
-.mensaje-avatar[data-user-id="3"] { background: #2E2E2E; color: white; }
-.mensaje-avatar[data-user-id="4"] { background: #666666; color: white; }
-.mensaje-avatar[data-user-id="5"] { background: #999999; color: white; }
-.mensaje-avatar[data-user-id="6"] { background: #10B981; color: white; }
-.mensaje-avatar[data-user-id="7"] { background: #F59E0B; color: white; }
-.mensaje-avatar[data-user-id="8"] { background: #3B82F6; color: white; }
-.mensaje-avatar[data-user-id="9"] { background: #8B5CF6; color: white; }
-.mensaje-avatar[data-user-id="10"] { background: #EC4899; color: white; }
-
-/* Color por defecto para otros usuarios */
-.mensaje-avatar:not([data-user-id]) {
-    background: #E6332A;
-    color: white;
+    font-size: 14px;
+    border: 2px solid var(--cc-border-default, #E5E5E5);
 }
 
 .mensaje-contenido {
     max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--cc-white, #FFFFFF);
+    border: 1px solid var(--cc-border-default, #E5E5E5);
+}
+
+/* Fondo rojo para mensajes del usuario 2 (derecha) */
+.mensaje.usuario2 .mensaje-contenido {
+    background: var(--cc-primary, #E6332A);
+    color: white;
+    border-color: var(--cc-primary, #E6332A);
 }
 
 .mensaje-header {
@@ -222,76 +241,39 @@ require_once __DIR__ . '/../../layouts/header.php';
 }
 
 .mensaje-autor {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--cc-text-primary);
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: var(--cc-bg-muted);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cc-primary, #E6332A);
 }
 
-/* Colores de nombre según usuario usando paleta del proyecto */
-.mensaje-item[data-user-id="1"] .mensaje-autor { color: #E6332A; background: rgba(230, 51, 42, 0.1); }
-.mensaje-item[data-user-id="2"] .mensaje-autor { color: #c72a22; background: rgba(199, 42, 34, 0.1); }
-.mensaje-item[data-user-id="3"] .mensaje-autor { color: #2E2E2E; background: rgba(46, 46, 46, 0.1); }
-.mensaje-item[data-user-id="4"] .mensaje-autor { color: #666666; background: rgba(102, 102, 102, 0.1); }
-.mensaje-item[data-user-id="5"] .mensaje-autor { color: #999999; background: rgba(153, 153, 153, 0.1); }
-.mensaje-item[data-user-id="6"] .mensaje-autor { color: #10B981; background: rgba(16, 185, 129, 0.1); }
-.mensaje-item[data-user-id="7"] .mensaje-autor { color: #F59E0B; background: rgba(245, 158, 11, 0.1); }
-.mensaje-item[data-user-id="8"] .mensaje-autor { color: #3B82F6; background: rgba(59, 130, 246, 0.1); }
-.mensaje-item[data-user-id="9"] .mensaje-autor { color: #8B5CF6; background: rgba(139, 92, 246, 0.1); }
-.mensaje-item[data-user-id="10"] .mensaje-autor { color: #EC4899; background: rgba(236, 72, 153, 0.1); }
+/* Color blanco para autor en mensajes rojos */
+.mensaje.usuario2 .mensaje-autor {
+    color: rgba(255, 255, 255, 0.9);
+}
 
 .mensaje-fecha {
     font-size: 11px;
-    color: var(--cc-text-tertiary);
-    font-weight: 500;
+    color: var(--cc-text-tertiary, #999);
+    margin-top: 4px;
+}
+
+/* Color blanco para fecha en mensajes rojos */
+.mensaje.usuario2 .mensaje-fecha {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .mensaje-texto {
-    padding: 12px 16px;
-    border-radius: 12px;
-    background: var(--cc-bg-surface);
-    border: 2px solid var(--cc-border-default);
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.5;
     margin: 0;
     word-wrap: break-word;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    transition: all 0.2s;
-    color: var(--cc-text-primary);
+    color: var(--cc-text-primary, #2E2E2E);
 }
 
-.mensaje-texto:hover {
-    border-color: var(--cc-primary);
-    box-shadow: 0 2px 8px rgba(230, 51, 42, 0.1);
+/* Color blanco para texto en mensajes rojos */
+.mensaje.usuario2 .mensaje-texto {
+    color: white;
 }
-
-.mensaje-item {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding: 12px;
-    border-radius: 12px;
-    transition: all 0.2s;
-}
-
-.mensaje-item:hover {
-    background: rgba(0,0,0,0.02);
-    transform: translateX(4px);
-}
-
-/* Borde lateral según usuario usando paleta del proyecto */
-.mensaje-item[data-user-id="1"] { border-left: 4px solid #E6332A; }
-.mensaje-item[data-user-id="2"] { border-left: 4px solid #c72a22; }
-.mensaje-item[data-user-id="3"] { border-left: 4px solid #2E2E2E; }
-.mensaje-item[data-user-id="4"] { border-left: 4px solid #666666; }
-.mensaje-item[data-user-id="5"] { border-left: 4px solid #999999; }
-.mensaje-item[data-user-id="6"] { border-left: 4px solid #10B981; }
-.mensaje-item[data-user-id="7"] { border-left: 4px solid #F59E0B; }
-.mensaje-item[data-user-id="8"] { border-left: 4px solid #3B82F6; }
-.mensaje-item[data-user-id="9"] { border-left: 4px solid #8B5CF6; }
-.mensaje-item[data-user-id="10"] { border-left: 4px solid #EC4899; }
 
 .mensaje-vacio {
     text-align: center;
@@ -315,13 +297,23 @@ require_once __DIR__ . '/../../layouts/header.php';
     box-shadow: 0 2px 4px rgba(230, 51, 42, 0.3);
 }
 
+.badge-nuevo {
+    color: var(--cc-primary);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Badge nuevo en mensajes rojos */
+.mensaje.usuario2 .badge-nuevo {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 /* Responsive */
 @media (max-width: 968px) {
-    .admin-mensajeria-container {
+    .mensajeria-container {
         grid-template-columns: 1fr;
         height: auto;
         max-height: none;
-        padding: 0 16px;
     }
     
     .conversaciones-panel {
@@ -333,10 +325,37 @@ require_once __DIR__ . '/../../layouts/header.php';
     }
 }
 
+@media (max-width: 640px) {
+    .mensaje-contenido {
+        max-width: 85%;
+    }
+}
+
 /* ============================================================================
- * DARK MODE - MENSAJERÍA ADMIN
+ * DARK MODE
  * ============================================================================ */
 
+:root[data-theme="dark"] main.container {
+    background: #111827 !important;
+}
+
+/* Breadcrumbs */
+:root[data-theme="dark"] .breadcrumbs a {
+    color: #9CA3AF !important;
+}
+
+/* Títulos */
+:root[data-theme="dark"] .h1,
+:root[data-theme="dark"] h1.h1 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .h3,
+:root[data-theme="dark"] h3.h3 {
+    color: #F3F4F6 !important;
+}
+
+/* Panel de conversaciones */
 :root[data-theme="dark"] .conversaciones-panel {
     background-color: #1F2937;
     border-color: #374151;
@@ -394,47 +413,71 @@ require_once __DIR__ . '/../../layouts/header.php';
     border-bottom-color: #374151;
 }
 
+:root[data-theme="dark"] .chat-header-titulo h3 {
+    color: #F3F4F6 !important;
+}
+
+:root[data-theme="dark"] .chat-header-titulo p {
+    color: #9CA3AF !important;
+}
+
 :root[data-theme="dark"] .chat-header-info h3 {
-    color: #F3F4F6;
+    color: #F3F4F6 !important;
 }
 
 :root[data-theme="dark"] .chat-header-info p {
-    color: #9CA3AF;
-}
-
-:root[data-theme="dark"] .chat-header-info a {
-    color: var(--cc-primary);
+    color: #9CA3AF !important;
 }
 
 :root[data-theme="dark"] .chat-mensajes {
     background-color: #111827;
 }
 
-:root[data-theme="dark"] .mensaje-item {
-    background-color: transparent;
+/* Mensajes */
+:root[data-theme="dark"] .mensaje-avatar {
+    border-color: #4B5563 !important;
 }
 
-:root[data-theme="dark"] .mensaje-item:hover {
-    background-color: rgba(55, 65, 81, 0.3);
+:root[data-theme="dark"] .mensaje-avatar-placeholder {
+    background: rgba(230, 51, 42, 0.15) !important;
+    border-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .mensaje-contenido {
+    background: #374151 !important;
+    border-color: #4B5563 !important;
+    color: #F3F4F6 !important;
+}
+
+/* Mensajes rojos en dark mode */
+:root[data-theme="dark"] .mensaje.usuario2 .mensaje-contenido {
+    background: var(--cc-primary) !important;
+    color: white !important;
+    border-color: var(--cc-primary) !important;
 }
 
 :root[data-theme="dark"] .mensaje-autor {
-    color: #F3F4F6;
-    background-color: #374151;
+    color: var(--cc-primary) !important;
 }
 
-:root[data-theme="dark"] .mensaje-fecha {
-    color: #9CA3AF;
+:root[data-theme="dark"] .mensaje.usuario2 .mensaje-autor {
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 :root[data-theme="dark"] .mensaje-texto {
-    background-color: #1F2937;
-    border-color: #374151;
-    color: #F3F4F6;
+    color: inherit !important;
 }
 
-:root[data-theme="dark"] .mensaje-texto:hover {
-    border-color: var(--cc-primary);
+:root[data-theme="dark"] .mensaje.usuario2 .mensaje-texto {
+    color: white !important;
+}
+
+:root[data-theme="dark"] .mensaje-fecha {
+    color: #9CA3AF !important;
+}
+
+:root[data-theme="dark"] .mensaje.usuario2 .mensaje-fecha {
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 :root[data-theme="dark"] .mensaje-vacio {
@@ -448,71 +491,20 @@ require_once __DIR__ . '/../../layouts/header.php';
 :root[data-theme="dark"] .badge-admin {
     background: linear-gradient(135deg, var(--cc-primary) 0%, #c72a22 100%);
 }
-
-/* Avatares en dark mode - mantener colores pero ajustar borde */
-:root[data-theme="dark"] .mensaje-avatar {
-    border-color: #1F2937;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-/* Colores de nombre en dark mode */
-:root[data-theme="dark"] .mensaje-item[data-user-id="1"] .mensaje-autor { 
-    color: #FCA5A5; 
-    background: rgba(230, 51, 42, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="2"] .mensaje-autor { 
-    color: #FCA5A5; 
-    background: rgba(199, 42, 34, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="3"] .mensaje-autor { 
-    color: #D1D5DB; 
-    background: rgba(46, 46, 46, 0.3); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="4"] .mensaje-autor { 
-    color: #D1D5DB; 
-    background: rgba(102, 102, 102, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="5"] .mensaje-autor { 
-    color: #D1D5DB; 
-    background: rgba(153, 153, 153, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="6"] .mensaje-autor { 
-    color: #6EE7B7; 
-    background: rgba(16, 185, 129, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="7"] .mensaje-autor { 
-    color: #FCD34D; 
-    background: rgba(245, 158, 11, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="8"] .mensaje-autor { 
-    color: #93C5FD; 
-    background: rgba(59, 130, 246, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="9"] .mensaje-autor { 
-    color: #C4B5FD; 
-    background: rgba(139, 92, 246, 0.2); 
-}
-:root[data-theme="dark"] .mensaje-item[data-user-id="10"] .mensaje-autor { 
-    color: #F9A8D4; 
-    background: rgba(236, 72, 153, 0.2); 
-}
 </style>
 
-<main class="admin-container" style="max-width: 1400px; margin: 0 auto; padding: 24px;">
+<main class="container" style="max-width: 1400px; padding: 24px;">
     
-    <!-- Header del panel admin -->
-    <div class="admin-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <div>
-            <h1 class="h1">Sistema de Mensajería</h1>
-            <p class="text-secondary">Monitoreo de todas las conversaciones del sistema</p>
-        </div>
-        <a href="<?php echo BASE_URL; ?>/admin" class="btn btn-outline">
-            ← Volver al panel
-        </a>
+    <!-- Breadcrumb -->
+    <div class="breadcrumbs" style="margin-bottom: 16px;">
+        <a href="<?php echo BASE_URL; ?>/admin">← Volver al panel admin</a>
     </div>
 
+    <!-- Título -->
+    <h1 class="h1" style="margin-bottom: 24px;">Sistema de Mensajería</h1>
+
     <!-- Container de mensajería -->
-    <div class="admin-mensajeria-container">
+    <div class="mensajeria-container">
         
         <!-- PANEL IZQUIERDO: Lista de conversaciones -->
         <aside class="conversaciones-panel">
@@ -592,18 +584,10 @@ require_once __DIR__ . '/../../layouts/header.php';
                     <div class="chat-header-info">
                         <h3><?php echo htmlspecialchars($conversacionActiva['publicacion_titulo']); ?></h3>
                         <p>
+                            Conversación entre 
                             <strong><?php echo htmlspecialchars($conversacionActiva['usuario1_nombre']); ?></strong>
-                            (<?php echo ucfirst($conversacionActiva['usuario1_rol']); ?>)
-                            ↔
+                            y
                             <strong><?php echo htmlspecialchars($conversacionActiva['usuario2_nombre']); ?></strong>
-                            (<?php echo ucfirst($conversacionActiva['usuario2_rol']); ?>)
-                        </p>
-                        <p style="font-size: 12px; margin-top: 4px;">
-                            <a href="<?php echo BASE_URL; ?>/publicacion/<?php echo $conversacionActiva['publicacion_id']; ?>" 
-                               target="_blank" 
-                               style="color: var(--cc-primary);">
-                                Ver publicación →
-                            </a>
                         </p>
                     </div>
                 </div>
@@ -619,10 +603,27 @@ require_once __DIR__ . '/../../layouts/header.php';
                         </div>
                     <?php else: ?>
                         <?php foreach ($mensajes as $msg): ?>
-                            <div class="mensaje-item" data-user-id="<?php echo $msg->remitente_id; ?>">
-                                <div class="mensaje-avatar" data-user-id="<?php echo $msg->remitente_id; ?>">
-                                    <?php echo strtoupper(substr($msg->remitente_nombre, 0, 1)); ?>
-                                </div>
+                            <?php 
+                            // Obtener avatar del remitente
+                            $avatarUrl = !empty($msg->remitente_avatar) 
+                                ? BASE_URL . '/uploads/avatars/' . $msg->remitente_avatar
+                                : null;
+                            $avatarInicial = strtoupper(substr($msg->remitente_nombre, 0, 1));
+                            
+                            // Determinar si es usuario1 o usuario2 basado en el ID del remitente
+                            $esUsuario1 = ($msg->remitente_id == $conversacionActiva['usuario1_id']);
+                            $claseUsuario = $esUsuario1 ? 'usuario1' : 'usuario2';
+                            ?>
+                            <div class="mensaje <?php echo $claseUsuario; ?>">
+                                <?php if ($avatarUrl): ?>
+                                    <img src="<?php echo $avatarUrl; ?>" 
+                                         alt="Avatar" 
+                                         class="mensaje-avatar">
+                                <?php else: ?>
+                                    <div class="mensaje-avatar-placeholder">
+                                        <?php echo $avatarInicial; ?>
+                                    </div>
+                                <?php endif; ?>
                                 <div class="mensaje-contenido">
                                     <div class="mensaje-header">
                                         <span class="mensaje-autor">
@@ -631,14 +632,12 @@ require_once __DIR__ . '/../../layouts/header.php';
                                         <?php if (isset($msg->remitente_rol) && $msg->remitente_rol === 'admin'): ?>
                                             <span class="badge-admin">ADMIN</span>
                                         <?php endif; ?>
-                                        <span class="mensaje-fecha"><?php echo $msg->fecha_formateada; ?></span>
                                         <?php if (!$msg->leido): ?>
-                                            <span style="color: var(--cc-primary); font-size: 11px; font-weight: 600;">● Nuevo</span>
+                                            <span class="badge-nuevo">● Nuevo</span>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="mensaje-texto">
-                                        <?php echo nl2br(htmlspecialchars($msg->mensaje)); ?>
-                                    </div>
+                                    <p class="mensaje-texto"><?php echo nl2br(htmlspecialchars($msg->mensaje)); ?></p>
+                                    <div class="mensaje-fecha"><?php echo $msg->fecha_formateada; ?></div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -769,4 +768,34 @@ document.addEventListener('visibilitychange', function() {
 <?php endif; ?>
 </script>
 
-<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>
+<!-- Script de tema (modo claro/oscuro) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const html = document.documentElement;
+    
+    // Cargar tema guardado
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    }
+    
+    // Inicializar iconos de Lucide
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
+</script>
+
+</main>
+</body>
+</html>

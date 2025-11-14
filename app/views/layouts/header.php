@@ -750,24 +750,25 @@
                     <?php 
                     $notificationCount = getNotificationCount();
                     $messageCount = getMessageCount();
+                    
+                    // Usar componente estandarizado de icono de notificaciones
+                    $size = 24;
+                    $count = $notificationCount;
+                    $id = 'btn-notificaciones';
+                    $onclick = 'toggleNotificaciones()';
+                    require APP_PATH . '/views/components/notification-icon.php';
                     ?>
-                    <button class="header-action-btn" aria-label="Notificaciones" id="btn-notificaciones" onclick="toggleNotificaciones()">
-                        <?php echo icon('bell', 22); ?>
-                        <?php if ($notificationCount > 0): ?>
-                            <span class="notification-badge" id="notification-count"><?php echo $notificationCount; ?></span>
-                        <?php endif; ?>
-                    </button>
                     
                     <!-- Mensajes -->
                     <a href="<?php echo BASE_URL; ?>/mensajes" class="header-action-btn" aria-label="Mensajes">
-                        <?php echo icon('message', 22); ?>
+                        <?php echo icon('message', 24); ?>
                         <?php if ($messageCount > 0): ?>
                             <span class="notification-badge" id="message-count"><?php echo $messageCount; ?></span>
                         <?php endif; ?>
                     </a>
                     
                     <!-- Botón Publicar -->
-                    <a href="<?php echo BASE_URL; ?>/publicar" class="btn btn-primary">
+                    <a href="<?php echo BASE_URL; ?>/publicar" class="btn btn-primary btn-lg">
                         <?php echo icon('plus', 18); ?>
                         <span class="btn-text">Publicar</span>
                     </a>

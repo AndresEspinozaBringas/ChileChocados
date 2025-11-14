@@ -236,9 +236,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($url[0])) {
     } elseif ($url[0] === 'recuperar-contrasena') {
         $controllerName = 'AuthController';
         $method = 'sendResetLink';
-    } elseif ($url[0] === 'reset-password') {
+    } elseif ($url[0] === 'reset-password' && isset($url[1])) {
         $controllerName = 'AuthController';
         $method = 'updatePassword';
+        $params = [$url[1]]; // Token
     }
     // Publicaciones - POST
     elseif ($url[0] === 'publicar' && isset($url[1]) && $url[1] === 'procesar') {

@@ -19,8 +19,8 @@ $success = Session::getFlash('success');
         <div class="auth-wrapper">
             <!-- Header -->
             <div class="auth-header">
-                <a href="/" class="auth-logo">
-                    <img src="/assets/images/logo.png" alt="ChileChocados">
+                <a href="<?php echo BASE_URL; ?>/" class="auth-logo">
+                    <img src="<?php echo BASE_URL; ?>/assets/logo-chch.svg" alt="ChileChocados">
                 </a>
                 <h1>¿Olvidaste tu contraseña?</h1>
                 <p>Ingresa tu email y te enviaremos un enlace para recuperarla</p>
@@ -83,8 +83,15 @@ $success = Session::getFlash('success');
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 0;
+    padding: 3rem 1rem;
     background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.auth-page .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .auth-wrapper {
@@ -94,7 +101,7 @@ $success = Session::getFlash('success');
     max-width: 450px;
     width: 100%;
     padding: 3rem;
-    margin: 0 1rem;
+    margin: 0 auto;
 }
 
 .auth-header {
@@ -103,7 +110,8 @@ $success = Session::getFlash('success');
 }
 
 .auth-logo img {
-    height: 50px;
+    height: 45px;
+    width: auto;
     margin-bottom: 1.5rem;
 }
 
@@ -219,4 +227,5 @@ $success = Session::getFlash('success');
 }
 </style>
 
-<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>
+</body>
+</html>

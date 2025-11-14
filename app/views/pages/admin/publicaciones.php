@@ -203,7 +203,7 @@ layout('header');
                       <?php echo htmlspecialchars($pub->categoria_nombre ?? 'Sin categoría'); ?>
                     </span>
                     <?php if ($pub->subcategoria_nombre): ?>
-                      <span class="badge" style="font-size: 11px; background: #E5E5E5;">
+                      <span class="badge" style="font-size: 11px; background: var(--cc-bg-muted); color: var(--cc-text-secondary);">
                         <?php echo htmlspecialchars($pub->subcategoria_nombre); ?>
                       </span>
                     <?php endif; ?>
@@ -214,9 +214,9 @@ layout('header');
                 <td>
                   <?php
                   $estadoColores = [
-                    'pendiente' => 'background: #FF9500; color: white;',
-                    'aprobada' => 'background: #34C759; color: white;',
-                    'rechazada' => 'background: #FF3B30; color: white;'
+                    'pendiente' => 'background: var(--cc-warning, #F59E0B); color: white;',
+                    'aprobada' => 'background: var(--cc-success, #10B981); color: white;',
+                    'rechazada' => 'background: var(--cc-danger, #EF4444); color: white;'
                   ];
                   $estadoTexto = [
                     'pendiente' => 'Pendiente',
@@ -291,8 +291,8 @@ layout('header');
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="6" style="text-align: center; padding: 48px; color: #999;">
-                <div class="h3" style="margin-bottom: 8px;">No hay publicaciones</div>
+              <td colspan="6" style="text-align: center; padding: 48px; color: var(--cc-text-tertiary);">
+                <div class="h3" style="margin-bottom: 8px; color: var(--cc-text-secondary);">No hay publicaciones</div>
                 <p class="meta">No se encontraron publicaciones con los filtros seleccionados</p>
               </td>
             </tr>
@@ -316,9 +316,9 @@ layout('header');
                   <span style="font-weight: 700; color: var(--cc-text-secondary); font-size: 12px;">#<?php echo $pub->id; ?></span>
                   <?php
                   $estadoColores = [
-                    'pendiente' => 'background: #FF9500; color: white;',
-                    'aprobada' => 'background: #34C759; color: white;',
-                    'rechazada' => 'background: #FF3B30; color: white;'
+                    'pendiente' => 'background: var(--cc-warning, #F59E0B); color: white;',
+                    'aprobada' => 'background: var(--cc-success, #10B981); color: white;',
+                    'rechazada' => 'background: var(--cc-danger, #EF4444); color: white;'
                   ];
                   $estadoTexto = [
                     'pendiente' => 'Pendiente',
@@ -410,8 +410,8 @@ layout('header');
         <?php endforeach; ?>
       </div>
     <?php else: ?>
-      <div style="text-align: center; padding: 48px; color: #999;">
-        <div class="h3" style="margin-bottom: 8px;">No hay publicaciones</div>
+      <div style="text-align: center; padding: 48px; color: var(--cc-text-tertiary);">
+        <div class="h3" style="margin-bottom: 8px; color: var(--cc-text-secondary);">No hay publicaciones</div>
         <p class="meta">No se encontraron publicaciones con los filtros seleccionados</p>
       </div>
     <?php endif; ?>
@@ -419,7 +419,7 @@ layout('header');
 
     <!-- Paginación -->
     <?php if (!empty($publicaciones) && isset($pagination) && $pagination['total_pages'] > 1): ?>
-      <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #E5E5E5;">
+      <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--cc-border-default);">
         <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
           <?php if ($pagination['current_page'] > 1): ?>
             <a href="?page=<?php echo $pagination['current_page'] - 1; ?><?php echo http_build_query(['estado' => $filtros['estado'] ?? '', 'categoria' => $filtros['categoria'] ?? '', 'q' => $filtros['q'] ?? '']); ?>" class="btn outline">
@@ -494,7 +494,7 @@ layout('header');
           <button type="button" onclick="cerrarModal('modalRechazo')" class="btn outline">
             Cancelar
           </button>
-          <button type="submit" class="btn primary" style="background: #FF3B30;">
+          <button type="submit" class="btn primary" style="background: var(--cc-danger); border-color: var(--cc-danger);">
             Confirmar Rechazo
           </button>
         </div>
@@ -515,8 +515,8 @@ function verDetallePublicacion(id) {
     .then(data => {
       if (data.error) {
         document.getElementById('contenidoDetalle').innerHTML = 
-          `<div style="text-align: center; padding: 48px; color: #FF3B30;">
-            <p class="h3">Error al cargar el detalle</p>
+          `<div style="text-align: center; padding: 48px; color: var(--cc-danger);">
+            <p class="h3" style="color: var(--cc-danger);">Error al cargar el detalle</p>
             <p class="meta">${data.error}</p>
           </div>`;
         return;
@@ -549,7 +549,7 @@ function verDetallePublicacion(id) {
               <img 
                 src="${rutaCompleta}" 
                 alt="Foto ${index + 1}"
-                onerror="console.error('Error cargando imagen:', this.src); this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;background:#F3F4F6;color:#9CA3AF;font-size:10px;flex-direction:column;padding:8px;text-align:center;\\'>❌<br>Error<br><small style=\\'word-break:break-all;\\'>${rutaRelativa}</small></div>';"
+                onerror="console.error('Error cargando imagen:', this.src); this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;background:var(--cc-bg-muted);color:var(--cc-text-tertiary);font-size:10px;flex-direction:column;padding:8px;text-align:center;\\'>❌<br>Error<br><small style=\\'word-break:break-all;\\'>${rutaRelativa}</small></div>';"
               >
               ${foto.es_principal == 1 ? '<span class="foto-principal-badge">★ Principal</span>' : ''}
             </div>
@@ -557,7 +557,7 @@ function verDetallePublicacion(id) {
         });
         fotosHtml += '</div>';
       } else {
-        fotosHtml = '<div style="text-align: center; padding: 40px; background: #F9FAFB; border-radius: 12px; border: 2px dashed #E5E7EB;"><p class="meta" style="color: #9CA3AF;">📷 No hay fotos disponibles para esta publicación</p></div>';
+        fotosHtml = '<div style="text-align: center; padding: 40px; background: var(--cc-bg-muted); border-radius: 12px; border: 2px dashed var(--cc-border-default);"><p class="meta" style="color: var(--cc-text-tertiary);">📷 No hay fotos disponibles para esta publicación</p></div>';
       }
 
       let html = `
@@ -585,17 +585,17 @@ function verDetallePublicacion(id) {
                 </tr>
                 <tr>
                   <td>Precio:</td>
-                  <td style="font-size: 20px; font-weight: 700; color: var(--cc-primary, #E6332A);">
+                  <td style="font-size: 20px; font-weight: 700; color: var(--cc-primary);">
                     ${pub.precio ? '$' + Number(pub.precio).toLocaleString('es-CL') : 'A convenir'}
                   </td>
                 </tr>
                 <tr>
                   <td>Categoría:</td>
                   <td>
-                    <span class="badge" style="background: var(--cc-primary-pale, #FFF1F0); color: var(--cc-primary, #E6332A);">
+                    <span class="badge" style="background: var(--cc-bg-muted); color: var(--cc-primary);">
                       ${pub.categoria_nombre}
                     </span>
-                    ${pub.subcategoria_nombre ? `<br><span class="badge" style="margin-top: 4px;">${pub.subcategoria_nombre}</span>` : ''}
+                    ${pub.subcategoria_nombre ? `<br><span class="badge" style="margin-top: 4px; background: var(--cc-bg-muted); color: var(--cc-text-secondary);">${pub.subcategoria_nombre}</span>` : ''}
                   </td>
                 </tr>
                 <tr>
@@ -607,17 +607,17 @@ function verDetallePublicacion(id) {
 
             <div class="modal-section">
               <div class="modal-section-title">📄 Descripción</div>
-              <div style="white-space: pre-wrap; line-height: 1.6; color: #374151;">
-                ${pub.descripcion || '<span class="meta" style="color: #9CA3AF;">Sin descripción</span>'}
+              <div style="white-space: pre-wrap; line-height: 1.6; color: var(--cc-text-primary);">
+                ${pub.descripcion || '<span class="meta" style="color: var(--cc-text-tertiary);">Sin descripción</span>'}
               </div>
             </div>
 
             ${pub.motivo_rechazo ? `
-              <div style="padding: 20px; background: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 12px; border: 1px solid #FEE2E2;">
-                <div style="font-size: 16px; font-weight: 700; color: #DC2626; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <div style="padding: 20px; background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--cc-danger); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                <div style="font-size: 16px; font-weight: 700; color: var(--cc-danger); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
                   ❌ Motivo de Rechazo
                 </div>
-                <p style="white-space: pre-wrap; color: #991B1B; line-height: 1.6;">${pub.motivo_rechazo}</p>
+                <p style="white-space: pre-wrap; color: var(--cc-text-primary); line-height: 1.6;">${pub.motivo_rechazo}</p>
               </div>
             ` : ''}
           </div>
@@ -634,7 +634,7 @@ function verDetallePublicacion(id) {
                 <tr>
                   <td>Email:</td>
                   <td>
-                    <a href="mailto:${pub.usuario_email}" style="color: var(--cc-primary, #E6332A); text-decoration: none; font-weight: 600;">
+                    <a href="mailto:${pub.usuario_email}" style="color: var(--cc-primary); text-decoration: none; font-weight: 600;">
                       📧 ${pub.usuario_email}
                     </a>
                   </td>
@@ -643,7 +643,7 @@ function verDetallePublicacion(id) {
                 <tr>
                   <td>Teléfono:</td>
                   <td>
-                    <a href="tel:${pub.usuario_telefono}" style="color: var(--cc-primary, #E6332A); text-decoration: none; font-weight: 600;">
+                    <a href="tel:${pub.usuario_telefono}" style="color: var(--cc-primary); text-decoration: none; font-weight: 600;">
                       📱 ${pub.usuario_telefono}
                     </a>
                   </td>
@@ -659,12 +659,12 @@ function verDetallePublicacion(id) {
         </div>
 
         <!-- Acciones del modal -->
-        <div style="margin-top: 32px; padding-top: 24px; border-top: 2px solid #E5E5E5; display: flex; gap: 12px; justify-content: flex-end;">
+        <div style="margin-top: 32px; padding-top: 24px; border-top: 2px solid var(--cc-border-default); display: flex; gap: 12px; justify-content: flex-end;">
           ${pub.estado === 'pendiente' ? `
-            <button onclick="aprobarPublicacion(${pub.id})" class="btn primary" style="background: #34C759;">
+            <button onclick="aprobarPublicacion(${pub.id})" class="btn primary" style="background: var(--cc-success);">
               ✓ Aprobar Publicación
             </button>
-            <button onclick="cerrarModal('modalDetalle'); mostrarModalRechazo(${pub.id});" class="btn" style="background: #FF3B30; color: white;">
+            <button onclick="cerrarModal('modalDetalle'); mostrarModalRechazo(${pub.id});" class="btn" style="background: var(--cc-danger); border-color: var(--cc-danger); color: white;">
               ✕ Rechazar Publicación
             </button>
           ` : ''}
@@ -679,7 +679,7 @@ function verDetallePublicacion(id) {
     .catch(error => {
       console.error('Error:', error);
       document.getElementById('contenidoDetalle').innerHTML = 
-        `<div style="text-align: center; padding: 48px; color: #FF3B30;">
+        `<div style="text-align: center; padding: 48px; color: var(--cc-danger);">
           <p class="h3">Error al cargar el detalle</p>
           <p class="meta">No se pudo conectar con el servidor</p>
         </div>`;
@@ -1452,6 +1452,119 @@ window.onclick = function(event) {
   background: #111827 !important;
   border-color: #374151 !important;
 }
+
+/* Badges en dark mode */
+:root[data-theme="dark"] .badge {
+  background: var(--cc-bg-muted) !important;
+  color: var(--cc-text-secondary) !important;
+}
+
+/* Texto de ubicación en modal */
+:root[data-theme="dark"] .info-table td {
+  color: var(--cc-text-primary) !important;
+}
+
+/* Títulos en modal */
+:root[data-theme="dark"] .h3,
+:root[data-theme="dark"] .h4 {
+  color: var(--cc-text-primary) !important;
+}
+
+/* Inputs y textareas en modales - Dark Mode */
+:root[data-theme="dark"] .admin-modal-body .input,
+:root[data-theme="dark"] .admin-modal-body textarea,
+:root[data-theme="dark"] .admin-modal-body input[type="text"],
+:root[data-theme="dark"] .admin-modal-body input[type="email"],
+:root[data-theme="dark"] .admin-modal-body select {
+  background: var(--cc-bg-surface) !important;
+  color: var(--cc-text-primary) !important;
+  border-color: var(--cc-border-default) !important;
+}
+
+:root[data-theme="dark"] .admin-modal-body .input::placeholder,
+:root[data-theme="dark"] .admin-modal-body textarea::placeholder {
+  color: var(--cc-text-tertiary) !important;
+}
+
+/* Labels en modales - Dark Mode */
+:root[data-theme="dark"] .admin-modal-body .label {
+  color: var(--cc-text-secondary) !important;
+}
+
+/* Párrafos en modales - Dark Mode */
+:root[data-theme="dark"] .admin-modal-body p {
+  color: var(--cc-text-secondary) !important;
+}
+
+/* Tabla - Dark Mode - Forzar fondos correctos */
+:root[data-theme="dark"] .publicaciones-table-view.card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] .publicaciones-table-view {
+  background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] .table {
+  background: transparent !important;
+}
+
+:root[data-theme="dark"] .table thead {
+  background: #374151 !important;
+}
+
+:root[data-theme="dark"] .table thead th {
+  background: #374151 !important;
+  color: #F9FAFB !important;
+  border-bottom-color: #4B5563 !important;
+}
+
+:root[data-theme="dark"] .table tbody tr {
+  background: #1F2937 !important;
+}
+
+:root[data-theme="dark"] .table tbody tr:hover {
+  background: #374151 !important;
+}
+
+:root[data-theme="dark"] .table tbody td {
+  background: transparent !important;
+  color: #F9FAFB !important;
+  border-bottom-color: #374151 !important;
+}
+
+/* Meta text en tabla - Dark Mode */
+:root[data-theme="dark"] .table .meta {
+  color: #9CA3AF !important;
+}
+
+/* Títulos en tabla - Dark Mode */
+:root[data-theme="dark"] .table .h4 {
+  color: #F9FAFB !important;
+}
+
+/* Span de ID en tabla - Dark Mode */
+:root[data-theme="dark"] .table td span[style*="font-weight: 600"] {
+  color: #9CA3AF !important;
+}
+
+/* Card de filtros - Dark Mode */
+:root[data-theme="dark"] .filtros-card.card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+/* Todos los cards en admin container - Dark Mode */
+:root[data-theme="dark"] .admin-container .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
+
+:root[data-theme="dark"] main.container .card {
+  background: #1F2937 !important;
+  border-color: #374151 !important;
+}
   
   /* ============================================================================
    * TABS DE ESTADO
@@ -1839,4 +1952,33 @@ async function eliminarPublicacion(id) {
 }
 </script>
 
-<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>
+<!-- Script de tema (modo claro/oscuro) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Theme toggle
+  const themeToggle = document.querySelector('.theme-toggle');
+  const html = document.documentElement;
+  
+  // Cargar tema guardado
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  html.setAttribute('data-theme', savedTheme);
+  
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function() {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  }
+  
+  // Inicializar iconos de Lucide
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+});
+</script>
+
+</body>
+</html>
